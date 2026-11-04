@@ -1,0 +1,288 @@
+From 49a41220c59572cfef0a229a23b802584f860d95 Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Wed, 4 Nov 2026 11:40:31 +0100
+Subject: [PATCH] SnakeOS: disable automatic update checks (no phone-home)
+
+- Remove Tauri updater plugin (startup + 4h check to github.com)
+- Remove UpdateBanner and use-updater hook
+- Disable automatic extension update check to xplorer.space on startup
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpEUPKtUaPQmdJRwUqt1
+---
+ apps/client/src/App.tsx                     |  2 -
+ apps/client/src/components/UpdateBanner.tsx | 63 -------------
+ apps/client/src/hooks/use-updater.ts        | 97 ---------------------
+ apps/client/src/lib/extension-host.ts       |  3 +-
+ apps/src-tauri/Cargo.toml                   |  1 -
+ apps/src-tauri/capabilities/default.json    |  1 -
+ apps/src-tauri/src/main.rs                  |  1 -
+ apps/src-tauri/tauri.conf.json              |  8 --
+ 8 files changed, 2 insertions(+), 174 deletions(-)
+ delete mode 100644 apps/client/src/components/UpdateBanner.tsx
+ delete mode 100644 apps/client/src/hooks/use-updater.ts
+
+diff --git a/apps/client/src/App.tsx b/apps/client/src/App.tsx
+index c81a974..1250fb5 100644
+--- a/apps/client/src/App.tsx
++++ b/apps/client/src/App.tsx
+@@ -10,7 +10,6 @@ import { TauriAPI } from '@/lib/tauri-api';
+ import { extensionHost } from '@/lib/extension-host';
+ import { useToast } from '@/hooks/use-toast';
+ import XtensionInstallDialog from '@/components/dialogs/XtensionInstallDialog';
+-import UpdateBanner from '@/components/UpdateBanner';
+ import './styles/tokyo-night.css';
+ 
+ // Lazy-loaded pages -- Settings is only needed when navigating to /settings
+@@ -124,7 +123,6 @@ const App = () => {
+ 
+   return (
+     <QueryClientProvider client={queryClient}>
+-      <UpdateBanner />
+       <ErrorBoundary>
+         <Router />
+       </ErrorBoundary>
+diff --git a/apps/client/src/components/UpdateBanner.tsx b/apps/client/src/components/UpdateBanner.tsx
+deleted file mode 100644
+index fc5dd4f..0000000
+--- a/apps/client/src/components/UpdateBanner.tsx
++++ /dev/null
+@@ -1,63 +0,0 @@
+-import { useTranslation } from 'react-i18next';
+-import useUpdater from '@/hooks/use-updater';
+-
+-const UpdateBanner = () => {
+-  const { t } = useTranslation();
+-  const { status, installUpdate, dismissUpdate } = useUpdater();
+-
+-  if (!status.available || status.error) return null;
+-
+-  return (
+-    <div
+-      className="flex items-center justify-between px-4 py-2 text-sm"
+-      style={{
+-        backgroundColor: 'var(--xp-accent, #4f46e5)',
+-        color: 'white',
+-      }}
+-    >
+-      {status.downloading ? (
+-        <div className="flex flex-1 items-center gap-3">
+-          <span>{t('updater.downloading')}</span>
+-          <div
+-            className="h-1.5 flex-1 overflow-hidden rounded-full"
+-            style={{ backgroundColor: 'rgba(255,255,255,0.3)' }}
+-          >
+-            <div
+-              className="h-full rounded-full transition-all"
+-              style={{
+-                width: `${status.progress}%`,
+-                backgroundColor: 'white',
+-              }}
+-            />
+-          </div>
+-          <span>{Math.round(status.progress)}%</span>
+-        </div>
+-      ) : (
+-        <>
+-          <span>{t('updater.available', { version: status.version })}</span>
+-          <div className="flex items-center gap-2">
+-            <button
+-              onClick={installUpdate}
+-              className="rounded px-3 py-1 text-xs font-medium"
+-              style={{
+-                backgroundColor: 'rgba(255,255,255,0.3)',
+-                border: '1px solid rgba(255,255,255,0.4)',
+-                color: 'white',
+-              }}
+-            >
+-              {t('updater.install')}
+-            </button>
+-            <button
+-              onClick={dismissUpdate}
+-              className="rounded px-2 py-1 text-xs opacity-70 hover:opacity-100"
+-            >
+-              {t('updater.dismiss')}
+-            </button>
+-          </div>
+-        </>
+-      )}
+-    </div>
+-  );
+-};
+-
+-export default UpdateBanner;
+diff --git a/apps/client/src/hooks/use-updater.ts b/apps/client/src/hooks/use-updater.ts
+deleted file mode 100644
+index 28085c9..0000000
+--- a/apps/client/src/hooks/use-updater.ts
++++ /dev/null
+@@ -1,97 +0,0 @@
+-import { useState, useEffect, useCallback } from 'react';
+-import { check } from '@tauri-apps/plugin-updater';
+-import { relaunch } from '@tauri-apps/plugin-process';
+-
+-interface UpdateStatus {
+-  available: boolean;
+-  version?: string;
+-  body?: string;
+-  downloading: boolean;
+-  progress: number;
+-  error?: string;
+-}
+-
+-const useUpdater = () => {
+-  const [status, setStatus] = useState<UpdateStatus>({
+-    available: false,
+-    downloading: false,
+-    progress: 0,
+-  });
+-
+-  const checkForUpdate = useCallback(async () => {
+-    try {
+-      const update = await check();
+-      if (update) {
+-        setStatus((prev) => ({
+-          ...prev,
+-          available: true,
+-          version: update.version,
+-          body: update.body ?? undefined,
+-          error: undefined,
+-        }));
+-        return update;
+-      }
+-    } catch (err) {
+-      console.warn('Failed to check for updates:', err);
+-      setStatus((prev) => ({
+-        ...prev,
+-        error: err instanceof Error ? err.message : String(err),
+-      }));
+-    }
+-    return null;
+-  }, []);
+-
+-  const installUpdate = useCallback(async () => {
+-    try {
+-      const update = await check();
+-      if (!update) return;
+-
+-      setStatus((prev) => ({ ...prev, downloading: true, progress: 0 }));
+-
+-      let downloaded = 0;
+-      let contentLength = 0;
+-
+-      await update.downloadAndInstall((event) => {
+-        if (event.event === 'Started') {
+-          contentLength = (event.data as { contentLength?: number }).contentLength ?? 0;
+-        } else if (event.event === 'Progress') {
+-          downloaded += (event.data as { chunkLength: number }).chunkLength;
+-          const progress = contentLength > 0 ? (downloaded / contentLength) * 100 : 0;
+-          setStatus((prev) => ({ ...prev, progress }));
+-        } else if (event.event === 'Finished') {
+-          setStatus((prev) => ({ ...prev, progress: 100 }));
+-        }
+-      });
+-
+-      await relaunch();
+-    } catch (err) {
+-      console.warn('Failed to install update:', err);
+-      setStatus((prev) => ({
+-        ...prev,
+-        downloading: false,
+-        error: err instanceof Error ? err.message : String(err),
+-      }));
+-    }
+-  }, []);
+-
+-  const dismissUpdate = useCallback(() => {
+-    setStatus({
+-      available: false,
+-      downloading: false,
+-      progress: 0,
+-    });
+-  }, []);
+-
+-  useEffect(() => {
+-    const timer = setTimeout(() => checkForUpdate(), 5000);
+-    const interval = setInterval(() => checkForUpdate(), 4 * 60 * 60 * 1000);
+-    return () => {
+-      clearTimeout(timer);
+-      clearInterval(interval);
+-    };
+-  }, [checkForUpdate]);
+-
+-  return { status, checkForUpdate, installUpdate, dismissUpdate };
+-};
+-
+-export default useUpdater;
+diff --git a/apps/client/src/lib/extension-host.ts b/apps/client/src/lib/extension-host.ts
+index 68537bf..b51198b 100644
+--- a/apps/client/src/lib/extension-host.ts
++++ b/apps/client/src/lib/extension-host.ts
+@@ -867,7 +867,8 @@ class ExtensionHost {
+         `[INFO] Extensions ready: ${sidebarCount} sidebar, ${panelCount} panels, ${bottomCount} bottom tabs`,
+       );
+ 
+-      this.checkForUpdatesAndNotify(installed).catch(() => {});
++      // SnakeOS: automatic extension update check (phones home to xplorer.space) disabled
++      // this.checkForUpdatesAndNotify(installed).catch(() => {});
+     } catch (err) {
+       console.error('[ExtensionHost] Failed to load installed extensions:', err);
+     }
+diff --git a/apps/src-tauri/Cargo.toml b/apps/src-tauri/Cargo.toml
+index fb48567..093f1e2 100644
+--- a/apps/src-tauri/Cargo.toml
++++ b/apps/src-tauri/Cargo.toml
+@@ -50,7 +50,6 @@ walkdir = "2.5"
+ ignore = "0.4"
+ jwalk = "0.8"
+ tauri-plugin-drag = "2.1.0"
+-tauri-plugin-updater = "2"
+ tauri-plugin-process = "2"
+ notify = "7"
+ rust-stemmers = "1.2"
+diff --git a/apps/src-tauri/capabilities/default.json b/apps/src-tauri/capabilities/default.json
+index 66aea6a..e27b54a 100644
+--- a/apps/src-tauri/capabilities/default.json
++++ b/apps/src-tauri/capabilities/default.json
+@@ -33,7 +33,6 @@
+     "dialog:default",
+     "global-shortcut:default",
+     "drag:default",
+-    "updater:default",
+     "process:default"
+   ]
+ }
+diff --git a/apps/src-tauri/src/main.rs b/apps/src-tauri/src/main.rs
+index 66c9e1d..7febf63 100644
+--- a/apps/src-tauri/src/main.rs
++++ b/apps/src-tauri/src/main.rs
+@@ -54,7 +54,6 @@ fn main() {
+         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+         .plugin(tauri_plugin_dialog::init())
+         .plugin(tauri_plugin_drag::init())
+-        .plugin(tauri_plugin_updater::Builder::new().build())
+         .plugin(tauri_plugin_process::init())
+         .setup(|app| {
+             // Initialize progress manager
+diff --git a/apps/src-tauri/tauri.conf.json b/apps/src-tauri/tauri.conf.json
+index 00855bc..67c4766 100644
+--- a/apps/src-tauri/tauri.conf.json
++++ b/apps/src-tauri/tauri.conf.json
+@@ -35,14 +35,6 @@
+       }
+     }
+   },
+-  "plugins": {
+-    "updater": {
+-      "endpoints": [
+-        "https://github.com/kimlimjustin/xplorer/releases/latest/download/latest.json"
+-      ],
+-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDhCODY4QkQ0MjMzRkE1RDQKUldUVXBUOGoxSXVHaTdWQXphK0pISXV4M0pnZjdMNE90ZitWbnZDOFhKK0oyRTRsTHhJcW50RWQK"
+-    }
+-  },
+   "bundle": {
+     "active": true,
+     "targets": "all",
+-- 
+2.43.0
+
