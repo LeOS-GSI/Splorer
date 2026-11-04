@@ -1,6 +1,6 @@
 /**
  * Agent Persistence — saves running agent sessions to localStorage so they
- * survive Xplorer restarts. Terminal sessions (done/error/cancelled) are
+ * survive Splorer restarts. Terminal sessions (done/error/cancelled) are
  * already saved to session history; this module handles in-flight sessions.
  *
  * - Periodically snapshots RUNNING agent state every 30 seconds

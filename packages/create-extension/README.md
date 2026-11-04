@@ -1,6 +1,6 @@
 # create-xplorer-extension
 
-Scaffold a new Xplorer extension in seconds.
+Scaffold a new Splorer extension in seconds.
 
 ## Usage
 

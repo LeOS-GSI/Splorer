@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use xplorer::duplicate_finder::*;
+use splorer::duplicate_finder::*;
 
 /// Integration tests for the DuplicateFinder module.
 ///

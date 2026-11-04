@@ -13,7 +13,7 @@ import { renderHook, act } from '@testing-library/react';
 vi.mock('@/lib/utils', () => ({
   themes: {
     glass: {
-      name: 'Xplorer Glass',
+      name: 'Splorer Glass',
       primary: '#6366f1',
       bg: 'transparent',
       surface: 'rgba(255,255,255,0.06)',
@@ -46,7 +46,7 @@ describe('theme-registry', () => {
     it('includes built-in themes', () => {
       const themes = getAllThemes();
       expect(themes.glass).toBeDefined();
-      expect(themes.glass.name).toBe('Xplorer Glass');
+      expect(themes.glass.name).toBe('Splorer Glass');
       expect(themes.light).toBeDefined();
       expect(themes.light.name).toBe('Light');
     });

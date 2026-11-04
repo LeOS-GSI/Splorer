@@ -80,7 +80,7 @@ const MARKETPLACE_EXTENSIONS: MarketplaceSuggestion[] = [
   {
     keyword: 'terminal',
     extensionName: 'Integrated Terminal',
-    description: 'Full terminal emulator inside Xplorer',
+    description: 'Full terminal emulator inside Splorer',
   },
   {
     keyword: 'archive',
@@ -428,7 +428,7 @@ export const buildMarketplaceSuggestionText = (userMessage: string): string => {
   const lines: string[] = [];
   for (const s of suggestions) {
     lines.push(
-      `There's a **${s.extensionName}** extension available in the Xplorer marketplace that could help: ${s.description}. The user can install it from the Extensions panel.`,
+      `There's a **${s.extensionName}** extension available in the Splorer marketplace that could help: ${s.description}. The user can install it from the Extensions panel.`,
     );
   }
   return lines.join('\n');

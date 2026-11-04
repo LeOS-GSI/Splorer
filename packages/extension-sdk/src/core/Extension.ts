@@ -1,7 +1,7 @@
 import { ExtensionManifest, ExtensionContext, ExtensionLifecycle, XplorerAPI } from '../types';
 
 /**
- * Base class for all Xplorer extensions
+ * Base class for all Splorer extensions
  */
 export abstract class Extension implements ExtensionLifecycle {
   public readonly manifest: ExtensionManifest;
@@ -33,17 +33,17 @@ export abstract class Extension implements ExtensionLifecycle {
   }
 
   /**
-   * Get the Xplorer API
+   * Get the Splorer API
    */
   protected getAPI(): XplorerAPI {
     if (!this.api) {
-      throw new Error('Xplorer API not available. Make sure the extension is activated.');
+      throw new Error('Splorer API not available. Make sure the extension is activated.');
     }
     return this.api;
   }
 
   /**
-   * Internal method to set context and API (called by Xplorer)
+   * Internal method to set context and API (called by Splorer)
    */
   public _setContext(context: ExtensionContext, api: XplorerAPI): void {
     this.context = context;

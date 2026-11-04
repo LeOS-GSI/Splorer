@@ -1,4 +1,4 @@
-// Xplorer Search Engine — Watcher & Directory Walking
+// Splorer Search Engine — Watcher & Directory Walking
 //
 // File-system watcher setup, directory walking, full rebuild,
 // and incremental update logic for the SearchEngine.

@@ -1,29 +1,31 @@
 <div align="center">
 
-<img height="120" src="apps/src-tauri/icons/icon.png" alt="Xplorer" />
+<img height="120" src="apps/src-tauri/icons/icon.png" alt="Splorer" />
 
-# Xplorer
+# Splorer
 
 **A modern, AI-powered file manager built with Rust and React.**
 
 Cross-platform. AI-integrated. Extensible. One app for all your files.
 
-[![LICENSE](https://img.shields.io/github/license/kimlimjustin/xplorer.svg?style=flat-square)](https://github.com/kimlimjustin/xplorer/blob/next/LICENSE) [![Downloads](https://img.shields.io/github/downloads/kimlimjustin/xplorer/total.svg?style=flat-square)](https://github.com/kimlimjustin/xplorer/releases) [![Stars](https://img.shields.io/github/stars/kimlimjustin/xplorer.svg?style=flat-square)](https://github.com/kimlimjustin/xplorer/stargazers)
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/kimlimjustin/xplorer/releases)[![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white)](https://github.com/kimlimjustin/xplorer/releases)[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/kimlimjustin/xplorer/releases)
+[![LICENSE](https://img.shields.io/github/license/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/blob/next/LICENSE) [![Downloads](https://img.shields.io/github/downloads/LeOS-GSI/Splorer/total.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/releases) [![Stars](https://img.shields.io/github/stars/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/stargazers)
+[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/LeOS-GSI/Splorer/releases)[![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white)](https://github.com/LeOS-GSI/Splorer/releases)[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/LeOS-GSI/Splorer/releases)
 
-[Website](https://xplorer.space) | [Documentation](https://xplorer.space/docs) | [Discussions](https://github.com/kimlimjustin/xplorer/discussions)
+[Releases](https://github.com/LeOS-GSI/Splorer/releases) | [Discussions](https://github.com/LeOS-GSI/Splorer/discussions)
+
+Splorer is a privacy-hardened fork of [Xplorer](https://github.com/kimlimjustin/xplorer) by Justin Maximillian Kimlim, maintained for SnakeOS. No automatic update checks, no phone-home.
 
 </div>
 
 ---
 
 <div align="center">
-<img src="images/xplorer.png" alt="Xplorer — File Manager" width="100%" />
+<img src="images/xplorer.png" alt="Splorer — File Manager" width="100%" />
 </div>
 
-## Why Xplorer?
+## Why Splorer?
 
-Most file managers haven't changed in decades. Xplorer is a ground-up rethink: a Tauri 2 desktop app with a Rust backend for speed and a React frontend for flexibility. It ships with AI chat, Git integration, an extension marketplace, and themeable UI out of the box.
+Most file managers haven't changed in decades. Splorer is a ground-up rethink: a Tauri 2 desktop app with a Rust backend for speed and a React frontend for flexibility. It ships with AI chat, Git integration, an extension marketplace, and themeable UI out of the box.
 
 > **Note:** This is the `next` branch -- a full rewrite using Tauri 2, React 18, and a new extension system. Not yet production-ready, but actively developed. Feedback welcome!
 
@@ -64,7 +66,7 @@ Most file managers haven't changed in decades. Xplorer is a ground-up rethink: a
 <td width="50%">
 
 **Extensibility**
-- Extension marketplace at [xplorer.space](https://xplorer.space)
+- Optional extension marketplace (upstream [xplorer.space](https://xplorer.space), contacted only when you open it)
 - Git UI, SSH manager, Docker, Google Drive, code editor, image editor, file hasher, and more
 - Themes: Tokyo Night, Dracula, Nord, Cyberpunk, Ocean Deep
 - Sandboxed runtime with public SDK — build and publish your own
@@ -107,7 +109,7 @@ Command palette, vim keybindings, custom keyboard shortcuts, and per-folder view
 
 ## Installation
 
-Download the latest release for your platform from the [Releases page](https://github.com/kimlimjustin/xplorer/releases).
+Download the latest release for your platform from the [Releases page](https://github.com/LeOS-GSI/Splorer/releases).
 
 | Platform | Format |
 |---|---|
@@ -126,8 +128,8 @@ Download the latest release for your platform from the [Releases page](https://g
 ### Setup
 
 ```bash
-git clone https://github.com/kimlimjustin/xplorer.git -b next
-cd xplorer
+git clone https://github.com/LeOS-GSI/Splorer.git -b next
+cd Splorer
 pnpm install
 pnpm dev:app
 ```
@@ -147,7 +149,7 @@ pnpm run test:tauri      # Rust backend tests
 ## Architecture
 
 ```
-xplorer/
+splorer/
 ├── apps/
 │   ├── client/           # React 18 + TypeScript + Vite frontend
 │   ├── src-tauri/        # Rust backend (Tauri 2, Tokio, Rayon)
@@ -175,8 +177,8 @@ xplorer/
 
 Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and guidelines.
 
-- **Bug reports** -- [GitHub Issues](https://github.com/kimlimjustin/xplorer/issues)
-- **Feature requests** -- [Discussions](https://github.com/kimlimjustin/xplorer/discussions)
+- **Bug reports** -- [GitHub Issues](https://github.com/LeOS-GSI/Splorer/issues)
+- **Feature requests** -- [Discussions](https://github.com/LeOS-GSI/Splorer/discussions)
 
 ## License
 

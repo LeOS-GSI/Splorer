@@ -1,6 +1,6 @@
 /**
  * Terminal Agent Detector — monitors PTY terminal output for
- * Claude Code, Codex, and other AI agents running in Xplorer's
+ * Claude Code, Codex, and other AI agents running in Splorer's
  * integrated terminal tabs.
  *
  * When an external agent is detected, it emits events so the

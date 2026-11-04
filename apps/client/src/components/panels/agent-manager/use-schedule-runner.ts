@@ -5,7 +5,7 @@
  * schedule whose nextRunAt is in the past. Fires create real agent sessions
  * via TauriAPI.createAgentSession.
  *
- * Schedules only fire while Xplorer is open. For OS-level scheduling that
+ * Schedules only fire while Splorer is open. For OS-level scheduling that
  * survives reboots, we'd need a Tauri-side cron daemon (future work).
  */
 import { useEffect, useRef, useState } from 'react';

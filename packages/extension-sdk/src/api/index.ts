@@ -1,7 +1,7 @@
 /**
  * High-level extension registration APIs.
  *
- * These provide the simplest possible DX for creating Xplorer extensions.
+ * These provide the simplest possible DX for creating Splorer extensions.
  * Each `*.register()` call internally creates the appropriate Extension
  * subclass, wires up boilerplate, and calls `registerExtension()`.
  *
@@ -29,7 +29,7 @@ const register = (extension: unknown): void => {
   if (typeof window !== 'undefined' && window.__xplorer_register__) {
     window.__xplorer_register__(extension);
   } else {
-    console.warn('[SDK] Could not register extension: Xplorer host not available.');
+    console.warn('[SDK] Could not register extension: Splorer host not available.');
   }
 };
 

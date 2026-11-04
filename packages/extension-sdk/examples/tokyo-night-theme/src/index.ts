@@ -6,7 +6,7 @@ export class TokyoNightTheme extends ThemeExtension {
       id: 'tokyo-night-theme',
       name: 'Tokyo Night Theme',
       version: '1.0.0',
-      author: 'Xplorer Team',
+      author: 'Splorer Team',
       description: 'A beautiful dark theme inspired by Tokyo Night',
       keywords: ['theme', 'dark', 'tokyo', 'night'],
       icon: '🌃',

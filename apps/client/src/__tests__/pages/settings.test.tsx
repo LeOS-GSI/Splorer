@@ -54,7 +54,7 @@ vi.mock('@radix-ui/react-select', async () => {
 vi.mock('@/lib/theme-registry', () => ({
   useAllThemes: vi.fn(() => ({
     glass: {
-      name: 'Xplorer Glass',
+      name: 'Splorer Glass',
       primary: '#7c3aed',
       bg: '#0a0a1a',
       surface: '#1a1a2e',
@@ -181,7 +181,7 @@ describe('Settings Page', () => {
       render(<Settings />);
 
       await waitFor(() => {
-        expect(screen.getByText('Customize your Xplorer experience')).toBeInTheDocument();
+        expect(screen.getByText('Customize your Splorer experience')).toBeInTheDocument();
       });
     });
 

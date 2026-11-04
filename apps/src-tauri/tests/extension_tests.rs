@@ -1,5 +1,5 @@
-use xplorer::extensions::permissions::*;
-use xplorer::extensions::types::*;
+use splorer::extensions::permissions::*;
+use splorer::extensions::types::*;
 
 #[test]
 fn test_extension_manifest_parsing() {

@@ -200,7 +200,7 @@ export interface BackupManifest {
   backup_type: 'full' | 'incremental';
 }
 
-// API interfaces for interacting with Xplorer
+// API interfaces for interacting with Splorer
 export interface XplorerAPI {
   // File operations
   files: {

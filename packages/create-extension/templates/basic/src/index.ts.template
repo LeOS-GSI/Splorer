@@ -36,7 +36,7 @@ export class {{displayName}}Extension extends Extension {
   }
 }
 
-// Register the extension with Xplorer
+// Register the extension with Splorer
 const extension = new {{displayName}}Extension();
 registerExtension(extension);
 

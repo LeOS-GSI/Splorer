@@ -1,4 +1,4 @@
-// Xplorer Search Engine — Tauri Command Wrappers
+// Splorer Search Engine — Tauri Command Wrappers
 //
 // Drop-in replacements for the old tokenizer.rs Tauri commands.
 // They delegate to the global SearchEngine singleton.

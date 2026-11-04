@@ -106,7 +106,7 @@ npm run watch     # rebuild on file changes (without hot-reload)
 ## Installation
 
 1. Build the extension: \`npm run build\`
-2. Open Xplorer
+2. Open Splorer
 3. Go to Settings > Extensions > Install from Folder
 4. Select this extension's directory
 
@@ -116,7 +116,7 @@ MIT
 
 ---
 
-Built with the Xplorer Extension SDK
+Built with the Splorer Extension SDK
 `;
 };
 
@@ -126,7 +126,7 @@ const panelTemplate = (vars: TemplateVars): TemplateOutput => {
   const source = `/**
  * ${vars.displayName} Extension
  *
- * A sidebar panel extension for Xplorer.
+ * A sidebar panel extension for Splorer.
  * Registers via Sidebar.register() and renders in the right sidebar.
  */
 
@@ -289,7 +289,7 @@ const themeTemplate = (vars: TemplateVars): TemplateOutput => {
   const source = `/**
  * ${vars.displayName} Theme Extension
  *
- * A custom color theme for Xplorer.
+ * A custom color theme for Splorer.
  * Registers via Theme.register() with color tokens and optional CSS overrides.
  */
 
@@ -360,7 +360,7 @@ Theme.register({
       'Custom color theme with full token support',
       'Background gradient',
       'Scrollbar, selection, and focus styling',
-      'CSS variable integration with the Xplorer theme system',
+      'CSS variable integration with the Splorer theme system',
     ]),
   };
 };
@@ -371,7 +371,7 @@ const actionTemplate = (vars: TemplateVars): TemplateOutput => {
   const source = `/**
  * ${vars.displayName} Extension
  *
- * A context menu action for Xplorer.
+ * A context menu action for Splorer.
  * Registers via ContextMenu.register() and appears in the right-click menu.
  */
 
@@ -473,7 +473,7 @@ const previewTemplate = (vars: TemplateVars): TemplateOutput => {
   const source = `/**
  * ${vars.displayName} Extension
  *
- * A file preview handler for Xplorer.
+ * A file preview handler for Splorer.
  * Registers via Preview.register() and renders a custom preview for matching files.
  */
 
@@ -640,7 +640,7 @@ const commandTemplate = (vars: TemplateVars): TemplateOutput => {
   const source = `/**
  * ${vars.displayName} Extension
  *
- * A command palette command for Xplorer.
+ * A command palette command for Splorer.
  * Registers via Command.register() with an optional keyboard shortcut.
  *
  * Usage: Open the command palette (Ctrl+Shift+P) and search for "${vars.displayName}".
@@ -742,7 +742,7 @@ const tabTemplate = (vars: TemplateVars): TemplateOutput => {
   const source = `/**
  * ${vars.displayName} Extension
  *
- * A sidebar tab for Xplorer. Appears in the left sidebar tab bar
+ * A sidebar tab for Splorer. Appears in the left sidebar tab bar
  * alongside Explorer and Search.
  */
 

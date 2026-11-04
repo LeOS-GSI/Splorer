@@ -58,15 +58,15 @@ describe('useSplitLayout', () => {
       const group = result.current.activeGroup;
       expect(group.tabs).toHaveLength(1);
       expect(group.tabs[0].name).toBe('Home');
-      expect(group.tabs[0].path).toBe('xplorer://home');
-      expect(group.currentPath).toBe('xplorer://home');
+      expect(group.tabs[0].path).toBe('splorer://home');
+      expect(group.currentPath).toBe('splorer://home');
     });
 
     it('has correct initial path history', () => {
       const { result } = renderHook(() => useSplitLayout());
 
       const group = result.current.activeGroup;
-      expect(group.pathHistory).toEqual(['xplorer://home']);
+      expect(group.pathHistory).toEqual(['splorer://home']);
       expect(group.historyIndex).toBe(0);
     });
   });
@@ -95,7 +95,7 @@ describe('useSplitLayout', () => {
         result.current.navigateBack(groupId);
       });
 
-      expect(result.current.activeGroup.currentPath).toBe('xplorer://home');
+      expect(result.current.activeGroup.currentPath).toBe('splorer://home');
     });
 
     it('can navigate forward after going back', () => {
@@ -219,7 +219,7 @@ describe('useSplitLayout', () => {
       });
 
       expect(result.current.activeGroup.activeTabId).toBe(homeTabId);
-      expect(result.current.activeGroup.currentPath).toBe('xplorer://home');
+      expect(result.current.activeGroup.currentPath).toBe('splorer://home');
     });
 
     it('closes a tab', () => {

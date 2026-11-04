@@ -687,7 +687,7 @@ Navigation.register({
     xplorerApi.navigation.openTab({
       type: 'gdrive-manager',
       name: 'Google Drive Settings',
-      path: 'xplorer://gdrive-manager',
+      path: 'splorer://gdrive-manager',
     });
   },
 });
@@ -701,7 +701,7 @@ Command.register({
     xplorerApi.navigation.openTab({
       type: 'gdrive-manager',
       name: 'Google Drive Settings',
-      path: 'xplorer://gdrive-manager',
+      path: 'splorer://gdrive-manager',
     });
   },
 });

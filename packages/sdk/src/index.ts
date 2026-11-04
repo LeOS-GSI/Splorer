@@ -1,5 +1,5 @@
 /**
- * Xplorer SDK — Internal service layer.
+ * Splorer SDK — Internal service layer.
  *
  * Re-exports every service module and all shared types.
  * Core app components import from `@xplorer/sdk` instead of TauriAPI directly.

@@ -478,7 +478,7 @@ const PaneTabBar = ({
               }}
               data-tab-item
               data-drop-target={
-                tab.type === 'folder' && tab.path && !tab.path.startsWith('xplorer://')
+                tab.type === 'folder' && tab.path && !tab.path.startsWith('splorer://')
                   ? tab.path
                   : undefined
               }

@@ -142,7 +142,7 @@ export const buildSystemPrompt = async (opts: SystemPromptOptions): Promise<stri
   const { xState, fileContexts, workspaceCtx, includeSelection, agentLoopContext } = opts;
 
   let systemContent =
-    "You are an AI agent inside the Xplorer file manager. You can observe the user's filesystem, understand their context, and take actions to help them manage files.\n\n" +
+    "You are an AI agent inside the Splorer file manager. You can observe the user's filesystem, understand their context, and take actions to help them manage files.\n\n" +
     'BEHAVIOR RULES — read carefully:\n' +
     "1. ACT, don't ASK. When the user asks you to do something, JUST DO IT. Don't say 'Would you like me to...' or 'Should I...' — read the file, run the command, make the change. The user will be prompted to approve any action that needs permission, so you don't need to ask first.\n" +
     "2. BE CONCISE. Don't write 'Step 1, Step 2' explanations. Don't restate what you're about to do. Just do it and report results in 1-3 sentences.\n" +

@@ -1,7 +1,7 @@
 {
   "name": "@xplorer/extension-sdk",
   "version": "1.0.0",
-  "description": "SDK for creating Xplorer file manager extensions",
+  "description": "SDK for creating Splorer file manager extensions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -20,7 +20,7 @@
     "sdk",
     "theme"
   ],
-  "author": "Xplorer Team",
+  "author": "Splorer Team",
   "license": "MIT",
   "dependencies": {
     "@types/react": "^19.0.0",

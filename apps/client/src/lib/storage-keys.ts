@@ -1,5 +1,5 @@
 /**
- * Centralized registry of all localStorage keys used by Xplorer.
+ * Centralized registry of all localStorage keys used by Splorer.
  * Always reference these constants instead of hardcoding key strings.
  */
 export const STORAGE_KEYS = {

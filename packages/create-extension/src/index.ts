@@ -83,7 +83,7 @@ const EXTENSION_TYPES: ExtensionType[] = [
 
 program
   .name('create-xplorer-extension')
-  .description('Scaffold a new Xplorer extension')
+  .description('Scaffold a new Splorer extension')
   .version('1.0.0');
 
 program
@@ -95,7 +95,7 @@ program
       extensionName: string | undefined,
       options: { type?: string; skipInstall?: boolean },
     ) => {
-      console.log(chalk.blue.bold('\n  Create Xplorer Extension\n'));
+      console.log(chalk.blue.bold('\n  Create Splorer Extension\n'));
 
       // ── Name ──────────────────────────────────────────────────────────────
 
@@ -136,7 +136,7 @@ program
           type: 'input',
           name: 'description',
           message: 'Description:',
-          default: `An Xplorer extension`,
+          default: `An Splorer extension`,
         },
         {
           type: 'input',
@@ -262,7 +262,7 @@ program
         console.log('    npm run build');
         console.log('    npm run watch     # for development');
         console.log();
-        console.log(chalk.gray('  Then load the extension in Xplorer:'));
+        console.log(chalk.gray('  Then load the extension in Splorer:'));
         console.log(chalk.gray('    Settings > Extensions > Install from Folder'));
         console.log();
       } catch (error: unknown) {

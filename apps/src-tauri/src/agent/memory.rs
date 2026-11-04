@@ -28,7 +28,7 @@ use crate::utils::now_secs;
 fn memory_path() -> std::path::PathBuf {
     let dir = dirs::data_local_dir()
         .unwrap_or_else(|| std::path::PathBuf::from("."))
-        .join("xplorer");
+        .join("splorer");
     std::fs::create_dir_all(&dir).ok();
     dir.join("agent_memory.json")
 }

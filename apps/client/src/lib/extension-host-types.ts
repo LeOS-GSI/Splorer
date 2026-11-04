@@ -54,7 +54,7 @@ export interface ExtensionManifest {
   signature?: string;
   /** Author's Ed25519 public key (hex-encoded) */
   publicKey?: string;
-  /** Whether this extension is verified by the Xplorer team */
+  /** Whether this extension is verified by the Splorer team */
   verified?: boolean;
   /** Path or identifier of a WASM backend module for this extension */
   backend?: string;

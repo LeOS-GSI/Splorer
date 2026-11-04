@@ -1,6 +1,6 @@
-# Contributing to Xplorer
+# Contributing to Splorer
 
-Thank you for your interest in contributing to Xplorer!
+Thank you for your interest in contributing to Splorer!
 
 ## System Dependencies
 
@@ -38,7 +38,7 @@ sudo pacman -S webkit2gtk-4.1 gtk3 libsoup3 libappindicator-gtk3 librsvg
 ### Quick Start
 
 ```bash
-git clone https://github.com/kimlimjustin/xplorer.git -b next
+git clone https://github.com/LeOS-GSI/Splorer.git -b next
 cd xplorer
 pnpm install
 pnpm dev
@@ -108,6 +108,6 @@ cd apps/web && pnpm dev
 
 ## Reporting Issues
 
-- **Bugs**: Open a [GitHub Issue](https://github.com/kimlimjustin/xplorer/issues)
-- **Feature requests**: Start a [Discussion](https://github.com/kimlimjustin/xplorer/discussions)
+- **Bugs**: Open a [GitHub Issue](https://github.com/LeOS-GSI/Splorer/issues)
+- **Feature requests**: Start a [Discussion](https://github.com/LeOS-GSI/Splorer/discussions)
 - **Security issues**: Email kimlimjustin@gmail.com directly

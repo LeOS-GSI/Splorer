@@ -27,7 +27,7 @@ export class WorkflowAutomationExtension extends Extension {
       id: 'workflow-automation',
       name: 'Workflow Automation',
       version: '1.0.0',
-      author: 'Xplorer Team',
+      author: 'Splorer Team',
       category: 'tool',
       description: 'Automated workflow checks and warnings for development issues',
     });

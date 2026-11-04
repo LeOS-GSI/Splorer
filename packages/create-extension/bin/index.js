@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 program
   .name('create-xplorer-extension')
-  .description('Create a new Xplorer extension')
+  .description('Create a new Splorer extension')
   .version('1.0.0');
 
 program
@@ -21,7 +21,7 @@ program
   .option('-t, --template <template>', 'template to use', 'basic')
   .option('--skip-install', 'skip npm install')
   .action(async (extensionName, options) => {
-    console.log(chalk.blue.bold('🚀 Create Xplorer Extension'));
+    console.log(chalk.blue.bold('🚀 Create Splorer Extension'));
     console.log();
 
     let name = extensionName;
@@ -58,7 +58,7 @@ program
         type: 'input',
         name: 'description',
         message: 'Description:',
-        default: `A Xplorer extension for ${name}`,
+        default: `A Splorer extension for ${name}`,
       },
       {
         type: 'input',

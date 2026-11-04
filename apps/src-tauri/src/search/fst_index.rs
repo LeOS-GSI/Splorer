@@ -1,4 +1,4 @@
-// Xplorer Search Engine -- Memory-Mapped FST Index
+// Splorer Search Engine -- Memory-Mapped FST Index
 //
 // Provides a persistent FST (Finite State Transducer) term dictionary that
 // can be built from a sorted list of terms, saved to disk, and later loaded

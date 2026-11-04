@@ -1,11 +1,11 @@
 use std::fs;
 use tempfile::TempDir;
-use xplorer::duplicate_finder::*;
-use xplorer::extensions::permissions::*;
-use xplorer::extensions::types::*;
-use xplorer::git::*;
-use xplorer::shortcuts::manager::*;
-use xplorer::shortcuts::types::*;
+use splorer::duplicate_finder::*;
+use splorer::extensions::permissions::*;
+use splorer::extensions::types::*;
+use splorer::git::*;
+use splorer::shortcuts::manager::*;
+use splorer::shortcuts::types::*;
 
 /// Test that extension manifest parsing works with contributes, context menus, etc.
 #[test]

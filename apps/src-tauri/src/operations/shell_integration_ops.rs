@@ -15,7 +15,7 @@ mod windows_impl {
     use winreg::RegKey;
 
     const VERB: &str = "OpenWithXplorer";
-    const DISPLAY_NAME: &str = "Open with Xplorer";
+    const DISPLAY_NAME: &str = "Open with Splorer";
 
     fn get_exe_path() -> Result<String, String> {
         std::env::current_exe()

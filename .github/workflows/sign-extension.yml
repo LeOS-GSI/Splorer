@@ -91,7 +91,7 @@ jobs:
 
             const sig = {
               hash,
-              signer: 'Xplorer Marketplace',
+              signer: 'Splorer Marketplace',
               timestamp: new Date().toISOString(),
               verified: true,
               ed25519_signature: signature.toString('hex')

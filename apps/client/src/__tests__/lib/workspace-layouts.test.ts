@@ -7,10 +7,10 @@ vi.mock('@/types/split-view', () => ({
     groups: {
       default: {
         id: 'default',
-        tabs: [{ id: 'tab-home-default', name: 'Home', path: 'xplorer://home', type: 'folder' }],
+        tabs: [{ id: 'tab-home-default', name: 'Home', path: 'splorer://home', type: 'folder' }],
         activeTabId: 'tab-home-default',
-        currentPath: 'xplorer://home',
-        pathHistory: ['xplorer://home'],
+        currentPath: 'splorer://home',
+        pathHistory: ['splorer://home'],
         historyIndex: 0,
       },
     },

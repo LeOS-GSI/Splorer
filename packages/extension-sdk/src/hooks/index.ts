@@ -1,7 +1,7 @@
 /**
  * React hooks for extensions.
  *
- * These hooks provide reactive access to Xplorer state from within
+ * These hooks provide reactive access to Splorer state from within
  * extension panel/preview components rendered via `Sidebar.register()`
  * or `Preview.register()`.
  *

@@ -397,7 +397,7 @@ const Settings = () => {
         return (
           <div className="space-y-6 px-4 py-2">
             <div className="border-xp-border rounded-lg border p-6 text-center">
-              <h2 className="text-xp-text mb-1 text-2xl font-bold">Xplorer</h2>
+              <h2 className="text-xp-text mb-1 text-2xl font-bold">Splorer</h2>
               <p className="text-xp-text-muted text-sm">v1.0.0-alpha.1</p>
               <p className="text-xp-text-secondary mt-3 text-sm">
                 {t('settings.about.description')}
@@ -410,7 +410,7 @@ const Settings = () => {
               </h3>
               <div className="space-y-2">
                 <button
-                  onClick={() => TauriAPI.openUrl('https://github.com/kimlimjustin/xplorer')}
+                  onClick={() => TauriAPI.openUrl('https://github.com/LeOS-GSI/Splorer')}
                   className="text-xp-text hover:bg-xp-surface-light flex w-full items-center gap-3 rounded-md p-2 text-left transition-colors"
                 >
                   <Github size={18} className="text-xp-text-muted" />
@@ -418,11 +418,11 @@ const Settings = () => {
                   <ExternalLink size={14} className="text-xp-text-muted ml-auto" />
                 </button>
                 <button
-                  onClick={() => TauriAPI.openUrl('https://xplorer.space')}
+                  onClick={() => TauriAPI.openUrl('https://github.com/kimlimjustin/xplorer')}
                   className="text-xp-text hover:bg-xp-surface-light flex w-full items-center gap-3 rounded-md p-2 text-left transition-colors"
                 >
-                  <ExternalLink size={18} className="text-xp-text-muted" />
-                  <span className="text-sm">xplorer.space</span>
+                  <Github size={18} className="text-xp-text-muted" />
+                  <span className="text-sm">Based on Xplorer by Justin Kimlim</span>
                   <ExternalLink size={14} className="text-xp-text-muted ml-auto" />
                 </button>
               </div>

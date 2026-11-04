@@ -100,7 +100,7 @@ const PERMISSIONS: Record<string, PermissionInfo> = {
   'xplorer:settings': {
     id: 'xplorer:settings',
     label: 'App Settings',
-    description: 'Read and modify Xplorer settings',
+    description: 'Read and modify Splorer settings',
     risk: 'warning',
     icon: Settings,
   },

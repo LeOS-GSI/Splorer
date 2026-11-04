@@ -1,4 +1,4 @@
-# Xplorer
+# Splorer
 
 Tauri 2.x desktop file manager. React 18 + TypeScript frontend, Rust backend, pnpm monorepo.
 
@@ -52,7 +52,7 @@ Do NOT run the full test suite unless asked. Prefer running single test files fo
 - **Rust commands**: Register in `apps/src-tauri/src/main.rs`. Logic goes in `apps/src-tauri/src/operations/` modules.
 - **Context menus**: Define in `apps/client/src/lib/context-menu-factory.ts` using `i18n.t()` for labels.
 - **State**: React hooks + localStorage (`xplorer:settings` key). No Redux/Zustand.
-- **Routing**: wouter (not react-router). Protocol URLs: `xplorer://home`, `xplorer://trash`, etc.
+- **Routing**: wouter (not react-router). Protocol URLs: `splorer://home`, `splorer://trash`, etc.
 - **Extensions**: Sandboxed, access `window.XplorerSDK`. Use JSX + inline styles + CSS variables in extensions. NEVER use Tailwind inside extensions.
 
 ## Code style
@@ -79,7 +79,7 @@ Do NOT run the full test suite unless asked. Prefer running single test files fo
 - Tailwind CSS with `--xp-*` CSS variables (defined in `apps/client/src/styles/tokyo-night.css`).
 - Utility classes: `.bg-xp-*`, `.text-xp-*`, `.border-xp-*`.
 - Theme classes on `document.documentElement`: `.theme-glass` (default), `.theme-tokyo-night`, `.theme-dracula`, `.theme-nord`, `.theme-catppuccin`.
-- Default: Xplorer Glass (semi-transparent RGBA + backdrop-filter blur).
+- Default: Splorer Glass (semi-transparent RGBA + backdrop-filter blur).
 - Toggle via `applyTheme()` in `apps/client/src/lib/utils.ts`.
 
 ## Rust conventions

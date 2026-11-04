@@ -114,10 +114,10 @@ export const ARCHIVE_PREVIEW_LIMIT = 20;
 // ── Route constants ─────────────────────────────────────────────────────────
 
 export const ROUTES = {
-  HOME: 'xplorer://home',
-  TRASH: 'xplorer://trash',
-  SETTINGS: 'xplorer://settings',
-  GDRIVE_MANAGER: 'xplorer://gdrive-manager',
+  HOME: 'splorer://home',
+  TRASH: 'splorer://trash',
+  SETTINGS: 'splorer://settings',
+  GDRIVE_MANAGER: 'splorer://gdrive-manager',
 } as const;
 
 // ── Byte-size multipliers ───────────────────────────────────────────────────

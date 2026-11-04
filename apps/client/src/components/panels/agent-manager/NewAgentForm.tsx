@@ -1,7 +1,7 @@
 /**
  * Inline form for creating a new multi-session agent.
  * Collects agent type, name, prompt, model selection, and scope configuration.
- * Supports Xplorer Cloud agents and launching external CLI agents
+ * Supports Splorer Cloud agents and launching external CLI agents
  * (Claude Code, Codex, or a custom command).
  */
 import { useState, useEffect, useCallback } from 'react';
@@ -57,7 +57,7 @@ const NewAgentForm = ({ onSubmit, onCancel, onCliLaunched }: NewAgentFormProps) 
   const [showScope, setShowScope] = useState(false);
   const [isLaunching, setIsLaunching] = useState(false);
 
-  // Auto-detect context from Xplorer state on mount
+  // Auto-detect context from Splorer state on mount
   useEffect(() => {
     const xState = getXplorerState();
     if (xState?.currentPath) {

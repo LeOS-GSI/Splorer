@@ -256,7 +256,7 @@ impl AIPipeline {
 /// Path to the on-disk AI index file.
 fn ai_index_path() -> PathBuf {
     let base = dirs::data_local_dir().unwrap_or_else(|| PathBuf::from("."));
-    base.join("xplorer").join("ai_index.json")
+    base.join("splorer").join("ai_index.json")
 }
 
 /// Atomically write the AI index to disk (write to temp, then rename).
@@ -296,7 +296,7 @@ pub(super) fn load_ai_index() -> HashMap<String, AIIndexEntry> {
 /// Path to the on-disk embeddings file.
 fn embeddings_path() -> PathBuf {
     let base = dirs::data_local_dir().unwrap_or_else(|| PathBuf::from("."));
-    base.join("xplorer").join("vector_embeddings.json")
+    base.join("splorer").join("vector_embeddings.json")
 }
 
 /// Atomically write embeddings to disk.

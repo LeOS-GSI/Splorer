@@ -1,5 +1,5 @@
 /**
- * Transport abstraction layer for Xplorer.
+ * Transport abstraction layer for Splorer.
  *
  * The canonical implementation lives in `@xplorer/sdk`.  This module
  * re-exports everything so existing imports (`@/lib/transport`) keep working.

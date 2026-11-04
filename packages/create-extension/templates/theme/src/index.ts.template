@@ -113,7 +113,7 @@ export class {{displayName}}Theme extends ThemeExtension {
   }
 }
 
-// Register the extension with Xplorer
+// Register the extension with Splorer
 const extension = new {{displayName}}Theme();
 registerExtension(extension);
 

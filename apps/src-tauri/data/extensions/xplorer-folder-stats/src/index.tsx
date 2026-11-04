@@ -103,7 +103,7 @@ function FolderStatsPanel({ currentPath }: { currentPath: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!currentPath || currentPath.startsWith('xplorer://') || currentPath.startsWith('gdrive://')) {
+    if (!currentPath || currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://')) {
       setFiles([]);
       setLoading(false);
       return;
@@ -178,7 +178,7 @@ function FolderStatsPanel({ currentPath }: { currentPath: string }) {
     );
   }
 
-  if (!currentPath || currentPath.startsWith('xplorer://')) {
+  if (!currentPath || currentPath.startsWith('splorer://')) {
     return (
       <div style={{ padding: 16, color: 'var(--xp-text-muted, #888)', fontSize: 13, textAlign: 'center' as const }}>
         <div style={{ marginBottom: 8, fontSize: 24 }}>📊</div>

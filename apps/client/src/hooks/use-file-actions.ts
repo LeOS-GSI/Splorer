@@ -187,7 +187,7 @@ export const useFileActions = (deps: FileActionsDeps) => {
     const managerTab: TabItem = {
       id: 'gdrive-manager',
       name: 'Google Drive',
-      path: 'xplorer://gdrive-manager',
+      path: 'splorer://gdrive-manager',
       type: 'gdrive-manager',
     };
     splitLayoutRef.current.addTab(activeGroupRef.current.id, managerTab, true);

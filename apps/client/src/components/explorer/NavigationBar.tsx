@@ -23,9 +23,9 @@ interface AutocompleteSuggestion {
 }
 
 const SPECIAL_PATHS_CONFIG: Record<string, { labelKey: string; icon: React.ReactNode }> = {
-  'xplorer://home': { labelKey: 'navigation.home', icon: <Home size={14} /> },
-  'xplorer://trash': { labelKey: 'navigation.trash', icon: <Trash2 size={14} /> },
-  'xplorer://gdrive-manager': { labelKey: 'navigation.googleDrive', icon: <Cloud size={14} /> },
+  'splorer://home': { labelKey: 'navigation.home', icon: <Home size={14} /> },
+  'splorer://trash': { labelKey: 'navigation.trash', icon: <Trash2 size={14} /> },
+  'splorer://gdrive-manager': { labelKey: 'navigation.googleDrive', icon: <Cloud size={14} /> },
 };
 
 const AUTOCOMPLETE_DEBOUNCE_MS = 200;
@@ -81,7 +81,7 @@ const splitParentAndPrefix = (inputPath: string): { parentDir: string; prefix: s
 const parseBreadcrumbSegments = (path: string): PathSegment[] => {
   if (!path) return [];
   if (
-    path.startsWith('xplorer://') ||
+    path.startsWith('splorer://') ||
     path.startsWith('gdrive://') ||
     path.startsWith('comparison://') ||
     path.startsWith('collection://')
@@ -165,7 +165,7 @@ const NavigationBar = ({ currentPath, navigateToPath, refetch: _refetch }: Navig
   // ── Fetch autocomplete suggestions ──────────────────────────────────────────
 
   const fetchSuggestions = useCallback(async (inputPath: string) => {
-    if (!inputPath || inputPath.startsWith('xplorer://')) {
+    if (!inputPath || inputPath.startsWith('splorer://')) {
       setSuggestions([]);
       setShowDropdown(false);
       return;
@@ -209,7 +209,7 @@ const NavigationBar = ({ currentPath, navigateToPath, refetch: _refetch }: Navig
   // ── Validate path existence ─────────────────────────────────────────────────
 
   const validatePath = useCallback(async (inputPath: string) => {
-    if (!inputPath || inputPath.startsWith('xplorer://')) {
+    if (!inputPath || inputPath.startsWith('splorer://')) {
       setValidation('idle');
       return;
     }

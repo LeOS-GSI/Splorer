@@ -551,7 +551,7 @@ const StandaloneChatPanel = () => {
     [currentConversationId, clearChat],
   );
 
-  // File path click handler — navigate to file in Xplorer
+  // File path click handler — navigate to file in Splorer
 
   const navigateToFile = useCallback((filePath: string) => {
     const xState = (

@@ -22,7 +22,7 @@ export const useTerminal = (deps: UseTerminalDeps) => {
   const { currentPath, setCurrentPath, refetch } = deps;
 
   const [terminalHistory, setTerminalHistory] = useState<string[]>([
-    'Welcome to Xplorer Terminal',
+    'Welcome to Splorer Terminal',
     'Type "help" to see available commands',
     '',
   ]);
@@ -36,7 +36,7 @@ export const useTerminal = (deps: UseTerminalDeps) => {
 
   // Update terminal working directory when path changes
   useEffect(() => {
-    if (currentPath !== 'xplorer://home' && currentPath !== 'xplorer://gdrive-manager') {
+    if (currentPath !== 'splorer://home' && currentPath !== 'splorer://gdrive-manager') {
       setTerminalCwd(currentPath);
     }
   }, [currentPath]);

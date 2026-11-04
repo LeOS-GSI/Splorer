@@ -121,7 +121,7 @@ export const useSmartView = (files: FileEntry[], currentPath: string): SmartView
     }
 
     // Skip auto-detection for special pages
-    if (currentPath.startsWith('xplorer://') || currentPath.startsWith('gdrive://')) {
+    if (currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://')) {
       setIsAutoDetected(false);
       setSuggestedView('medium');
       return;

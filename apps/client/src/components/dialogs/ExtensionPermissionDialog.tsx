@@ -24,7 +24,7 @@ const PERMISSION_DESCRIPTIONS: Record<string, string> = {
   'directory:list': 'View files inside folders',
   'directory:create': 'Create new folders',
   'directory:delete': 'Delete folders and their contents',
-  'xplorer:settings': 'Read and modify Xplorer settings',
+  'xplorer:settings': 'Read and modify Splorer settings',
   'xplorer:extensions': 'Install, disable, or remove other extensions',
   'xplorer:themes': 'Add custom color themes',
   'xplorer:history': 'Read browsing and navigation history',

@@ -1,7 +1,7 @@
 {
   "name": "@xplorer/sdk",
   "version": "1.0.0-alpha.1",
-  "description": "Xplorer internal SDK - core service modules for the Xplorer file manager",
+  "description": "Splorer internal SDK - core service modules for the Splorer file manager",
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",

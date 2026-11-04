@@ -393,7 +393,7 @@ const MainLayout = (props: MainLayoutProps) => {
           const newTab: TabItem = {
             id: `tab-${Date.now()}`,
             name: 'Home',
-            path: 'xplorer://home',
+            path: 'splorer://home',
             type: 'folder',
           };
           splitLayout.addTab(groupId, newTab, true);
@@ -492,7 +492,7 @@ const MainLayout = (props: MainLayoutProps) => {
               const newTab: TabItem = {
                 id: `tab-${Date.now()}`,
                 name: 'Home',
-                path: 'xplorer://home',
+                path: 'splorer://home',
                 type: 'folder',
               };
               splitLayout.addTab(activeGroup.id, newTab, true);

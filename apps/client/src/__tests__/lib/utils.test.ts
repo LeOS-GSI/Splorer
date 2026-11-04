@@ -411,7 +411,7 @@ describe('themes', () => {
   });
 
   it('glass theme has expected structure', () => {
-    expect(themes.glass.name).toBe('Xplorer Glass');
+    expect(themes.glass.name).toBe('Splorer Glass');
     expect(themes.glass.primary).toBeTruthy();
     expect(themes.glass.bg).toBeDefined();
     expect(themes.glass.surface).toBeDefined();

@@ -1,4 +1,4 @@
-use xplorer::git::*;
+use splorer::git::*;
 
 #[test]
 fn test_git_commit_serialization() {

@@ -1,7 +1,7 @@
 {
   "name": "tokyo-night-theme",
   "version": "1.0.0",
-  "description": "Tokyo Night theme for Xplorer",
+  "description": "Tokyo Night theme for Splorer",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -17,7 +17,7 @@
     "displayName": "Tokyo Night Theme",
     "category": "theme",
     "version": "1.0.0",
-    "author": "Xplorer Team",
+    "author": "Splorer Team",
     "description": "A beautiful dark theme inspired by Tokyo Night",
     "keywords": [
       "theme",

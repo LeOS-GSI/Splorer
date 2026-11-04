@@ -1,9 +1,9 @@
 #!/bin/bash
-# Xplorer CLI wrapper — installed to /usr/local/bin/xplorer
+# Splorer CLI wrapper — installed to /usr/local/bin/splorer
 # Delegates to the Node.js CLI bundled with the app or runs commands directly.
 
-APP_PATH="/Applications/Xplorer.app"
-CLI_SCRIPT="$APP_PATH/Contents/Resources/cli/xplorer.mjs"
+APP_PATH="/Applications/Splorer.app"
+CLI_SCRIPT="$APP_PATH/Contents/Resources/cli/splorer.mjs"
 
 # If the app has a bundled CLI, use it
 if [ -f "$CLI_SCRIPT" ] && command -v node &>/dev/null; then
@@ -14,10 +14,10 @@ fi
 if [ $# -eq 0 ]; then
     open "$APP_PATH"
 elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
-    echo "Xplorer CLI"
+    echo "Splorer CLI"
     echo ""
     echo "Usage:"
-    echo "  xplorer [folder]        Open folder in Xplorer"
+    echo "  xplorer [folder]        Open folder in Splorer"
     echo "  xplorer login           Login to xplorer.space"
     echo "  xplorer publish         Publish extension to marketplace"
     echo "  xplorer extensions      List your published extensions"
@@ -26,7 +26,7 @@ elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
     echo ""
     echo "Requires: Node.js (for login/publish commands)"
 elif [ -d "$1" ] || [ -f "$1" ]; then
-    open -a Xplorer "$1"
+    open -a Splorer "$1"
 else
     echo "Error: Node.js not found. Install Node.js for full CLI features."
     echo "For now, you can open folders: xplorer /path/to/folder"

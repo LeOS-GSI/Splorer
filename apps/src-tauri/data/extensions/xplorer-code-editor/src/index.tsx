@@ -1,5 +1,5 @@
 /**
- * Xplorer Code Editor Extension — VS Code-like Editor
+ * Splorer Code Editor Extension — VS Code-like Editor
  *
  * A full-featured code editor that opens as a full-screen overlay.
  * Features: syntax highlighting (CodeMirror 6), file tree, multiple tabs,
@@ -1405,7 +1405,7 @@ const extension = {
   },
 };
 
-// Register with the Xplorer extension host
+// Register with the Splorer extension host
 if (typeof window !== 'undefined' && (window as any).__xplorer_register__) {
   (window as any).__xplorer_register__(extension);
 }

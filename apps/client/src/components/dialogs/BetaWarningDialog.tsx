@@ -75,7 +75,7 @@ const BetaWarningDialog = () => {
             <p className="text-xs">
               {t('dialogs.beta.bugReport')}{' '}
               <a
-                href="https://github.com/kimlimjustin/xplorer/issues"
+                href="https://github.com/LeOS-GSI/Splorer/issues"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xp-blue hover:underline"

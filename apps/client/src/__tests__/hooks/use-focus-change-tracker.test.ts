@@ -71,10 +71,10 @@ describe('useFocusChangeTracker', () => {
       expect(mockReadDir).toHaveBeenCalledWith('/test');
     });
 
-    it('does not take snapshot for xplorer:// paths', async () => {
+    it('does not take snapshot for splorer:// paths', async () => {
       const mockReadDir = vi.mocked(TauriAPI.readDirectory);
 
-      renderHook(() => useFocusChangeTracker('xplorer://home'));
+      renderHook(() => useFocusChangeTracker('splorer://home'));
 
       await act(async () => {
         simulateVisibilityChange(true);

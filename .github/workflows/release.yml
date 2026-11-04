@@ -80,7 +80,7 @@ jobs:
         with:
           projectPath: apps
           tagName: ${{ github.ref_name }}
-          releaseName: 'Xplorer ${{ github.ref_name }}'
+          releaseName: 'Splorer ${{ github.ref_name }}'
           releaseBody: 'See the changelog for details about this release.'
           releaseDraft: true
           prerelease: false

@@ -34,7 +34,7 @@ export const MAX_IMAGE_CONTEXT_COUNT = 3;
 export const IMAGE_EXTENSIONS = new Set(['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp']);
 
 // ---------------------------------------------------------------------------
-// Xplorer state helpers
+// Splorer state helpers
 // ---------------------------------------------------------------------------
 
 export interface XplorerState {

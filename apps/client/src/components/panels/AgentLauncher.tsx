@@ -277,7 +277,7 @@ const AgentLauncher = ({
       scopeContext = `Selected ${selectedFileCount} file(s) in ${workingDir}`;
     }
 
-    // Gather selected file paths from Xplorer state
+    // Gather selected file paths from Splorer state
     const xState = getXplorerState();
     const selectedPaths = xState?.selectedFiles?.map((f) => f.path) ?? [];
 

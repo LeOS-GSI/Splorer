@@ -33,7 +33,7 @@ const PlacesSection = ({ userDirectories, currentPath, navigateToPath }: PlacesS
           (
             [
               {
-                path: 'xplorer://home',
+                path: 'splorer://home',
                 Icon: Home,
                 color: 'text-xp-blue',
                 labelKey: 'sidebar.home',

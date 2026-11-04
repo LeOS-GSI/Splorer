@@ -50,7 +50,7 @@ export const useCommandPaletteCommands = ({
         title: t('commands.goHome'),
         shortcut: 'Alt+H',
         category: t('commands.categories.navigation'),
-        action: () => navigateWithHistory('xplorer://home'),
+        action: () => navigateWithHistory('splorer://home'),
       },
       {
         id: 'up',
@@ -183,13 +183,13 @@ export const useCommandPaletteCommands = ({
         title: t('commands.openSettings'),
         shortcut: 'Ctrl+,',
         category: t('commands.categories.other'),
-        action: () => navigateWithHistory('xplorer://settings'),
+        action: () => navigateWithHistory('splorer://settings'),
       },
       {
         id: 'trash',
         title: t('commands.openTrash'),
         category: t('commands.categories.other'),
-        action: () => navigateWithHistory('xplorer://trash'),
+        action: () => navigateWithHistory('splorer://trash'),
       },
       {
         id: 'keyboard-shortcuts',

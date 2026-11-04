@@ -593,7 +593,7 @@ function ProblemsPanel({
     async (path: string, hidden = skipHidden, gitignored = skipGitignored) => {
       if (
         !path ||
-        path.startsWith('xplorer://') ||
+        path.startsWith('splorer://') ||
         path.startsWith('gdrive://') ||
         path.startsWith('comparison://')
       ) {

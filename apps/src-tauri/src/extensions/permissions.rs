@@ -45,7 +45,7 @@ pub enum ExtensionPermission {
     // Google Drive permissions
     GDriveAccess,
 
-    // Xplorer-specific permissions
+    // Splorer-specific permissions
     AccessSettings,
     ModifyThemes,
     AccessHistory,

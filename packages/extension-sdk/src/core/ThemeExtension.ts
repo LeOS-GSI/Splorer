@@ -34,7 +34,7 @@ export abstract class ThemeExtension extends Extension {
   async activate(_context: ExtensionContext): Promise<void> {
     this.theme = this.getTheme();
 
-    // Register the theme with Xplorer
+    // Register the theme with Splorer
     await this.registerTheme();
 
     // Register theme variants if available
@@ -62,7 +62,7 @@ export abstract class ThemeExtension extends Extension {
     if (!this.theme) return;
 
     try {
-      // Register theme with Xplorer's theme manager
+      // Register theme with Splorer's theme manager
       await this.executeCommand('xplorer.themes.register', {
         id: this.manifest.id,
         theme: this.theme,

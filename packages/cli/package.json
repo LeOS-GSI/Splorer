@@ -1,14 +1,14 @@
 {
   "name": "@xplorer/cli",
   "version": "1.0.0",
-  "description": "Xplorer CLI — open folders, login, and publish extensions to xplorer.space",
+  "description": "Splorer CLI — open folders, login, and publish extensions to xplorer.space",
   "type": "module",
   "bin": {
-    "xplorer": "./bin/xplorer.mjs"
+    "splorer": "./bin/splorer.mjs"
   },
   "scripts": {
     "build": "echo 'No build needed — pure JS'",
-    "start": "node bin/xplorer.mjs"
+    "start": "node bin/splorer.mjs"
   },
   "files": [
     "bin/",

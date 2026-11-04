@@ -72,7 +72,7 @@ async function executeCustomCommand(
     case 'help':
       setTerminalHistory((prev) => [
         ...prev,
-        'Xplorer File Explorer Terminal',
+        'Splorer File Explorer Terminal',
         '─────────────────────────────────',
         'Custom Commands:',
         '  help           - Show this help',

@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/capability.json",
   "identifier": "default",
-  "description": "Default capabilities for Xplorer",
+  "description": "Default capabilities for Splorer",
   "windows": ["main"],
   "permissions": [
     "core:event:allow-listen",
@@ -33,7 +33,6 @@
     "dialog:default",
     "global-shortcut:default",
     "drag:default",
-    "updater:default",
     "process:default"
   ]
 }

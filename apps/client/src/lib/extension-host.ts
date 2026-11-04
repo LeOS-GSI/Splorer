@@ -867,7 +867,8 @@ class ExtensionHost {
         `[INFO] Extensions ready: ${sidebarCount} sidebar, ${panelCount} panels, ${bottomCount} bottom tabs`,
       );
 
-      this.checkForUpdatesAndNotify(installed).catch(() => {});
+      // SnakeOS: automatic extension update check (phones home to xplorer.space) disabled
+      // this.checkForUpdatesAndNotify(installed).catch(() => {});
     } catch (err) {
       console.error('[ExtensionHost] Failed to load installed extensions:', err);
     }

@@ -74,7 +74,7 @@ export class {{displayName}}Extension extends PanelExtension {
   }
 }
 
-// Register the extension with Xplorer
+// Register the extension with Splorer
 const extension = new {{displayName}}Extension();
 registerExtension(extension);
 

@@ -280,7 +280,7 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
     [setShortcutsDialogOpen],
   );
   const handleOpenSettings = useCallback(
-    () => navigation.navigateWithHistory('xplorer://settings'),
+    () => navigation.navigateWithHistory('splorer://settings'),
     [navigation],
   );
   const handleCloseCollectionEditor = useCallback(() => {

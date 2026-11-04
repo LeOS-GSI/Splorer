@@ -1,4 +1,4 @@
-// Roaring bitmap-based metadata filter indexes for the Xplorer search engine.
+// Roaring bitmap-based metadata filter indexes for the Splorer search engine.
 //
 // Pre-builds compressed bitmap indexes for common file metadata dimensions
 // (type, size range, date range, extension) enabling sub-millisecond filter

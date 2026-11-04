@@ -83,7 +83,7 @@ function createExtension(args) {
   const packageJson = {
     name: name,
     version: '1.0.0',
-    description: `A Xplorer extension`,
+    description: `A Splorer extension`,
     main: 'dist/index.js',
     scripts: {
       build: 'tsc',
@@ -100,7 +100,7 @@ function createExtension(args) {
       category: template,
       version: '1.0.0',
       author: 'Your Name',
-      description: `A ${template} extension for Xplorer`,
+      description: `A ${template} extension for Splorer`,
     },
   };
 
@@ -154,7 +154,7 @@ export class ${toPascalCase(name)} extends ThemeExtension {
       name: '${name.replace(/-/g, ' ').replace(/\\b\\w/g, (l) => l.toUpperCase())}',
       version: '1.0.0',
       author: 'Your Name',
-      description: 'A custom theme for Xplorer'
+      description: 'A custom theme for Splorer'
     });
   }
 
@@ -207,7 +207,7 @@ export class ${toPascalCase(name)} extends Extension {
       version: '1.0.0',
       author: 'Your Name',
       category: 'tool',
-      description: 'A Xplorer extension'
+      description: 'A Splorer extension'
     });
   }
 
@@ -231,7 +231,7 @@ export class ${toPascalCase(name)} extends Extension {
   // Create README
   const readme = `# ${name.replace(/-/g, ' ').replace(/\\b\\w/g, (l) => l.toUpperCase())}
 
-A Xplorer extension.
+A Splorer extension.
 
 ## Development
 
@@ -246,7 +246,7 @@ npm run build
 npm run package
 \`\`\`
 
-Then install the generated \`.zip\` file in Xplorer.
+Then install the generated \`.zip\` file in Splorer.
 `;
 
   fs.writeFileSync(path.join(extensionDir, 'README.md'), readme);
@@ -376,7 +376,7 @@ function showHelp(commandName) {
     return;
   }
 
-  console.log('Xplorer Extension SDK');
+  console.log('Splorer Extension SDK');
   console.log('');
   console.log('Usage: xplorer-sdk <command> [options]');
   console.log('');

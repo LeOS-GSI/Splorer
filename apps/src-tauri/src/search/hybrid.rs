@@ -318,7 +318,7 @@ pub fn search_embeddings(
 pub fn load_embeddings_from_disk() -> Vec<EmbeddingEntry> {
     let path = dirs::data_dir()
         .unwrap_or_else(|| std::path::PathBuf::from("."))
-        .join("xplorer")
+        .join("splorer")
         .join("vector_embeddings.json");
 
     match std::fs::read_to_string(&path) {

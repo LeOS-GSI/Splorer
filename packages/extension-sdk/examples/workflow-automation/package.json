@@ -1,7 +1,7 @@
 {
   "name": "workflow-automation-extension",
   "version": "1.0.0",
-  "description": "Workflow automation extension for Xplorer - detects package manager conflicts and more",
+  "description": "Workflow automation extension for Splorer - detects package manager conflicts and more",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -17,7 +17,7 @@
     "displayName": "Workflow Automation",
     "category": "tool",
     "version": "1.0.0",
-    "author": "Xplorer Team",
+    "author": "Splorer Team",
     "description": "Automated workflow checks and warnings for common development issues",
     "keywords": [
       "workflow",

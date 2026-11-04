@@ -247,7 +247,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
       onNewFolder: async () => {
         if (
           !currentPath ||
-          currentPath.startsWith('xplorer://') ||
+          currentPath.startsWith('splorer://') ||
           currentPath.startsWith('collection://')
         ) {
           return;
@@ -290,7 +290,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         if (
           selectedFiles.size === 0 ||
           !currentPath ||
-          currentPath.startsWith('xplorer://') ||
+          currentPath.startsWith('splorer://') ||
           currentPath.startsWith('collection://')
         ) {
           return;
@@ -338,7 +338,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         navigateForwardInHistory();
       },
       onGoHome: () => {
-        setCurrentPath('xplorer://home');
+        setCurrentPath('splorer://home');
       },
       onGoToPath: () => {
         leftSidebarRef?.current?.focusSearch();
@@ -370,7 +370,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         leftSidebarRef?.current?.focusSearch();
       },
       onOpenSettings: () => {
-        navigateWithHistory('xplorer://settings');
+        navigateWithHistory('splorer://settings');
       },
       onToggleFullscreen: () => {
         document.fullscreenElement
@@ -548,7 +548,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
       e.stopPropagation();
 
       if (e.shiftKey) {
-        if (currentPath && !currentPath.startsWith('xplorer://')) {
+        if (currentPath && !currentPath.startsWith('splorer://')) {
           assignPathBookmark(slot, currentPath);
           toast({ title: `Saved to bookmark ${slot}`, description: getFolderName(currentPath) });
         }
@@ -629,7 +629,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
     const isRealPath =
       currentPath &&
       activeTabObj?.type !== 'editor' &&
-      !currentPath.startsWith('xplorer://') &&
+      !currentPath.startsWith('splorer://') &&
       !currentPath.startsWith('gdrive://') &&
       !currentPath.startsWith('comparison://') &&
       !currentPath.startsWith('collection://');
@@ -706,7 +706,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
   useWindowEvent('open-gdrive-setup', () => openGDriveManager(), [openGDriveManager]);
   useWindowEvent('open-gdrive-management', () => openGDriveManager(), [openGDriveManager]);
 
-  // ── Listen for folder-opened event (from shell integration / "Open with Xplorer") ──
+  // ── Listen for folder-opened event (from shell integration / "Open with Splorer") ──
   useEffect(() => {
     let unlisten: (() => void) | undefined;
 
@@ -748,7 +748,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
       };
       if (
         currentPath &&
-        !currentPath.startsWith('xplorer://') &&
+        !currentPath.startsWith('splorer://') &&
         !currentPath.startsWith('collection://') &&
         !currentPath.startsWith('gdrive://') &&
         !currentPath.startsWith('comparison://')

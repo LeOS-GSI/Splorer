@@ -1,7 +1,7 @@
 {
-  "productName": "Xplorer",
+  "productName": "Splorer",
   "version": "0.99.1",
-  "identifier": "com.xplorer.app",
+  "identifier": "org.snakeos.splorer",
   "build": {
     "beforeBuildCommand": "pnpm -w frontend:build",
     "frontendDist": "../client/dist",
@@ -10,7 +10,7 @@
   "app": {
     "windows": [
       {
-        "title": "Xplorer - File Explorer",
+        "title": "Splorer - File Explorer",
         "width": 1200,
         "height": 800,
         "minWidth": 800,
@@ -35,26 +35,21 @@
       }
     }
   },
-  "plugins": {
-    "updater": {
-      "endpoints": [
-        "https://github.com/kimlimjustin/xplorer/releases/latest/download/latest.json"
-      ],
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDhCODY4QkQ0MjMzRkE1RDQKUldUVXBUOGoxSXVHaTdWQXphK0pISXV4M0pnZjdMNE90ZitWbnZDOFhKK0oyRTRsTHhJcW50RWQK"
-    }
-  },
   "bundle": {
     "active": true,
     "targets": "all",
     "resources": {
-      "../../packages/cli/bin/xplorer.mjs": "xplorer.mjs"
+      "../../packages/cli/bin/splorer.mjs": "splorer.mjs"
     },
     "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
       "icons/icon.png",
       "icons/icon.ico"
     ],
-    "publisher": "Xplorer",
-    "copyright": "Copyright 2025 Xplorer",
+    "publisher": "Splorer",
+    "copyright": "Copyright 2025 Splorer",
     "category": "Utility",
     "shortDescription": "Modern file explorer",
     "longDescription": "A modern file explorer built with Tauri, React, and TypeScript",
@@ -62,7 +57,7 @@
       {
         "ext": ["xtension"],
         "mimeType": "application/x-xplorer-extension",
-        "description": "Xplorer Extension Package"
+        "description": "Splorer Extension Package"
       }
     ],
     "windows": {

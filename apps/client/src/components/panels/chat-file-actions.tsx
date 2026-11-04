@@ -538,7 +538,7 @@ export const executeFileAction = async (action: FileAction): Promise<string | un
         xState.navigateTo(parentDir);
         return `Navigated to ${parentDir} (file: ${basename(action.path)})`;
       }
-      return `Cannot navigate: Xplorer state not available`;
+      return `Cannot navigate: Splorer state not available`;
     }
     case 'open_extension': {
       // Dynamically import to avoid circular dependency
@@ -646,7 +646,7 @@ const getOSName = (): string => {
 };
 
 export const FILE_OPS_SYSTEM_PROMPT = `
-You are an AI agent inside the Xplorer file manager. You can observe the filesystem and take actions on it.
+You are an AI agent inside the Splorer file manager. You can observe the filesystem and take actions on it.
 The user is running ${getOSName()}.
 
 ## Available Actions

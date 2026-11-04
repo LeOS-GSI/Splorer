@@ -1,6 +1,6 @@
-# Xplorer Code Editor Extension
+# Splorer Code Editor Extension
 
-A VS Code-like code editor for the Xplorer file manager. Opens as a full-screen overlay with syntax highlighting, file tree, multiple tabs, and VS Code settings import.
+A VS Code-like code editor for the Splorer file manager. Opens as a full-screen overlay with syntax highlighting, file tree, multiple tabs, and VS Code settings import.
 
 ## Features
 
@@ -42,7 +42,7 @@ TypeScript, JavaScript, JSX/TSX, HTML, CSS/SCSS, JSON, Python, Rust, C/C++, Java
 
 ### From Marketplace
 
-1. Open Xplorer
+1. Open Splorer
 2. Click the Marketplace icon in the left sidebar
 3. Search for "Code Editor"
 4. Click Install
@@ -55,7 +55,7 @@ TypeScript, JavaScript, JSX/TSX, HTML, CSS/SCSS, JSON, Python, Rust, C/C++, Java
    npm install
    npm run build
    ```
-3. In Xplorer, go to Extensions panel > "Install from Folder"
+3. In Splorer, go to Extensions panel > "Install from Folder"
 4. Select this folder
 
 ## Development

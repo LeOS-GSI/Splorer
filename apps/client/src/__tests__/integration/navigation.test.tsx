@@ -203,7 +203,7 @@ describe('Navigation Integration', () => {
       expect(mockStartWatching).toHaveBeenCalledWith('D:\\Projects');
     });
 
-    it('does not index xplorer:// protocol paths', () => {
+    it('does not index splorer:// protocol paths', () => {
       const deps = createNavigationDeps();
       const { result } = renderHook(() => useNavigation(deps));
 
@@ -232,8 +232,8 @@ describe('Navigation Integration', () => {
       );
     });
 
-    it('does not navigate up when at xplorer://home', () => {
-      const deps = createNavigationDeps({ currentPath: 'xplorer://home' });
+    it('does not navigate up when at splorer://home', () => {
+      const deps = createNavigationDeps({ currentPath: 'splorer://home' });
       const { result } = renderHook(() => useNavigation(deps));
 
       act(() => {
@@ -262,7 +262,7 @@ describe('Navigation Integration', () => {
         result.current.navigateToHome();
       });
 
-      expect(deps.splitLayout.navigate).toHaveBeenCalledWith('default', 'xplorer://home', 'home');
+      expect(deps.splitLayout.navigate).toHaveBeenCalledWith('default', 'splorer://home', 'home');
     });
   });
 
@@ -423,14 +423,14 @@ describe('Navigation Integration', () => {
       expect(navigateToPath).toHaveBeenCalledWith(expect.stringMatching(/^C:\\?/));
     });
 
-    it('renders special label for xplorer://home', () => {
-      render(<NavigationBar currentPath="xplorer://home" navigateToPath={vi.fn()} />);
+    it('renders special label for splorer://home', () => {
+      render(<NavigationBar currentPath="splorer://home" navigateToPath={vi.fn()} />);
 
       expect(screen.getByText('home')).toBeInTheDocument();
     });
 
-    it('renders special label for xplorer://trash', () => {
-      render(<NavigationBar currentPath="xplorer://trash" navigateToPath={vi.fn()} />);
+    it('renders special label for splorer://trash', () => {
+      render(<NavigationBar currentPath="splorer://trash" navigateToPath={vi.fn()} />);
 
       expect(screen.getByText('trash')).toBeInTheDocument();
     });
@@ -608,7 +608,7 @@ describe('Navigation Integration', () => {
   describe('navigateFromHome', () => {
     it('creates a new folder tab when navigating from home', () => {
       const deps = {
-        currentPath: 'xplorer://home',
+        currentPath: 'splorer://home',
         splitLayout: {
           navigate: vi.fn(),
           navigateBack: vi.fn(),
@@ -618,9 +618,9 @@ describe('Navigation Integration', () => {
         },
         activeGroup: {
           id: 'default',
-          tabs: [{ id: 'tab-home', name: 'Home', path: 'xplorer://home', type: 'folder' }],
+          tabs: [{ id: 'tab-home', name: 'Home', path: 'splorer://home', type: 'folder' }],
           activeTabId: 'tab-home',
-          pathHistory: ['xplorer://home'],
+          pathHistory: ['splorer://home'],
           historyIndex: 0,
         },
       };

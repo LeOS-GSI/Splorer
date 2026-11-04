@@ -1,7 +1,7 @@
 import { Extension } from '../core/Extension';
 
 /**
- * Register an extension with the Xplorer host.
+ * Register an extension with the Splorer host.
  * Call this from your extension's entry point after creating the extension instance.
  */
 export const registerExtension = (extension: Extension): void => {
@@ -11,8 +11,8 @@ export const registerExtension = (extension: Extension): void => {
     register(extension);
   } else {
     console.warn(
-      `[${extension.manifest.name}] Could not register extension: Xplorer host not available. ` +
-        `Make sure registerExtension() is called within the Xplorer runtime.`,
+      `[${extension.manifest.name}] Could not register extension: Splorer host not available. ` +
+        `Make sure registerExtension() is called within the Splorer runtime.`,
     );
   }
 };

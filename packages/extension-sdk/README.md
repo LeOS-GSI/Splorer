@@ -1,6 +1,6 @@
-# Xplorer Extension SDK
+# Splorer Extension SDK
 
-The Xplorer Extension SDK allows developers to create custom extensions for the Xplorer file manager. Extensions can add new functionality, themes, file previews, sidebar panels, commands, and context menu actions.
+The Splorer Extension SDK allows developers to create custom extensions for the Splorer file manager. Extensions can add new functionality, themes, file previews, sidebar panels, commands, and context menu actions.
 
 ## Quick Start
 
@@ -138,7 +138,7 @@ ContextMenu.register({
 
 ## Hooks
 
-React hooks for reading Xplorer state from within extension components.
+React hooks for reading Splorer state from within extension components.
 
 ```typescript
 import { useCurrentPath, useSelectedFiles, navigateTo } from '@xplorer/extension-sdk';
@@ -152,7 +152,7 @@ function MyComponent() {
 
 ## UI Components
 
-Pre-built React components styled with Xplorer's CSS variables. They automatically match the active theme.
+Pre-built React components styled with Splorer's CSS variables. They automatically match the active theme.
 
 ```typescript
 import { Button, Input, Select, Toggle, Spinner, Panel, Card } from '@xplorer/extension-sdk';

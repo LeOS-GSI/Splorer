@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
 /**
- * Xplorer CLI
+ * Splorer CLI
  *
  * Usage:
- *   xplorer [folder]              Open a folder in Xplorer
- *   xplorer login                 Authenticate with xplorer.space
- *   xplorer logout                Clear stored credentials
- *   xplorer whoami                Show current user
- *   xplorer publish               Build & publish extension to marketplace
- *   xplorer extensions            List your published extensions
- *   xplorer --help                Show help
- *   xplorer --version             Show version
+ *   splorer [folder]              Open a folder in Splorer
+ *   splorer login                 Authenticate with xplorer.space
+ *   splorer logout                Clear stored credentials
+ *   splorer whoami                Show current user
+ *   splorer publish               Build & publish extension to marketplace
+ *   splorer extensions            List your published extensions
+ *   splorer --help                Show help
+ *   splorer --version             Show version
  */
 
 import { resolve, join } from 'path';
@@ -23,7 +23,7 @@ import { createReadStream } from 'fs';
 
 const VERSION = '1.0.0';
 const API_URL = process.env.XPLORER_API_URL || 'https://xplorer.space/api';
-const CONFIG_DIR = join(homedir(), '.xplorer');
+const CONFIG_DIR = join(homedir(), '.splorer');
 const TOKEN_FILE = join(CONFIG_DIR, 'auth.json');
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -73,24 +73,24 @@ const error = (msg) => {
 
 const showHelp = () => {
   print(`
-Xplorer CLI v${VERSION}
+Splorer CLI v${VERSION}
 
 Usage:
-  xplorer [folder]              Open a folder in Xplorer app
-  xplorer .                     Open current directory
-  xplorer login                 Login to xplorer.space marketplace
-  xplorer logout                Clear stored credentials
-  xplorer whoami                Show current user info
-  xplorer publish               Build & publish current extension
-  xplorer extensions            List your published extensions
-  xplorer create [name]         Scaffold a new extension
-  xplorer --help, -h            Show this help
-  xplorer --version, -v         Show version
+  splorer [folder]              Open a folder in Splorer app
+  splorer .                     Open current directory
+  splorer login                 Login to xplorer.space marketplace
+  splorer logout                Clear stored credentials
+  splorer whoami                Show current user info
+  splorer publish               Build & publish current extension
+  splorer extensions            List your published extensions
+  splorer create [name]         Scaffold a new extension
+  splorer --help, -h            Show this help
+  splorer --version, -v         Show version
 
 Environment:
   XPLORER_API_URL               Marketplace API URL (default: https://xplorer.space/api)
 
-Config: ~/.xplorer/auth.json
+Config: ~/.splorer/auth.json
 `);
 };
 
@@ -100,24 +100,24 @@ const openFolder = (folderPath) => {
     error(`Path does not exist: ${absPath}`);
   }
 
-  // Try to open with Xplorer desktop app
+  // Try to open with Splorer desktop app
   const platform = process.platform;
   try {
     if (platform === 'darwin') {
-      execSync(`open -a Xplorer "${absPath}"`, { stdio: 'pipe' });
+      execSync(`open -a Splorer "${absPath}"`, { stdio: 'pipe' });
     } else if (platform === 'win32') {
-      execSync(`start xplorer://"${absPath}"`, { stdio: 'pipe' });
+      execSync(`start splorer://"${absPath}"`, { stdio: 'pipe' });
     } else {
       // Linux: try xdg-open with custom protocol, or direct binary
       try {
-        execSync(`xdg-open "xplorer://${absPath}"`, { stdio: 'pipe' });
+        execSync(`xdg-open "splorer://${absPath}"`, { stdio: 'pipe' });
       } catch {
-        execSync(`xplorer "${absPath}"`, { stdio: 'pipe' });
+        execSync(`splorer "${absPath}"`, { stdio: 'pipe' });
       }
     }
-    print(`Opening ${absPath} in Xplorer...`);
+    print(`Opening ${absPath} in Splorer...`);
   } catch {
-    error(`Could not open Xplorer. Is the app installed?\n  Path: ${absPath}`);
+    error(`Could not open Splorer. Is the app installed?\n  Path: ${absPath}`);
   }
 };
 
@@ -180,7 +180,7 @@ const whoami = () => {
   } catch {
     /* ignore */
   }
-  print('Not logged in. Run: xplorer login');
+  print('Not logged in. Run: splorer login');
 };
 
 const ask = (question) =>
@@ -212,7 +212,7 @@ const CATEGORIES = [
 
 const publish = async () => {
   const token = loadToken();
-  if (!token) error('Not logged in. Run: xplorer login');
+  if (!token) error('Not logged in. Run: splorer login');
 
   // Find package.json
   const pkgPath = resolve('package.json');
@@ -226,7 +226,7 @@ const publish = async () => {
   const id = manifest.id || pkg.name;
   if (!id) error('No extension ID found in package.json xplorer.id');
 
-  print('\n  Xplorer Extension Publisher\n');
+  print('\n  Splorer Extension Publisher\n');
 
   // Check current published version
   const currentVersion = manifest.version || pkg.version || '1.0.0';
@@ -352,7 +352,7 @@ const publish = async () => {
   // Package zip using tar+gzip (no external deps needed)
   print('  Packaging...');
   const { execSync: execSyncPkg } = await import('child_process');
-  const tmpZip = join(homedir(), `.xplorer-publish-${Date.now()}.zip`);
+  const tmpZip = join(homedir(), `.splorer-publish-${Date.now()}.zip`);
   const filesToZip = ['package.json', 'dist/index.js'];
 
   const sigPath = resolve('.sig');
@@ -428,7 +428,7 @@ const publish = async () => {
 
 const listExtensions = async () => {
   const token = loadToken();
-  if (!token) error('Not logged in. Run: xplorer login');
+  if (!token) error('Not logged in. Run: splorer login');
 
   try {
     const res = await fetch(`${API_URL}/user/extensions`, {
@@ -472,7 +472,7 @@ const cmd = args[0];
 if (!cmd || cmd === '--help' || cmd === '-h') {
   showHelp();
 } else if (cmd === '--version' || cmd === '-v') {
-  print(`xplorer v${VERSION}`);
+  print(`splorer v${VERSION}`);
 } else if (cmd === 'login') {
   await login();
 } else if (cmd === 'logout') {

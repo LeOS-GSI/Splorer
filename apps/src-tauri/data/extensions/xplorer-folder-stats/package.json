@@ -18,7 +18,7 @@
     "displayName": "Folder Statistics",
     "description": "Displays file type distribution, size breakdown, and top largest files for the current directory in a sidebar panel.",
     "version": "1.0.0",
-    "author": "Xplorer Team",
+    "author": "Splorer Team",
     "category": "panel",
     "icon": "bar-chart-3",
     "keywords": ["panel", "statistics", "analytics", "folder", "files", "distribution"],

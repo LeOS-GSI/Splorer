@@ -1,7 +1,7 @@
 {
   "name": "xplorer-code-editor",
   "version": "2.0.0",
-  "description": "A VS Code-like code editor for Xplorer with syntax highlighting, file tree, tabs, and VS Code settings import",
+  "description": "A VS Code-like code editor for Splorer with syntax highlighting, file tree, tabs, and VS Code settings import",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -34,7 +34,7 @@
     "displayName": "Code Editor",
     "description": "A VS Code-like code editor with syntax highlighting, file tree, multiple tabs, and VS Code settings import. Opens as a full-screen editor overlay.",
     "version": "2.0.0",
-    "author": "Xplorer Team",
+    "author": "Splorer Team",
     "category": "panel",
     "icon": "code",
     "keywords": ["editor", "code", "text", "edit", "vscode", "syntax"],

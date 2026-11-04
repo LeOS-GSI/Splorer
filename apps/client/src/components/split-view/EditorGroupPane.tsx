@@ -233,9 +233,9 @@ const EditorGroupPane = ({
     staleTime: 0,
     enabled:
       activeTab?.type !== 'editor' &&
-      currentPath !== 'xplorer://home' &&
-      currentPath !== 'xplorer://trash' &&
-      currentPath !== 'xplorer://gdrive-manager' &&
+      currentPath !== 'splorer://home' &&
+      currentPath !== 'splorer://trash' &&
+      currentPath !== 'splorer://gdrive-manager' &&
       !currentPath.startsWith('comparison://') &&
       !isCollectionPath,
   });
@@ -455,7 +455,7 @@ const EditorGroupPane = ({
     prevSyncEmitPathRef.current = currentPath;
 
     // Don't sync special protocol paths
-    if (currentPath.startsWith('xplorer://') || currentPath.startsWith('comparison://')) return;
+    if (currentPath.startsWith('splorer://') || currentPath.startsWith('comparison://')) return;
 
     emitPaneSyncNavigate({
       sourceGroupId: group.id,
@@ -474,7 +474,7 @@ const EditorGroupPane = ({
       // Ignore events emitted by this pane.
       if (detail.sourceGroupId === group.id) return;
       // Don't react to special protocol paths.
-      if (detail.path.startsWith('xplorer://') || detail.path.startsWith('comparison://')) return;
+      if (detail.path.startsWith('splorer://') || detail.path.startsWith('comparison://')) return;
 
       let targetPath: string | null;
 
@@ -498,7 +498,7 @@ const EditorGroupPane = ({
 
   // Render content based on current path / tab type
   const renderContent = () => {
-    if (currentPath === 'xplorer://home') {
+    if (currentPath === 'splorer://home') {
       return (
         <div className="flex-1 overflow-auto">
           <HomePage
@@ -510,10 +510,10 @@ const EditorGroupPane = ({
       );
     }
 
-    if (currentPath === 'xplorer://trash') {
+    if (currentPath === 'splorer://trash') {
       return (
         <div className="flex-1 overflow-auto">
-          <TrashPage onClose={() => onNavigate(group.id, 'xplorer://home', 'Home')} />
+          <TrashPage onClose={() => onNavigate(group.id, 'splorer://home', 'Home')} />
         </div>
       );
     }
@@ -623,7 +623,7 @@ const EditorGroupPane = ({
   const isEditorTab = activeTab?.type === 'editor';
   const isDroppablePath =
     !isEditorTab &&
-    !currentPath.startsWith('xplorer://') &&
+    !currentPath.startsWith('splorer://') &&
     !currentPath.startsWith('gdrive://') &&
     !currentPath.startsWith('collection://');
 

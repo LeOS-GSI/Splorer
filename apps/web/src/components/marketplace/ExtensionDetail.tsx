@@ -228,7 +228,7 @@ function ScreenshotGallery({ screenshots }: { screenshots: string[] }) {
 export function ExtensionDetail({ extension }: ExtensionDetailProps) {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   const screenshots = parseScreenshots(extension.screenshots);
-  const deepLink = `xplorer://extensions/install/${extension.slug}`;
+  const deepLink = `splorer://extensions/install/${extension.slug}`;
 
   const tabs: { id: Tab; label: string; count?: number }[] = [
     { id: 'overview', label: 'Overview' },

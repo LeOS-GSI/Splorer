@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest an idea for Xplorer
+description: Suggest an idea for Splorer
 labels: [enhancement]
 body:
   - type: markdown

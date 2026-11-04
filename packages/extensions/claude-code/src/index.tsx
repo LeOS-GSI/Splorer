@@ -128,7 +128,7 @@ const ClaudeCodePanel = () => {
     if (!prompt || _loading) return;
     // Add structured context about current location and selected files
     const contextParts: string[] = [];
-    if (currentPath && currentPath !== '.' && !currentPath.startsWith('xplorer://')) {
+    if (currentPath && currentPath !== '.' && !currentPath.startsWith('splorer://')) {
       contextParts.push(`[Working directory: ${currentPath}]`);
     }
     if (selectedFiles.length > 0) {

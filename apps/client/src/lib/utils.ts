@@ -530,7 +530,7 @@ export interface ThemeDef {
 
 export const themes: Record<string, ThemeDef> = {
   glass: {
-    name: 'Xplorer Glass',
+    name: 'Splorer Glass',
     primary: '#6366f1',
     bg: 'transparent',
     surface: 'rgba(255,255,255,0.06)',

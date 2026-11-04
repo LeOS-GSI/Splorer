@@ -237,7 +237,7 @@ export const buildDroppedFiles = (
 ): Array<{ name: string; path: string; is_dir: boolean }> => {
   let files: Array<{ name: string; path: string; is_dir: boolean }> = [];
 
-  // Xplorer internal drag format
+  // Splorer internal drag format
   const xplorerData = e.dataTransfer.getData('application/xplorer-files');
   if (xplorerData) {
     try {

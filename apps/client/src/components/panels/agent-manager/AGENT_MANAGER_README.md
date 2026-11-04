@@ -1,6 +1,6 @@
 # Agent Manager Panel
 
-Architecture reference for the Xplorer Agent Manager — the right-sidebar panel and full-screen workspace for managing AI agent sessions.
+Architecture reference for the Splorer Agent Manager — the right-sidebar panel and full-screen workspace for managing AI agent sessions.
 
 ## File Map
 

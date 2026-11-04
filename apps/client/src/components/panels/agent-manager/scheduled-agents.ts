@@ -2,7 +2,7 @@
  * Scheduled agent definitions and storage.
  * Lets users schedule agents to run on a recurring or one-time basis.
  *
- * Schedules fire while Xplorer is open — the runner hook checks every 30s.
+ * Schedules fire while Splorer is open — the runner hook checks every 30s.
  * Each schedule tracks last_run timestamp to avoid duplicate fires.
  */
 import { STORAGE_KEYS } from '@/lib/storage-keys';

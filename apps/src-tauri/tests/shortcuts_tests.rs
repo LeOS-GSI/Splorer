@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use tempfile::TempDir;
-use xplorer::shortcuts::manager::*;
-use xplorer::shortcuts::types::*;
+use splorer::shortcuts::manager::*;
+use splorer::shortcuts::types::*;
 
 #[test]
 fn test_shortcut_action_serialization() {
