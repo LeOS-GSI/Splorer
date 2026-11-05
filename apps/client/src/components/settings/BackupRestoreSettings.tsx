@@ -7,7 +7,7 @@ import { STORAGE_KEYS } from '@/lib/storage-keys';
 const EXPORT_VERSION = '0.4.0';
 const LAST_EXPORT_KEY = STORAGE_KEYS.LAST_EXPORT_DATE;
 
-const KNOWN_KEYS = [
+const KNOWN_KEYS: string[] = [
   STORAGE_KEYS.SETTINGS,
   STORAGE_KEYS.UI_STATE,
   STORAGE_KEYS.FONT_SIZE,
