@@ -49,13 +49,12 @@ This starts the Vite dev server and the Tauri desktop app together. The app will
 ### Project Structure
 
 - `apps/client/` — React frontend (components, hooks, pages)
-- `apps/src-tauri/` — Rust backend (file operations, Git, search, AI)
+- `apps/src-tauri/` — Rust backend (file operations, Git, search)
 - `packages/sdk/` — Internal TypeScript service layer wrapping Tauri IPC
 - `packages/extension-sdk/` — Public API for building extensions
 - `packages/create-extension/` — CLI to scaffold new extensions
-- `packages/extensions/` — 40+ free extensions (themes, tools, previews)
-- `apps/web/` — Next.js marketplace server (Prisma, billing, admin)
-- `infra/` — Docker Compose for local PostgreSQL
+- `packages/extensions/` — Built-in extensions (themes, tools, previews)
+- `packages/cli/` — `splorer` command-line launcher
 - `scripts/` — Extension signing and utility scripts
 
 ### Running Tests
@@ -76,28 +75,6 @@ npx @xplorer/create-extension my-extension
 cd packages/extensions/my-extension
 pnpm build
 ```
-
-## Full Stack Setup
-
-The quick start above runs the desktop app only. To work on the marketplace web server or features that interact with it, you need a local PostgreSQL database:
-
-```bash
-# 1. Start PostgreSQL via Docker
-docker compose -f infra/docker-compose.yml up -d
-
-# 2. Configure environment variables
-cp apps/web/.env.example apps/web/.env
-# Edit apps/web/.env and fill in DATABASE_URL, NEXTAUTH_SECRET, and any
-# Stripe keys needed for billing features.
-
-# 3. Run database migrations
-cd apps/web && npx prisma migrate dev
-
-# 4. Start the marketplace dev server
-cd apps/web && pnpm dev
-```
-
-**`pnpm dev` vs `pnpm dev:app`**: `pnpm dev` starts all services (frontend + Tauri backend + marketplace). If you only need the desktop app without the marketplace server, use `pnpm dev:app` from the repo root. To run the marketplace server separately, use `cd apps/web && pnpm dev`.
 
 ## Guidelines
 

@@ -594,7 +594,6 @@ function ProblemsPanel({
       if (
         !path ||
         path.startsWith('splorer://') ||
-        path.startsWith('gdrive://') ||
         path.startsWith('comparison://')
       ) {
         setProblems([]);

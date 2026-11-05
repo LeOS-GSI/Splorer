@@ -525,9 +525,8 @@
     "backup": {
       "categoryAppSettings": "App Settings",
       "categoryAppearance": "Appearance & Theme",
-      "categoryAiSearch": "AI & Search",
+      "categorySearch": "搜索",
       "categoryExtensions": "Extensions",
-      "categorySyncCloud": "Sync & Cloud",
       "categoryOther": "Other",
       "exportSection": "Export",
       "exportSectionDesc": "Download a backup of your settings as a JSON file",
@@ -2099,7 +2098,7 @@
     }
   },
   "search": {
-    "aiThinking": "AI 思考中...",
+    "indexSearching": "正在搜索索引...",
     "aiProvider": "通过 {{provider}}",
     "aiNoProvider": "AI 不可用，使用文本搜索",
     "aiSearchTerms": "搜索词",

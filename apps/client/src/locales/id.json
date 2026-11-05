@@ -525,9 +525,8 @@
     "backup": {
       "categoryAppSettings": "App Settings",
       "categoryAppearance": "Appearance & Theme",
-      "categoryAiSearch": "AI & Search",
+      "categorySearch": "Pencarian",
       "categoryExtensions": "Extensions",
-      "categorySyncCloud": "Sync & Cloud",
       "categoryOther": "Other",
       "exportSection": "Export",
       "exportSectionDesc": "Download a backup of your settings as a JSON file",
@@ -2099,7 +2098,7 @@
     }
   },
   "search": {
-    "aiThinking": "AI sedang berpikir...",
+    "indexSearching": "Mencari di indeks...",
     "aiProvider": "melalui {{provider}}",
     "aiNoProvider": "AI tidak tersedia, menggunakan pencarian teks",
     "aiSearchTerms": "Kata kunci pencarian",

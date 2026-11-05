@@ -155,7 +155,7 @@ const FileGrid = ({
     if (files.length === 0) return;
 
     // Only fetch tags when on a real filesystem path (not special pages)
-    if (currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://')) return;
+    if (currentPath.startsWith('splorer://')) return;
 
     let cancelled = false;
     const loadAllTags = async () => {
@@ -415,7 +415,7 @@ const FileGrid = ({
   );
 
   // Background drop target — the whole grid accepts drops into currentPath
-  const isSpecialPage = currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://');
+  const isSpecialPage = currentPath.startsWith('splorer://');
   const bgDropRef = useDroppable(currentPath, isSpecialPage);
 
   // ─── Virtual scrolling hooks (must be called before any early returns) ───

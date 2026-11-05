@@ -15,7 +15,6 @@ export { transport, listenToEvent, convertAssetUrl, isTauri, getApiUrl } from '.
 export * as FileSystem from './services/file-system';
 export * as Search from './services/search';
 export * as Storage from './services/storage';
-export * as AI from './services/ai';
 export * as Compression from './services/compression';
 export * as System from './services/system';
 export * as Git from './services/git';
@@ -25,10 +24,6 @@ export * as Duplicates from './services/duplicates';
 export * as Comparison from './services/comparison';
 export * as Organizer from './services/organizer';
 export * as Analytics from './services/analytics';
-export * as Chat from './services/chat';
-export * as Agent from './services/agent';
-export * as AgentSessions from './services/agent-sessions';
-export * as Sync from './services/sync';
 export * as Database from './services/database';
 export * as Images from './services/images';
 export * as Backup from './services/backup';

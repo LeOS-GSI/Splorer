@@ -20,7 +20,6 @@ import {
   type LoadedExtension,
 } from './extension-host-types';
 import { createExtensionApi } from './extension-api-factory';
-import { STORAGE_KEYS } from './storage-keys';
 import { createSandboxedEnvironment, BLOCKED_GLOBALS } from './extension-sandbox-env';
 import { registerSidebarTab, registerBottomTab } from './extension-registration-helpers';
 import {
@@ -33,14 +32,11 @@ import {
   buildCommandPaletteEntries,
   getActiveSidebarTabs,
   getActiveBottomTabs,
-  checkForUpdates,
-  type ExtensionUpdateInfo,
 } from './extension-host-queries';
 
 // Re-export all types and helpers so consumers can import from either location
 export * from './extension-host-types';
 export { resolveIcon } from './extension-host-icon';
-export type { ExtensionUpdateInfo } from './extension-host-queries';
 
 // ─── Extension Host ────────────────────────────────────────────────────────────
 
@@ -94,8 +90,6 @@ class ExtensionHost {
   private eventBus = new EventBus();
   private changeListeners = new Set<() => void>();
   private expectedExtensionId: string | null = null;
-  private availableUpdates = new Map<string, ExtensionUpdateInfo>();
-  private updatingExtensions = new Set<string>();
   private globalStateStore = new Map<string, Map<string, unknown>>();
   private workspaceStateStore = new Map<string, Map<string, unknown>>();
 
@@ -858,168 +852,15 @@ class ExtensionHost {
       }
       this.notifyChange();
 
-      await this.loadMarketplaceInstalledExtensions();
-
       const sidebarCount = this.getSidebarTabs().length;
       const panelCount = this.getRegisteredPanels().length;
       const bottomCount = this.getBottomTabs().length;
       this.log(
         `[INFO] Extensions ready: ${sidebarCount} sidebar, ${panelCount} panels, ${bottomCount} bottom tabs`,
       );
-
-      // SnakeOS: automatic extension update check (phones home to xplorer.space) disabled
-      // this.checkForUpdatesAndNotify(installed).catch(() => {});
     } catch (err) {
       console.error('[ExtensionHost] Failed to load installed extensions:', err);
     }
-  }
-
-  private async loadMarketplaceInstalledExtensions(): Promise<void> {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEYS.INSTALLED_EXTENSIONS);
-      if (!raw) return;
-      const installed = JSON.parse(raw) as Record<
-        string,
-        { enabled: boolean; manifest: ExtensionManifest; downloadUrl: string; bundleCache?: string }
-      >;
-
-      for (const [id, info] of Object.entries(installed)) {
-        if (!info.enabled || this.extensions.has(id)) continue;
-        try {
-          let jsContent = info.bundleCache;
-          if (!jsContent) {
-            const response = await fetch(info.downloadUrl);
-            if (!response.ok) continue;
-            jsContent = await response.text();
-            installed[id].bundleCache = jsContent;
-            localStorage.setItem(STORAGE_KEYS.INSTALLED_EXTENSIONS, JSON.stringify(installed));
-          }
-
-          this.bundleCache.set(id, jsContent);
-          const pkg: ExtensionPackage = {
-            manifest: info.manifest,
-            path: `marketplace://${id}`,
-            is_active: true,
-            is_installed: true,
-          };
-          await this.loadExtension(pkg);
-          await this.activateExtension(id);
-        } catch (err) {
-          console.warn(`[ExtensionHost] Failed to reload marketplace extension ${id}:`, err);
-        }
-      }
-      this.notifyChange();
-    } catch {
-      // localStorage parse failure — skip marketplace extensions
-    }
-  }
-
-  private async checkForUpdatesAndNotify(
-    installed: Array<{ manifest: { id: string; version?: string } }>,
-  ): Promise<void> {
-    const updates = await checkForUpdates(installed);
-    if (updates.length === 0) return;
-
-    // Store available updates
-    for (const update of updates) {
-      this.availableUpdates.set(update.id, update);
-      console.warn(
-        `[ExtensionHost] Update available: ${update.id} ${update.currentVersion} -> ${update.latestVersion}`,
-      );
-    }
-
-    this.notifyChange();
-
-    // Emit event for UI to show toast notifications
-    this.eventBus.emit('extensionUpdatesAvailable', updates);
-
-    // Check if auto-update is enabled
-    const autoUpdateRaw = localStorage.getItem(STORAGE_KEYS.AUTO_UPDATE_EXTENSIONS);
-    // Default to true if not explicitly set
-    const autoUpdateEnabled = autoUpdateRaw === null || autoUpdateRaw === 'true';
-
-    if (autoUpdateEnabled) {
-      // Auto-update all extensions
-      for (const update of updates) {
-        await this.applyExtensionUpdate(update.id);
-      }
-    }
-  }
-
-  /** Apply a pending update for a specific extension. */
-  async applyExtensionUpdate(extensionId: string): Promise<boolean> {
-    const update = this.availableUpdates.get(extensionId);
-    if (!update) return false;
-
-    this.updatingExtensions.add(extensionId);
-    this.notifyChange();
-
-    try {
-      // Download the new bundle
-      await TauriAPI.downloadAndInstallExtension(update.downloadUrl, extensionId, update.checksum);
-
-      // Unload the current version
-      await this.unloadExtension(extensionId);
-
-      // Reload the installed extensions to pick up the new version
-      const installed = await TauriAPI.getInstalledExtensions();
-      const updatedPkg = installed.find((p) => p.manifest.id === extensionId);
-      if (updatedPkg) {
-        await this.loadExtension(updatedPkg);
-        await this.activateExtension(extensionId);
-      }
-
-      // Remove from available updates
-      this.availableUpdates.delete(extensionId);
-      this.updatingExtensions.delete(extensionId);
-      this.notifyChange();
-
-      // Emit event for UI to show success toast
-      this.eventBus.emit('extensionUpdated', {
-        id: extensionId,
-        version: update.latestVersion,
-      });
-
-      console.warn(`[ExtensionHost] Updated ${extensionId} to ${update.latestVersion}`);
-      return true;
-    } catch (err) {
-      this.updatingExtensions.delete(extensionId);
-      this.notifyChange();
-      console.error(`[ExtensionHost] Failed to update ${extensionId}:`, err);
-      this.eventBus.emit('extensionUpdateFailed', {
-        id: extensionId,
-        error: err instanceof Error ? err.message : String(err),
-      });
-      return false;
-    }
-  }
-
-  /** Apply all pending extension updates. */
-  async applyAllUpdates(): Promise<void> {
-    const updateIds = Array.from(this.availableUpdates.keys());
-    for (const id of updateIds) {
-      await this.applyExtensionUpdate(id);
-    }
-  }
-
-  /** Get available updates for all extensions. */
-  getAvailableUpdates(): Map<string, ExtensionUpdateInfo> {
-    return new Map(this.availableUpdates);
-  }
-
-  /** Get update info for a specific extension. */
-  getUpdateForExtension(extensionId: string): ExtensionUpdateInfo | undefined {
-    return this.availableUpdates.get(extensionId);
-  }
-
-  /** Check if an extension is currently being updated. */
-  isUpdating(extensionId: string): boolean {
-    return this.updatingExtensions.has(extensionId);
-  }
-
-  /** Check if any extensions have pending updates. */
-  hasUpdatesAvailable(): boolean {
-    return this.availableUpdates.size > 0;
   }
 
   async activateExtension(id: string): Promise<void> {

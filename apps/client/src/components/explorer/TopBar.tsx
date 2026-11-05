@@ -1,19 +1,7 @@
 import React, { useRef, useState, useEffect, forwardRef } from 'react';
 import { useWindowEvent } from '@/hooks/use-window-event';
 import { isTauri } from '@/lib/transport';
-import {
-  Minus,
-  Square,
-  Copy,
-  X,
-  Plus,
-  Columns,
-  Rows,
-  ChevronUp,
-  RefreshCw,
-  MessageSquare,
-} from 'lucide-react';
-import { TauriAPI } from '@/lib/tauri-api';
+import { Minus, Square, Copy, X, Plus, Columns, Rows, ChevronUp, RefreshCw } from 'lucide-react';
 import { ROOT_PATH } from '@/lib/constants';
 import type { TabItem } from '@/types/split-view';
 import { type FileCollection, getAllCollections, isQuickFilter } from '@/lib/collections';
@@ -288,25 +276,6 @@ const TopBar = React.memo(
                 aria-label={t('topBar.refresh')}
               >
                 <RefreshCw size={14} />
-              </button>
-            )}
-
-            {/* New Chat button — available in any folder */}
-            {!currentPath.startsWith('splorer://') && (
-              <button
-                onClick={async () => {
-                  try {
-                    await TauriAPI.createChatFile(currentPath);
-                    refetch?.();
-                  } catch (err) {
-                    console.error('Failed to create chat:', err);
-                  }
-                }}
-                className="hover:bg-xp-surface-light flex-shrink-0 rounded p-1 transition-colors"
-                title={t('topBar.newChatDesc')}
-                aria-label={t('topBar.newChat')}
-              >
-                <MessageSquare size={14} />
               </button>
             )}
 

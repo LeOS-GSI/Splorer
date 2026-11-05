@@ -11,27 +11,18 @@ const KNOWN_KEYS = [
   STORAGE_KEYS.SETTINGS,
   STORAGE_KEYS.UI_STATE,
   STORAGE_KEYS.FONT_SIZE,
-  STORAGE_KEYS.MARKETPLACE_URL,
   STORAGE_KEYS.AUTO_WHITELIST_VISITED,
   STORAGE_KEYS.SPLIT_LAYOUT,
   STORAGE_KEYS.TOUR_COMPLETED,
   STORAGE_KEYS.BETA_WARNING_DISMISSED,
   STORAGE_KEYS.CUSTOM_THEMES,
   STORAGE_KEYS.LAST_EXPORT_DATE,
-  STORAGE_KEYS.OPENAI_KEY,
-  STORAGE_KEYS.OLLAMA_URL,
   STORAGE_KEYS.VIM_MODE,
-  STORAGE_KEYS.INSTALLED_EXTENSIONS,
   STORAGE_KEYS.SEARCH_HISTORY,
   STORAGE_KEYS.PERMISSION_VIOLATIONS,
-  STORAGE_KEYS.SYNC_API_URL,
-  STORAGE_KEYS.SYNC_TOKEN,
-  STORAGE_KEYS.AUTO_SYNC_ENABLED,
-  'gdrive-plugin-settings',
-  'gdrive-file-cache',
 ];
 
-const KNOWN_PREFIXES = ['xplorer:', 'xplorer_', 'xplorer-', 'gdrive-'];
+const KNOWN_PREFIXES = ['xplorer:', 'xplorer_', 'xplorer-'];
 
 interface ExportPayload {
   version: string;
@@ -67,9 +58,8 @@ const categorizeKeys = (keys: string[]): ImportCategory[] => {
   const buckets: Record<string, string[]> = {
     'settings.backup.categoryAppSettings': [],
     'settings.backup.categoryAppearance': [],
-    'settings.backup.categoryAiSearch': [],
+    'settings.backup.categorySearch': [],
     'settings.backup.categoryExtensions': [],
-    'settings.backup.categorySyncCloud': [],
     'settings.backup.categoryOther': [],
   };
 
@@ -83,12 +73,10 @@ const categorizeKeys = (keys: string[]): ImportCategory[] => {
       buckets['settings.backup.categoryAppSettings'].push(key);
     } else if (key.includes('theme') || key.includes('custom-themes')) {
       buckets['settings.backup.categoryAppearance'].push(key);
-    } else if (key.includes('openai') || key.includes('ollama') || key.includes('search')) {
-      buckets['settings.backup.categoryAiSearch'].push(key);
-    } else if (key.includes('extension') || key.includes('marketplace')) {
+    } else if (key.includes('search')) {
+      buckets['settings.backup.categorySearch'].push(key);
+    } else if (key.includes('extension')) {
       buckets['settings.backup.categoryExtensions'].push(key);
-    } else if (key.includes('sync') || key.includes('gdrive')) {
-      buckets['settings.backup.categorySyncCloud'].push(key);
     } else {
       buckets['settings.backup.categoryOther'].push(key);
     }

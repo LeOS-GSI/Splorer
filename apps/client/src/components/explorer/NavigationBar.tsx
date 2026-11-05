@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { ChevronRight, Pencil, HardDrive, Home, Trash2, Cloud, Folder } from 'lucide-react';
+import { ChevronRight, Pencil, HardDrive, Home, Trash2, Folder } from 'lucide-react';
 import { PATH_SEPARATOR, isWindows } from '@/lib/constants';
 import { TauriAPI } from '@/lib/tauri-api';
 import { getCollection } from '@/lib/collections';
@@ -25,7 +25,6 @@ interface AutocompleteSuggestion {
 const SPECIAL_PATHS_CONFIG: Record<string, { labelKey: string; icon: React.ReactNode }> = {
   'splorer://home': { labelKey: 'navigation.home', icon: <Home size={14} /> },
   'splorer://trash': { labelKey: 'navigation.trash', icon: <Trash2 size={14} /> },
-  'splorer://gdrive-manager': { labelKey: 'navigation.googleDrive', icon: <Cloud size={14} /> },
 };
 
 const AUTOCOMPLETE_DEBOUNCE_MS = 200;
@@ -82,7 +81,6 @@ const parseBreadcrumbSegments = (path: string): PathSegment[] => {
   if (!path) return [];
   if (
     path.startsWith('splorer://') ||
-    path.startsWith('gdrive://') ||
     path.startsWith('comparison://') ||
     path.startsWith('collection://')
   ) {

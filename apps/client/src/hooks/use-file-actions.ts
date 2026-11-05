@@ -158,41 +158,6 @@ export const useFileActions = (deps: FileActionsDeps) => {
     [toast, navigateWithHistory, executeOpenHandler, openOpenWithDialog],
   );
 
-  // ── Google Drive ───────────────────────────────────────────────────────────
-
-  const openGDriveTab = useCallback(
-    (accountId: string, accountName: string) => {
-      const ag = activeGroupRef.current;
-      const sl = splitLayoutRef.current;
-      const existingTab = ag.tabs.find(
-        (tab: TabItem) => tab.type === 'gdrive' && tab.gdriveData?.accountId === accountId,
-      );
-      if (existingTab) {
-        sl.switchTab(ag.id, existingTab.id);
-        return;
-      }
-      const gdriveTab: TabItem = {
-        id: `gdrive-${accountId}-${Date.now()}`,
-        name: `\u2601 ${accountName}`,
-        path: `gdrive://${accountId}/root`,
-        type: 'gdrive',
-        gdriveData: { accountId, folderId: 'root', folderName: 'My Drive' },
-      };
-      sl.addTab(ag.id, gdriveTab, true);
-    },
-    [splitLayoutRef, activeGroupRef],
-  );
-
-  const openGDriveManager = useCallback(() => {
-    const managerTab: TabItem = {
-      id: 'gdrive-manager',
-      name: 'Google Drive',
-      path: 'splorer://gdrive-manager',
-      type: 'gdrive-manager',
-    };
-    splitLayoutRef.current.addTab(activeGroupRef.current.id, managerTab, true);
-  }, [splitLayoutRef, activeGroupRef]);
-
   // ── Cross-tab batch operation handlers ────────────────────────────────────
 
   const handleCrossTabPickFolder = useCallback(async (): Promise<string | null> => {
@@ -333,8 +298,6 @@ export const useFileActions = (deps: FileActionsDeps) => {
     toggleFileSelection,
     handleFileClick,
     handleFileDoubleClick,
-    openGDriveTab,
-    openGDriveManager,
     handleCrossTabPickFolder,
     handleCrossTabMoveAll,
     handleCrossTabCopyAll,

@@ -76,7 +76,7 @@ const SearchResultsPanel = React.forwardRef<SearchResultsPanelHandle, SearchResu
       triggerContentSearch,
     } = useLiveSearch(basePath);
 
-    // ── AI search ───────────────────────────────────────────────────────────
+    // ── Index search ───────────────────────────────────────────────────────────
     const {
       aiQuery,
       setAiQuery,
@@ -84,7 +84,6 @@ const SearchResultsPanel = React.forwardRef<SearchResultsPanelHandle, SearchResu
       isAiSearching,
       aiParsedInfo,
       matchedItems,
-      provider: aiProvider,
       searchTermsUsed,
       handleAiResultSelect,
       clearAiSearch,
@@ -273,13 +272,13 @@ const SearchResultsPanel = React.forwardRef<SearchResultsPanelHandle, SearchResu
           </div>
         )}
 
-        {/* AI search info */}
+        {/* Index search info */}
         {searchMode === 'ai' && !noQuery && (
           <SearchStatusBar isSearching={isAiSearching} noResults={noResults} query={query}>
             {isAiSearching ? (
               <>
                 <Spinner />
-                <span>{t('search.aiThinking')}</span>
+                <span>{t('search.indexSearching')}</span>
               </>
             ) : noResults ? (
               <span>No results for &apos;{query}&apos;</span>
@@ -287,25 +286,6 @@ const SearchResultsPanel = React.forwardRef<SearchResultsPanelHandle, SearchResu
               <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                 <span>
                   {aiResults.length} result{aiResults.length !== 1 ? 's' : ''}
-                  {aiProvider && aiProvider !== 'fallback' && aiProvider !== 'cancelled' && (
-                    <span
-                      style={{
-                        marginLeft: '6px',
-                        fontSize: '10px',
-                        opacity: 0.6,
-                        padding: '1px 5px',
-                        borderRadius: '3px',
-                        background: 'rgba(var(--xp-blue-rgb, 99, 102, 241), 0.1)',
-                      }}
-                    >
-                      {t('search.aiProvider', { provider: aiProvider })}
-                    </span>
-                  )}
-                  {aiProvider === 'fallback' && (
-                    <span style={{ marginLeft: '6px', fontSize: '10px', opacity: 0.5 }}>
-                      {t('search.aiNoProvider')}
-                    </span>
-                  )}
                 </span>
                 {aiParsedInfo && (
                   <span style={{ fontSize: '11px', opacity: 0.7 }}>{aiParsedInfo}</span>
@@ -395,7 +375,7 @@ const SearchResultsPanel = React.forwardRef<SearchResultsPanelHandle, SearchResu
             >
               <Spinner />
               <span style={{ fontSize: '12px' }}>
-                {searchMode === 'ai' ? t('search.aiThinking') : 'Searching...'}
+                {searchMode === 'ai' ? t('search.indexSearching') : 'Searching...'}
               </span>
             </div>
           ) : noResults && searchMode === 'local' && !contentSearchTriggered ? (
@@ -683,7 +663,7 @@ const SearchModeToggle = ({
         gap: '4px',
       }}
       aria-pressed={searchMode === 'ai'}
-      title="AI-powered search: natural language queries, content search, semantic matching"
+      title="Index search: searches all indexed folders, understands queries like 'large images last week'"
     >
       <svg
         width="12"
@@ -701,7 +681,7 @@ const SearchModeToggle = ({
         <path d="M3 5h4" />
         <path d="M17 19h4" />
       </svg>
-      AI Search
+      Index
     </button>
   </div>
 );
@@ -784,7 +764,7 @@ const SearchInput = ({
           color: 'var(--xp-text)',
           lineHeight: '18px',
         }}
-        aria-label={searchMode === 'local' ? 'Search files and folders' : 'AI search'}
+        aria-label={searchMode === 'local' ? 'Search files and folders' : 'Index search'}
       />
       {isSearching && <Spinner />}
       {query && (
@@ -900,7 +880,7 @@ const EmptyState = ({ searchMode }: { searchMode: SearchMode }) => (
           <path d="M3 5h4" />
           <path d="M17 19h4" />
         </svg>
-        <span style={{ fontSize: '12px', textAlign: 'center' }}>AI-powered search</span>
+        <span style={{ fontSize: '12px', textAlign: 'center' }}>Index search</span>
         <span
           style={{
             fontSize: '10px',
@@ -1018,7 +998,7 @@ const NoResultsState = ({
           transition: 'opacity 0.15s',
         }}
       >
-        Try AI search instead
+        Search the index instead
       </button>
     )}
   </div>

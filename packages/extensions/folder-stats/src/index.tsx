@@ -103,7 +103,7 @@ function FolderStatsPanel({ currentPath }: { currentPath: string }) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!currentPath || currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://')) {
+    if (!currentPath || currentPath.startsWith('splorer://')) {
       setFiles([]);
       setLoading(false);
       return;

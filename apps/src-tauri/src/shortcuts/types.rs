@@ -61,10 +61,9 @@ pub enum ShortcutAction {
     NextTab,
     PreviousTab,
 
-    // Terminal / AI
+    // Terminal
     #[serde(alias = "FocusTerminal")]
     OpenTerminal,
-    OpenAIAssistant,
     OpenExtensions,
 
     // Extension operations
@@ -75,6 +74,8 @@ pub enum ShortcutAction {
     },
 
     // Legacy (kept for backward compat)
+    /// AI assistant was removed; variant kept so stored shortcut profiles still deserialize.
+    OpenAIAssistant,
     Save,
     SaveAs,
     Open,

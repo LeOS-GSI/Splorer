@@ -17,7 +17,6 @@ use std::time::UNIX_EPOCH;
 use jwalk::WalkDir;
 use tracing::info;
 
-use super::ai_pipeline::AIPipeline;
 use super::index::SearchIndex;
 use super::watcher::FileWatcher;
 use super::SearchResult;
@@ -962,16 +961,6 @@ pub fn get_search_engine() -> Arc<SearchEngine> {
             engine.start();
             engine
         })
-        .clone()
-}
-
-// ===== AI Pipeline singleton =================================================
-
-static GLOBAL_AI_PIPELINE: OnceLock<Arc<AIPipeline>> = OnceLock::new();
-
-pub(crate) fn get_ai_pipeline() -> Arc<AIPipeline> {
-    GLOBAL_AI_PIPELINE
-        .get_or_init(|| Arc::new(AIPipeline::new()))
         .clone()
 }
 

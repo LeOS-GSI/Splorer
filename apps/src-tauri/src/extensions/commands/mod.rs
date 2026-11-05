@@ -1,7 +1,6 @@
 mod install;
 mod manage;
 mod pack;
-mod proxy;
 mod wasm;
 
 // Re-export all #[command] functions and public items so that
@@ -9,7 +8,6 @@ mod wasm;
 pub use install::*;
 pub use manage::*;
 pub use pack::*;
-pub use proxy::*;
 pub use wasm::*;
 
 use crate::extensions::manager::*;

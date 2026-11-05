@@ -123,10 +123,6 @@ export const AIResultRow = React.memo(({ result, query, onSelect }: AIResultRowP
         return { label: 'Fuzzy', color: '#eab308' };
       case 'metadata':
         return { label: 'Meta', color: '#14b8a6' };
-      case 'ai_description':
-        return { label: 'AI', color: '#a855f7' };
-      case 'ai_reranked':
-        return { label: 'AI Ranked', color: '#a855f7' };
       default:
         return { label: result.relevance_type, color: '#6366f1' };
     }

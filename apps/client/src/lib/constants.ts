@@ -117,19 +117,11 @@ export const ROUTES = {
   HOME: 'splorer://home',
   TRASH: 'splorer://trash',
   SETTINGS: 'splorer://settings',
-  GDRIVE_MANAGER: 'splorer://gdrive-manager',
 } as const;
 
 // ── Byte-size multipliers ───────────────────────────────────────────────────
 
 export const BYTES = { KB: 1024, MB: 1024 ** 2, GB: 1024 ** 3, TB: 1024 ** 4 } as const;
-
-// ── Marketplace ─────────────────────────────────────────────────────────────
-
-/** Marketplace API base URL. Override via VITE_MARKETPLACE_URL env var. */
-export const MARKETPLACE_API_URL =
-  (import.meta as unknown as { env?: { VITE_MARKETPLACE_URL?: string } }).env
-    ?.VITE_MARKETPLACE_URL || 'https://xplorer.space/api';
 
 // ── Toast defaults ──────────────────────────────────────────────────────────
 

@@ -83,18 +83,6 @@ describe('useFocusChangeTracker', () => {
       expect(mockReadDir).not.toHaveBeenCalled();
     });
 
-    it('does not take snapshot for gdrive:// paths', async () => {
-      const mockReadDir = vi.mocked(TauriAPI.readDirectory);
-
-      renderHook(() => useFocusChangeTracker('gdrive://root'));
-
-      await act(async () => {
-        simulateVisibilityChange(true);
-      });
-
-      expect(mockReadDir).not.toHaveBeenCalled();
-    });
-
     it('does not take snapshot for comparison:// paths', async () => {
       const mockReadDir = vi.mocked(TauriAPI.readDirectory);
 

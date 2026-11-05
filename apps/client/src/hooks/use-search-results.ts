@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { TauriAPI, type SearchResult, type FileEntry } from '@/lib/tauri-api';
 import { SEARCH_DEBOUNCE_MS } from '@/lib/constants';
-import { STORAGE_KEYS } from '@/lib/storage-keys';
 
 /** Emit a message to the Activity Log */
 const logOutput = (msg: string) => {
@@ -45,102 +44,30 @@ export const useAiSearch = (basePath: string) => {
       aiAbortRef.current = signal;
 
       try {
-        // Phase 1: Show fast BM25F results immediately
-        logOutput(`[INFO] AI Search: "${trimmed}" — fetching instant results...`);
+        // Local BM25F search (no AI / no network)
         setAiParsedInfo('Searching...');
-
-        try {
-          const fastResults = await TauriAPI.enhancedSearch(trimmed, undefined, 50);
-          if (!signal.aborted && fastResults.results.length > 0) {
-            setAiResults(fastResults.results);
-            setProvider('text');
-            const pq = fastResults.parsed_query;
-            if (pq) {
-              const parts: string[] = [];
-              if (pq.file_type_filter) parts.push(`type: ${pq.file_type_filter}`);
-              if (pq.sort_hint) parts.push(`sort: ${pq.sort_hint}`);
-              if (pq.keywords?.length) parts.push(`"${pq.keywords.join(' ')}"`);
-              setAiParsedInfo(parts.length > 0 ? parts.join(' | ') : 'Text search');
-            }
-            logOutput(`[INFO] AI Search: ${fastResults.results.length} instant results`);
-          }
-        } catch {
-          // BM25F unavailable — skip fast phase
-        }
-
-        // Phase 2: Call AI for smart results (runs in parallel feel)
-        if (!signal.aborted) {
-          setAiParsedInfo((prev) => (prev ? `${prev} — waiting for AI...` : 'Waiting for AI...'));
-          logOutput('[INFO] AI Search: querying LLM for smart interpretation...');
-
-          // Read AI search provider settings from localStorage
-          let searchProvider: string | undefined;
-          let searchApiKey: string | undefined;
-          let searchModel: string | undefined;
-          try {
-            const raw = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-            if (raw) {
-              const s = JSON.parse(raw) as Record<string, unknown>;
-
-              // If explicit search provider is set, use it
-              if (s.aiSearchProvider && s.aiSearchProvider !== 'auto') {
-                searchProvider = s.aiSearchProvider as string;
-                if (s.aiSearchModel) searchModel = s.aiSearchModel as string;
-                if (s.aiSearchApiKey) searchApiKey = s.aiSearchApiKey as string;
-              } else {
-                // Fall back to the AI service mode settings
-                const mode = (s.aiServiceMode as string) || 'cloud';
-                if (mode === 'cloud') {
-                  searchProvider = 'openrouter';
-                  searchModel = (s.aiCloudModel as string) || 'anthropic/claude-sonnet-4';
-                  // No API key — backend uses its own
-                } else if (mode === 'custom') {
-                  const cp = (s.aiCustomProvider as string) || 'ollama';
-                  searchProvider = cp;
-                  if (s.aiCustomModel) searchModel = s.aiCustomModel as string;
-                  if (s.aiCustomApiKey) searchApiKey = s.aiCustomApiKey as string;
-                }
-              }
-            }
-          } catch {
-            /* ignore parse errors */
-          }
-
-          const response = await TauriAPI.smartSearch(
-            trimmed,
-            basePath,
-            50,
-            searchProvider,
-            searchApiKey,
-            searchModel,
-          );
-
-          if (!signal.aborted) {
-            setAiResults(response.results);
-            setAiParsedInfo(response.explanation ?? null);
-            setMatchedItems(response.matched_items);
-            setProvider(response.provider);
-            setSearchTermsUsed(response.search_terms_used);
-            setIsAiSearching(false);
-            logOutput(
-              `[INFO] AI Search: ${response.results.length} results via ${response.provider}${
-                response.search_terms_used.length > 0
-                  ? ` (terms: ${response.search_terms_used.join(', ')})`
-                  : ''
-              }`,
-            );
-          }
-        }
+        const fastResults = await TauriAPI.enhancedSearch(trimmed, undefined, 50);
+        if (signal.aborted) return;
+        setAiResults(fastResults.results);
+        setProvider('text');
+        setMatchedItems([]);
+        setSearchTermsUsed(fastResults.parsed_query?.keywords ?? []);
+        const pq = fastResults.parsed_query;
+        const parts: string[] = [];
+        if (pq?.file_type_filter) parts.push(`type: ${pq.file_type_filter}`);
+        if (pq?.sort_hint) parts.push(`sort: ${pq.sort_hint}`);
+        if (pq?.keywords?.length) parts.push(`"${pq.keywords.join(' ')}"`);
+        setAiParsedInfo(parts.length > 0 ? parts.join(' | ') : null);
+        logOutput(`[INFO] Search: "${trimmed}" — ${fastResults.results.length} results`);
       } catch (err: unknown) {
         if (!signal.aborted) {
           const msg = err instanceof Error ? err.message : String(err);
-          logOutput(`[WARN] AI Search failed: ${msg}`);
+          logOutput(`[WARN] Search failed: ${msg}`);
+          setAiResults([]);
           setAiParsedInfo(null);
-          setMatchedItems([]);
-          setProvider('fallback');
-          setSearchTermsUsed([]);
-          setIsAiSearching(false);
         }
+      } finally {
+        if (!signal.aborted) setIsAiSearching(false);
       }
     }, SEARCH_DEBOUNCE_MS);
 

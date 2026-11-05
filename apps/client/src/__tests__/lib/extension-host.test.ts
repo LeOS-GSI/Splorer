@@ -52,7 +52,7 @@ vi.mock('@/lib/tauri-api', () => ({
     nativePluginInvoke: vi.fn(() => Promise.resolve(null)),
     registerExtensionShortcut: vi.fn(() => Promise.resolve()),
     unregisterExtensionShortcuts: vi.fn(() => Promise.resolve()),
-    agentWriteFileWithPermission: vi.fn(() => Promise.resolve()),
+    writeTextFile: vi.fn(() => Promise.resolve()),
   },
   FileEntry: {},
 }));

@@ -136,10 +136,6 @@ export interface XplorerEffectsDeps {
   // File changes
   fileChanges: FileChangeSet | null;
 
-  // Google Drive
-  openGDriveTab: (accountId: string, accountName: string) => void;
-  openGDriveManager: () => void;
-
   // Vim actions
   vimActions: VimModeActions;
 }
@@ -204,8 +200,6 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
     setShowChangeSummaryToast,
     fileOps,
     fileChanges,
-    openGDriveTab,
-    openGDriveManager,
     vimActions,
   } = deps;
 
@@ -630,7 +624,6 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
       currentPath &&
       activeTabObj?.type !== 'editor' &&
       !currentPath.startsWith('splorer://') &&
-      !currentPath.startsWith('gdrive://') &&
       !currentPath.startsWith('comparison://') &&
       !currentPath.startsWith('collection://');
     if (!isRealPath) return;
@@ -692,20 +685,6 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
     actions: vimActions,
   });
 
-  // ── GDrive event listeners ────────────────────────────────────────────────
-  useWindowEvent(
-    'open-gdrive-tab',
-    (e: Event) => {
-      const detail = (e as CustomEvent).detail;
-      if (detail?.accountId) {
-        openGDriveTab(detail.accountId, detail.accountName || detail.accountId);
-      }
-    },
-    [openGDriveTab],
-  );
-  useWindowEvent('open-gdrive-setup', () => openGDriveManager(), [openGDriveManager]);
-  useWindowEvent('open-gdrive-management', () => openGDriveManager(), [openGDriveManager]);
-
   // ── Listen for folder-opened event (from shell integration / "Open with Splorer") ──
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -750,7 +729,6 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         currentPath &&
         !currentPath.startsWith('splorer://') &&
         !currentPath.startsWith('collection://') &&
-        !currentPath.startsWith('gdrive://') &&
         !currentPath.startsWith('comparison://')
       ) {
         patch.lastRealPath = currentPath;
@@ -808,26 +786,6 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         });
     },
     [splitLayoutRef],
-  );
-
-  // ── AI Chat request bridge ───────────────────────────────────────────────
-  // When a component (e.g. code preview AI actions) dispatches
-  // xplorer-ai-chat-request, open the chat panel and store the prompt
-  // so the chat panel can pick it up on its next render cycle.
-  useWindowEvent(
-    'xplorer-ai-chat-request',
-    (e: Event) => {
-      const prompt = (e as CustomEvent<{ prompt: string }>).detail?.prompt;
-      if (prompt) {
-        setRightSidebarCollapsed(false);
-        setRightPanelTab('chat');
-        // Store the pending prompt for the chat panel to pick up
-        (window as unknown as Record<string, unknown>).__xplorer_pending_ai_prompt__ = prompt;
-        // Dispatch a follow-up event the chat panel can listen for
-        window.dispatchEvent(new CustomEvent('xplorer-chat-inject-prompt', { detail: { prompt } }));
-      }
-    },
-    [setRightSidebarCollapsed, setRightPanelTab],
   );
 
   // ── Spring-loaded folder navigation ──────────────────────────────────────

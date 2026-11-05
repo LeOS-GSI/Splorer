@@ -42,9 +42,7 @@ A collection of 25 extensions for [Xplorer](https://github.com/kimlimjustin/xplo
 | Extension | Description |
 |-----------|-------------|
 | `ai-chat` | AI chat assistant powered by local LLMs |
-| `claude-code` | Claude Code integration for AI-assisted development |
 | `docker` | Docker container and image management |
-| `gdrive` | Google Drive file browser and sync |
 | `git-extension` | Full Git UI (status, commit, branches, blame) |
 | `ssh` | SSH remote file browsing |
 | `collaboration` | Real-time collaboration (experimental) |
@@ -53,7 +51,6 @@ A collection of 25 extensions for [Xplorer](https://github.com/kimlimjustin/xplo
 | Extension | Description |
 |-----------|-------------|
 | `3d-viewer` | 3D model file viewer (GLB, OBJ, STL) |
-| `architect` | Project architecture visualizer |
 | `audio-waveform-extension` | Audio file waveform visualization |
 | `backup` | File backup and restore |
 | `duplicate-finder-extension` | Find and manage duplicate files |

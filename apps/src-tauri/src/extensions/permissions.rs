@@ -34,16 +34,9 @@ pub enum ExtensionPermission {
     SearchRead,
     SearchDuplicates,
 
-    // AI permissions
-    AIRead,
-    AIChat,
-
     // Git permissions
     GitRead,
     GitWrite,
-
-    // Google Drive permissions
-    GDriveAccess,
 
     // Splorer-specific permissions
     AccessSettings,
@@ -74,11 +67,8 @@ impl ExtensionPermission {
             "storage:write" => Some(Self::StorageWrite),
             "search:read" => Some(Self::SearchRead),
             "search:duplicates" => Some(Self::SearchDuplicates),
-            "ai:read" => Some(Self::AIRead),
-            "ai:chat" => Some(Self::AIChat),
             "git:read" => Some(Self::GitRead),
             "git:write" => Some(Self::GitWrite),
-            "gdrive:access" => Some(Self::GDriveAccess),
             "xplorer:settings" => Some(Self::AccessSettings),
             "xplorer:themes" => Some(Self::ModifyThemes),
             "xplorer:history" => Some(Self::AccessHistory),

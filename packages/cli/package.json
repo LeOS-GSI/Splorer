@@ -1,7 +1,7 @@
 {
   "name": "@xplorer/cli",
   "version": "1.0.0",
-  "description": "Splorer CLI — open folders, login, and publish extensions to xplorer.space",
+  "description": "Splorer CLI — open folders in Splorer and scaffold extensions",
   "type": "module",
   "bin": {
     "splorer": "./bin/splorer.mjs"
@@ -17,8 +17,7 @@
   "keywords": [
     "xplorer",
     "file-manager",
-    "cli",
-    "marketplace"
+    "cli"
   ],
   "license": "AGPL-3.0"
 }

@@ -256,14 +256,6 @@ export interface AppSettings {
   highContrast: boolean;
   autoCalculateFolderSizes: boolean;
   rememberViewPerFolder: boolean;
-  aiSearchProvider: string;
-  aiSearchModel: string;
-  aiSearchApiKey: string;
-  aiServiceMode: 'cloud' | 'custom';
-  aiCloudModel: string;
-  aiCustomProvider: string;
-  aiCustomModel: string;
-  aiCustomApiKey: string;
 }
 
 export const DEFAULT_SETTINGS: AppSettings = {
@@ -283,14 +275,6 @@ export const DEFAULT_SETTINGS: AppSettings = {
   highContrast: false,
   autoCalculateFolderSizes: false,
   rememberViewPerFolder: false,
-  aiSearchProvider: 'auto',
-  aiSearchModel: '',
-  aiSearchApiKey: '',
-  aiServiceMode: 'cloud',
-  aiCloudModel: 'anthropic/claude-sonnet-4',
-  aiCustomProvider: 'ollama',
-  aiCustomModel: '',
-  aiCustomApiKey: '',
 };
 
 export const SETTINGS_KEY = STORAGE_KEYS.SETTINGS;

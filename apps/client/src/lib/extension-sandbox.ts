@@ -298,7 +298,7 @@ export const createExtensionApi = (
           throw new Error(`Extension "${manifest.id}" blocked from accessing path: ${path}`);
         }
         const text = typeof content === 'string' ? content : new TextDecoder().decode(content);
-        return TauriAPI.agentWriteFileWithPermission(path, text, false);
+        return TauriAPI.writeTextFile(path, text);
       },
       exists: async (path: string) => {
         if (!hasPermission(manifest, 'file:read')) {
@@ -647,35 +647,6 @@ export const createExtensionApi = (
         return TauriAPI.deleteExtensionStorage(manifest.id, key);
       },
     },
-    ai: {
-      getModels: async () => {
-        if (!hasPermission(manifest, 'ai:read')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: ai:read`);
-        }
-        return TauriAPI.getAiModels();
-      },
-      chat: async (
-        model: string,
-        messages: Array<{ role: string; content: string }>,
-        fileContext?: { path: string; content?: string; language?: string },
-      ) => {
-        if (!hasPermission(manifest, 'ai:chat')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: ai:chat`);
-        }
-        const ctx = fileContext
-          ? {
-              name: fileContext.path.split(/[\\/]/).pop() || '',
-              path: fileContext.path,
-              file_type: fileContext.language || '',
-              content: fileContext.content,
-            }
-          : undefined;
-        return TauriAPI.chatWithAI(model, messages, ctx);
-      },
-      checkOllamaStatus: async () => {
-        return TauriAPI.checkOllamaStatus();
-      },
-    },
     search: {
       query: async (query: string, limit?: number) => {
         if (!hasPermission(manifest, 'search:read')) {
@@ -683,12 +654,6 @@ export const createExtensionApi = (
         }
         const result = await TauriAPI.enhancedSearch(query, undefined, limit);
         return result.results;
-      },
-      semantic: async (query: string, limit?: number) => {
-        if (!hasPermission(manifest, 'search:read')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: search:read`);
-        }
-        return TauriAPI.semanticSearch(query, limit);
       },
       findDuplicates: async (
         rootPath: string,
@@ -791,91 +756,6 @@ export const createExtensionApi = (
           throw new Error(`Extension "${manifest.id}" missing permission: file:write`);
         }
         return Organizer.executeOrganization(plan as OrganizationPlan);
-      },
-    },
-    gdrive: {
-      authenticate: async () => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_authenticate');
-      },
-      disconnect: async (accountId: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_disconnect', { accountId });
-      },
-      listAccounts: async () => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_list_accounts');
-      },
-      listFiles: async (accountId: string, folderId: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_list_files', { accountId, folderId });
-      },
-      downloadFile: async (accountId: string, fileId: string, localPath: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_download_file', { accountId, fileId, localPath });
-      },
-      uploadFile: async (accountId: string, localPath: string, parentFolderId: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_upload_file', { accountId, localPath, parentFolderId });
-      },
-      deleteFile: async (accountId: string, fileId: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_delete_file', { accountId, fileId });
-      },
-      renameFile: async (accountId: string, fileId: string, newName: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_rename_file', { accountId, fileId, newName });
-      },
-      moveFile: async (
-        accountId: string,
-        fileId: string,
-        newParentId: string,
-        oldParentId: string,
-      ) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_move_file', { accountId, fileId, newParentId, oldParentId });
-      },
-      createFolder: async (accountId: string, name: string, parentFolderId: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_create_folder', { accountId, name, parentFolderId });
-      },
-      getFileContent: async (accountId: string, fileId: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('gdrive_get_file_content', { accountId, fileId });
-      },
-      getSettings: async () => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('get_gdrive_settings');
-      },
-      updateSettings: async (clientId: string, clientSecret: string) => {
-        if (!hasPermission(manifest, 'gdrive:access')) {
-          throw new Error(`Extension "${manifest.id}" missing permission: gdrive:access`);
-        }
-        return transport('update_gdrive_settings', { clientId, clientSecret });
       },
     },
     git: {

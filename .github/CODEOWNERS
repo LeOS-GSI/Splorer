@@ -13,4 +13,3 @@ apps/src-tauri/src/operations/secure_delete_ops.rs @kimlimjustin
 packages/extension-sdk/src/ @kimlimjustin
 
 # Marketplace
-apps/web/ @kimlimjustin

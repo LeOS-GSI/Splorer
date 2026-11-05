@@ -1,9 +1,6 @@
 pub mod error;
 pub mod utils;
 
-pub mod agent;
-pub mod agent_sessions;
-pub mod ai;
 pub mod audit_log;
 pub mod backup;
 pub mod document_extractor;
@@ -14,23 +11,18 @@ pub mod file_organizer;
 pub mod file_versions;
 pub mod file_watcher;
 pub mod git;
-pub mod google_drive;
-pub mod mcp_host;
-pub mod mcp_server;
 pub mod operations;
 pub mod pty;
 pub mod search;
-pub mod secure_credentials;
 pub mod shortcuts;
 pub mod storage;
-pub mod sync;
+pub mod user_dirs;
 
 #[cfg(windows)]
 pub mod windows_recycle_bin;
 
 #[cfg(test)]
 mod tests {
-    use crate::agent::memory::MemoryStore;
     use crate::error::{AppError, AppResult};
     use crate::operations::{validate_file_path, FileEntry};
 
@@ -77,11 +69,5 @@ mod tests {
 
         let err_result: AppResult<i32> = Err(AppError::Other("test error".to_string()));
         assert!(err_result.is_err());
-    }
-
-    #[test]
-    fn memory_store_defaults_to_empty() {
-        let store = MemoryStore::default();
-        assert!(store.entries.is_empty());
     }
 }

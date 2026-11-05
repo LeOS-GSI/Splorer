@@ -9,6 +9,6 @@
 pub use super::compat_engine::{get_search_engine, SearchEngine};
 // Re-export frontend-facing types.
 pub use super::compat_types::{
-    AISearchResult, CompatStructuredQuery, EnhancedSearchResult, FileToken, TokenizerSettings,
+    CompatStructuredQuery, EnhancedSearchResult, FileToken, TokenizerSettings,
     TokenizerStats,
 };

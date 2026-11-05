@@ -224,28 +224,6 @@ export interface PreviewRenderProps {
   selectedFiles?: Array<{ name: string; path: string; is_dir: boolean; size?: number }>;
 }
 
-/** Result of an extension update check for a single extension */
-export interface ExtensionUpdateResult {
-  id: string;
-  currentVersion: string;
-  latestVersion: string;
-  downloadUrl: string;
-  checksum: string;
-  changelog: string | null;
-}
-
-/** Configuration for extension auto-update behavior */
-export interface ExtensionAutoUpdateConfig {
-  /** Whether auto-update checking is enabled (default: true) */
-  enabled?: boolean;
-  /** Marketplace base URL (default: https://xplorer.space) */
-  marketplaceUrl?: string;
-  /** Interval in ms between update checks (default: 4 hours) */
-  checkIntervalMs?: number;
-  /** Whether to automatically download updates (default: false) */
-  autoDownload?: boolean;
-}
-
 export type CommandHandler = (...args: unknown[]) => unknown;
 export type EventCallback = (...args: unknown[]) => void;
 

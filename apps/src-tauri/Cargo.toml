@@ -30,7 +30,6 @@ aes-gcm = "0.10"
 argon2 = "0.5"
 reqwest = { version = "0.12", features = ["json", "blocking", "stream"] }
 chrono = { version = "0.4", features = ["serde"] }
-ollama-rs = "0.3.2"
 trash = "5.1"
 dirs = "5.0"
 base64 = "0.22"
@@ -59,7 +58,6 @@ roaring = "0.10"
 notify-debouncer-full = "0.4"
 image = "0.25"
 git2 = "0.19"
-keyring = { version = "3", features = ["windows-native", "apple-native", "linux-native"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 thiserror = "2"

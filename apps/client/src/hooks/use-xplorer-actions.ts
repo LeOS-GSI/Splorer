@@ -49,7 +49,6 @@ export interface XplorerActionsDeps {
   theme: string;
   setTheme: (theme: string) => void;
   handleQuickLook: (file: FileEntry) => void;
-  handleGDriveFileSelect: (file: FileEntry) => void;
   setPaneFiles: React.Dispatch<React.SetStateAction<FileEntry[]>>;
   paneRefetchRef: React.MutableRefObject<() => void>;
   pendingSelectRef: React.MutableRefObject<string | null>;
@@ -112,7 +111,6 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
     theme,
     setTheme,
     handleQuickLook,
-    handleGDriveFileSelect,
     setPaneFiles,
     paneRefetchRef,
     pendingSelectRef,
@@ -385,15 +383,6 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
         };
         splitLayoutRef.current.addTab(groupId, newTab, true);
       },
-      onGDriveNavigate: (
-        accountId: string,
-        folderId: string,
-        _folderName: string,
-        groupId: string,
-      ) => {
-        splitLayoutRef.current.navigate(groupId, `gdrive://${accountId}/${folderId}`, folderId);
-      },
-      onGDriveFileSelect: handleGDriveFileSelect,
       onError: (title: string, description: string) => {
         toastRef.current({ variant: 'destructive', title, description });
       },
@@ -423,7 +412,6 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
       setPaneFiles,
       setSelectedFiles,
       paneRefetchRef,
-      handleGDriveFileSelect,
       navigation.navigateBackInHistory,
       navigation.navigateForwardInHistory,
       navigation.canNavigateBackInHistory,
@@ -543,10 +531,6 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
     handleReviewChanges,
     handleDismissChangesToast,
     handleDismissAllChanges,
-
-    // Google Drive
-    openGDriveTab: fileActions.openGDriveTab,
-    openGDriveManager: fileActions.openGDriveManager,
 
     // Cross-tab
     handleCrossTabPickFolder: fileActions.handleCrossTabPickFolder,

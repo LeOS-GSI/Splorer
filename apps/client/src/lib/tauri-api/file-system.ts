@@ -183,6 +183,10 @@ export const createFile = async (path: string): Promise<void> =>
 export const createFileWithContent = async (path: string, content: string): Promise<void> =>
   await transport('create_file_with_content', { path, content });
 
+/** Create or overwrite a text file (editors, extensions with file:write). */
+export const writeTextFile = async (path: string, content: string): Promise<void> =>
+  await transport('write_text_file', { path, content });
+
 export const createSymlink = async (target: string, linkPath: string): Promise<void> =>
   await transport('create_symlink', { target, link_path: linkPath });
 

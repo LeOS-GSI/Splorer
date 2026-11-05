@@ -1,6 +1,5 @@
 packages:
   - 'apps/client'
-  - 'apps/web'
   - 'packages/sdk'
   - 'packages/extension-sdk'
   - 'packages/create-extension'
@@ -10,7 +9,4 @@ packages:
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - esbuild
-  - '@prisma/client'
-  - '@prisma/engines'
-  - prisma
   - sharp

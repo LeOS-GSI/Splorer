@@ -9,16 +9,6 @@ import { getFolderColorHex } from '@/lib/folder-colors';
 import { validateFileName } from '@/lib/validate-filename';
 import ThumbnailPreview from './ThumbnailPreview';
 
-// ─── Chat file display name helper ───────────────────────────────────────────
-
-const getChatDisplayName = (filename: string): string => {
-  let name = filename.replace(/\.chat$/, '');
-  // Remove date prefix like "2026-03-14_"
-  name = name.replace(/^\d{4}-\d{2}-\d{2}_/, '');
-  // Replace hyphens/underscores with spaces
-  return name.replace(/[-_]/g, ' ');
-};
-
 // ─── Size badge component ────────────────────────────────────────────────────
 
 const SizeBadge = ({
@@ -392,9 +382,7 @@ const FileGridItem = React.memo(
 
       return (
         <>
-          <span className="min-w-0 truncate">
-            {file.name.endsWith('.chat') ? getChatDisplayName(file.name) : file.name}
-          </span>
+          <span className="min-w-0 truncate">{file.name}</span>
           <LockBadge isReadonly={file.is_readonly} />
           <GitStatusDot status={gitStatus} />
         </>
@@ -465,11 +453,6 @@ const FileGridItem = React.memo(
           >
             {renderNameArea()}
           </div>
-          {file.name.endsWith('.chat') && !isRenaming && (
-            <span className="bg-xp-purple/20 text-xp-purple mt-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px]">
-              Chat
-            </span>
-          )}
           {isGridView && !isRenaming && <TagDots tags={tags} />}
           {!isGridView && !isListView && !isRenaming && (
             <div className="text-xp-text-muted flex items-center space-x-4 text-xs">

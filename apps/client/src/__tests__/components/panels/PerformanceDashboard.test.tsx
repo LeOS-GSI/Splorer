@@ -32,9 +32,6 @@ vi.mock('@/hooks/use-performance-stats', () => ({
       cachedFolderCount: 10,
     },
     indexingStatus: {
-      aiIndexed: 50,
-      aiQueueLength: 0,
-      isAiProcessing: false,
       tokenTotalFiles: 120,
       tokenTotalTokens: 5000,
       tokenLastUpdated: 0,

@@ -33,33 +33,10 @@ export const useNavigationActions = (deps: NavigationActionsDeps) => {
       const ag = activeGroupRef.current;
       const sl = splitLayoutRef.current;
 
-      const activeTabObj = ag.tabs.find((t: TabItem) => t.id === ag.activeTabId);
-      const isGDriveTab =
-        activeTabObj?.type === 'gdrive' || activeTabObj?.type === 'gdrive-manager';
-      const isLocalPath =
-        !newPath.startsWith('gdrive://') && !newPath.startsWith('splorer://gdrive-manager');
-
-      if (isGDriveTab && isLocalPath) {
-        const folderTab = ag.tabs.find((t: TabItem) => t.type === 'folder' || t.type === undefined);
-        if (folderTab) {
-          sl.switchTab(ag.id, folderTab.id);
-          setTimeout(() => sl.navigate(ag.id, newPath, newPath.split(/[/\\]/).pop() || newPath), 0);
-        } else {
-          const newTab: TabItem = {
-            id: `tab-folder-${Date.now()}`,
-            name: newPath.split(/[/\\]/).pop() || newPath,
-            path: newPath,
-            type: 'folder',
-          };
-          sl.addTab(ag.id, newTab, true);
-        }
-      } else {
-        sl.navigate(ag.id, newPath, newPath.split(/[/\\]/).pop() || newPath);
-      }
+      sl.navigate(ag.id, newPath, newPath.split(/[/\\]/).pop() || newPath);
 
       if (
         !newPath.startsWith('splorer://') &&
-        !newPath.startsWith('gdrive://') &&
         !newPath.startsWith('comparison://') &&
         !newPath.startsWith('collection://')
       ) {
@@ -84,8 +61,6 @@ export const useNavigationActions = (deps: NavigationActionsDeps) => {
 
   const navigateUp = useCallback(() => {
     if (currentPath === 'splorer://home') return;
-    if (currentPath === 'splorer://gdrive-manager') return;
-    if (currentPath.startsWith('gdrive://')) return;
     if (currentPath.startsWith('collection://')) return;
     if (currentPath.startsWith('/')) {
       const parts = currentPath.split('/').filter(Boolean);
