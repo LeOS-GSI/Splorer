@@ -1,4 +1,5 @@
 import { FileEntry } from '@/lib/tauri-api';
+import { loadAppSettings } from '@/lib/app-settings';
 
 // Preview types
 export type PreviewType =
@@ -323,9 +324,15 @@ export class PreviewFactory {
   private canPreviewText(file: FileEntry): boolean {
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     const capability = this.capabilities.get('text')!;
+    // "Markdown Preview" off: show markdown files as plain text
+    const rawMarkdown =
+      !loadAppSettings().enableMarkdownPreview &&
+      this.capabilities.get('markdown')!.extensions.includes(ext);
 
     return (
-      capability.extensions.includes(ext) || (file.mime_type?.startsWith('text/plain') ?? false)
+      rawMarkdown ||
+      capability.extensions.includes(ext) ||
+      (file.mime_type?.startsWith('text/plain') ?? false)
     );
   }
 
@@ -354,6 +361,7 @@ export class PreviewFactory {
   }
 
   private canPreviewMarkdown(file: FileEntry): boolean {
+    if (!loadAppSettings().enableMarkdownPreview) return false;
     const ext = file.name.split('.').pop()?.toLowerCase() || '';
     const capability = this.capabilities.get('markdown')!;
 

@@ -7,7 +7,6 @@ import {
   Sparkles,
   PanelLeft,
   Bell,
-  Save,
   HelpCircle,
   AlertTriangle,
   RotateCcw,
@@ -148,18 +147,6 @@ const GeneralSettings = ({ settings, updateSetting, setSettings }: GeneralSettin
           label={t('settings.general.notifications')}
           checked={settings.enableNotifications}
           onChange={(v) => updateSetting('enableNotifications', v)}
-        />
-      </SettingRow>
-      <SettingRow
-        icon={Save}
-        label={t('settings.general.autoSave')}
-        description={t('settings.general.autoSaveDesc')}
-      >
-        <Toggle
-          id="autoSave"
-          label={t('settings.general.autoSave')}
-          checked={settings.autoSave}
-          onChange={(v) => updateSetting('autoSave', v)}
         />
       </SettingRow>
 

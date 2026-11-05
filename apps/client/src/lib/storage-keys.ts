@@ -23,6 +23,7 @@ export const STORAGE_KEYS = {
   // Explorer UI
   SIDEBAR_SECTIONS: 'xplorer-sidebar-sections',
   SIDEBAR_HEIGHTS: 'xplorer-sidebar-heights',
+  SIDEBAR_WIDTH_PRESET: 'xplorer:sidebar-width-preset',
 
   // Collections, bookmarks, colors
   COLLECTIONS: 'xplorer:collections',

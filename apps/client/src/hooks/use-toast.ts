@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { addNotification } from './use-notification-history';
+import { loadAppSettings } from '@/lib/app-settings';
 
 // Simplified toast types without shadcn/ui dependency
 type ToastActionElement = React.ReactElement;
@@ -153,6 +154,10 @@ export type Toast = Omit<ToasterToast, 'id'>;
 const toast = ({ ...props }: Toast) => {
   const id = genId();
 
+  // "Notifications" off: keep errors visible, record everything else in the
+  // notification history without showing a pop-up.
+  const popupsDisabled = !loadAppSettings().enableNotifications && props.variant !== 'destructive';
+
   const update = (props: ToasterToast) =>
     dispatch({
       type: 'UPDATE_TOAST',
@@ -160,17 +165,19 @@ const toast = ({ ...props }: Toast) => {
     });
   const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
 
-  dispatch({
-    type: 'ADD_TOAST',
-    toast: {
-      ...props,
-      id,
-      open: true,
-      onOpenChange: (open: boolean) => {
-        if (!open) dismiss();
+  if (!popupsDisabled) {
+    dispatch({
+      type: 'ADD_TOAST',
+      toast: {
+        ...props,
+        id,
+        open: true,
+        onOpenChange: (open: boolean) => {
+          if (!open) dismiss();
+        },
       },
-    },
-  });
+    });
+  }
 
   // Capture toast into notification history
   {

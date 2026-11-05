@@ -216,7 +216,8 @@ html.font-xl {
    Collapses all animations/transitions for motion-sensitive users.
    ═══════════════════════════════════════════════════════════════════ */
 
-html.reduce-motion * {
+html.reduce-motion *,
+html.no-animations * {
   animation-duration: 0.001ms !important;
   transition-duration: 0.001ms !important;
 }

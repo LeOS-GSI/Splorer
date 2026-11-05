@@ -1,6 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { STORAGE_KEYS } from '@/lib/storage-keys';
 import type { SortField } from '@/lib/utils';
+import { useAppSettings, SIDEBAR_WIDTH_PRESETS } from '@/lib/app-settings';
 
 // ── Helpers for persisting UI state to localStorage ──────────────────────────
 const UI_STATE_KEY = STORAGE_KEYS.UI_STATE;
@@ -122,6 +123,23 @@ export const useLayoutState = (): LayoutState => {
   const [bottomPanelHeight, setBottomPanelHeight] = useState(() =>
     loadUiState('bottomPanelHeight', 192),
   );
+
+  // "Sidebar Width" setting: apply the preset whenever the setting changes.
+  // The last applied preset is remembered so a width dragged by hand survives restarts.
+  const { sidebarWidth: sidebarPreset } = useAppSettings();
+  useEffect(() => {
+    try {
+      const applied = localStorage.getItem(STORAGE_KEYS.SIDEBAR_WIDTH_PRESET);
+      localStorage.setItem(STORAGE_KEYS.SIDEBAR_WIDTH_PRESET, sidebarPreset);
+      if (applied === sidebarPreset) return;
+      // First run with the untouched default: keep whatever width the user already has
+      if (applied === null && sidebarPreset === 'medium') return;
+    } catch {
+      /* storage unavailable — still apply the preset */
+    }
+    const px = SIDEBAR_WIDTH_PRESETS[sidebarPreset];
+    if (px) setLeftSidebarWidth(px);
+  }, [sidebarPreset]);
 
   // Resize handlers
   const handleLeftResize = useCallback((delta: number) => {

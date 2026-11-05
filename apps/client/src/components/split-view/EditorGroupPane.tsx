@@ -18,6 +18,7 @@ import {
   computeRelativeSyncPath,
 } from '@/hooks/use-pane-sync';
 import { useFolderViewSettings } from '@/hooks/use-folder-view-settings';
+import { useAppSettings } from '@/lib/app-settings';
 
 // Re-export components needed by the pane content
 import HomePage from '@/pages/HomePage';
@@ -218,7 +219,13 @@ const EditorGroupPane = ({
       !currentPath.startsWith('comparison://') &&
       !isCollectionPath,
   });
-  const queryFiles = queryFilesRaw ?? EMPTY_FILES;
+  // "Show Hidden Files" off: hide dotfiles from the listing
+  const appSettings = useAppSettings();
+  const queryFiles = useMemo(() => {
+    const list = queryFilesRaw ?? EMPTY_FILES;
+    if (appSettings.showHiddenFiles) return list;
+    return list.filter((f) => !f.name.startsWith('.'));
+  }, [queryFilesRaw, EMPTY_FILES, appSettings.showHiddenFiles]);
 
   // Fallback base path for collection scanning (memoized to avoid re-renders)
   const collectionFallbackPath = useMemo(() => {
@@ -265,18 +272,10 @@ const EditorGroupPane = ({
 
   // Auto-calculate folder sizes if the setting is enabled
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      if (saved) {
-        const settings = JSON.parse(saved);
-        if (settings.autoCalculateFolderSizes && files.some((f) => f.is_dir)) {
-          calculateMissingSizes();
-        }
-      }
-    } catch {
-      /* ignore localStorage/parse errors */
+    if (appSettings.autoCalculateFolderSizes && files.some((f) => f.is_dir)) {
+      calculateMissingSizes();
     }
-  }, [files, calculateMissingSizes]);
+  }, [files, calculateMissingSizes, appSettings.autoCalculateFolderSizes]);
 
   // Listen for files-changed events (from drag-drop operations) to refetch
   useEffect(() => {

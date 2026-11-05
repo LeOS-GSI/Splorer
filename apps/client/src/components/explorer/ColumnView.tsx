@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FileEntry, TauriAPI } from '@/lib/tauri-api';
 import { ViewComponentProps } from './FileGridTypes';
@@ -30,6 +31,7 @@ const ColumnFileRow = React.memo(
     onDoubleClick: () => void;
     onRightClick: (e: React.MouseEvent) => void;
   }) => {
+    const { showFileExtensions } = useAppSettings();
     return (
       <div
         role="option"
@@ -100,7 +102,7 @@ const ColumnFileRow = React.memo(
             whiteSpace: 'nowrap',
           }}
         >
-          {file.name}
+          {getDisplayName(file.name, file.is_dir, showFileExtensions)}
         </span>
         {file.is_dir && (
           <span

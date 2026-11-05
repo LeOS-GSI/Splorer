@@ -31,6 +31,7 @@ import ExplorerSettings from '@/components/settings/ExplorerSettings';
 import AccessibilitySettings from '@/components/settings/AccessibilitySettings';
 import FileAssociationsSettings from '@/components/settings/FileAssociationsSettings';
 import { loadFontSize } from '@/lib/utils';
+import { saveAppSettings } from '@/lib/app-settings';
 import { AppSettings, DEFAULT_SETTINGS, SETTINGS_KEY } from '@/components/settings/shared';
 
 type SettingsTab =
@@ -133,17 +134,13 @@ const Settings = () => {
     return DEFAULT_SETTINGS;
   });
 
+  // Persist and notify the rest of the app (applies the change immediately)
   useEffect(() => {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    saveAppSettings(settings);
   }, [settings]);
 
   useEffect(() => {
     loadFontSize();
-    if (settings.reducedMotion) document.documentElement.classList.add('reduce-motion');
-    if (settings.enhancedFocus) document.documentElement.classList.add('enhanced-focus');
-    if (settings.highContrast) document.documentElement.classList.add('high-contrast');
-    // Mount-only: apply persisted accessibility settings on init
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateSetting = (key: string, value: string | boolean | number) => {

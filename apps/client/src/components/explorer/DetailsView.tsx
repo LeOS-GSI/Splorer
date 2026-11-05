@@ -1,4 +1,5 @@
 import React, { useRef, useMemo, useCallback } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useTranslation } from 'react-i18next';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FileEntry, FolderSizeInfo } from '@/lib/tauri-api';
@@ -47,6 +48,7 @@ const FileRow = React.memo(
     isCalculatingSize,
     onCalculateFolderSize,
   }: FileRowProps) => {
+    const { showFileExtensions } = useAppSettings();
     const { t } = useTranslation();
     const handleClick = useCallback(
       (e: React.MouseEvent) => onFileClick(file.path, e),
@@ -107,7 +109,9 @@ const FileRow = React.memo(
           <span className="text-lg">{getFileIcon(file)}</span>
         </div>
         <div className="col-span-5 min-w-0">
-          <div className="truncate font-medium">{file.name}</div>
+          <div className="truncate font-medium">
+            {getDisplayName(file.name, file.is_dir, showFileExtensions)}
+          </div>
         </div>
         <div className="text-xp-text-muted col-span-2 text-right text-xs">
           {(() => {

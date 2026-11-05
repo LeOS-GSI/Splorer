@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { createPortal } from 'react-dom';
 import { useDraggable } from '@/hooks/use-draggable';
 import { useDroppable } from '@/hooks/use-droppable';
@@ -325,6 +326,7 @@ const FileGridItem = React.memo(
     onRenameCancel,
     onRenameTab,
   }: FileGridItemProps) => {
+    const { showFileExtensions } = useAppSettings();
     // Native drag via tauri-plugin-drag (mousedown/mousemove/mouseup)
     const dragHandlers = useDraggable({ file, selectedFiles, allFiles });
 
@@ -382,7 +384,9 @@ const FileGridItem = React.memo(
 
       return (
         <>
-          <span className="min-w-0 truncate">{file.name}</span>
+          <span className="min-w-0 truncate">
+            {getDisplayName(file.name, file.is_dir, showFileExtensions)}
+          </span>
           <LockBadge isReadonly={file.is_readonly} />
           <GitStatusDot status={gitStatus} />
         </>

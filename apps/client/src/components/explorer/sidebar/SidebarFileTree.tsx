@@ -5,6 +5,7 @@ import { PATH_SEPARATOR, ROOT_PATH } from '@/lib/constants';
 import { getFolderColorHex } from '@/lib/folder-colors';
 import { useWindowEvent } from '@/hooks/use-window-event';
 import { useTranslation } from 'react-i18next';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 
 type SortBy = 'name' | 'dateModified' | 'size' | 'type';
 type SortOrder = 'asc' | 'desc';
@@ -31,6 +32,11 @@ const SidebarFileTree = ({
   const { t } = useTranslation();
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [folderContents, setFolderContents] = useState<Map<string, FileEntry[]>>(new Map());
+  const { showHiddenFiles, showFileExtensions } = useAppSettings();
+  const visible = useCallback(
+    (list: FileEntry[]) => (showHiddenFiles ? list : list.filter((f) => !f.name.startsWith('.'))),
+    [showHiddenFiles],
+  );
   const [loadingFolders, setLoadingFolders] = useState<Set<string>>(new Set());
 
   // Re-render when folder colors change
@@ -125,8 +131,8 @@ const SidebarFileTree = ({
   const sortedRootContents = useMemo(() => {
     const rootContents = folderContents.get(rootPath);
     if (!rootContents) return undefined;
-    return sortFiles(rootContents);
-  }, [folderContents, rootPath, sortFiles]);
+    return visible(sortFiles(rootContents));
+  }, [folderContents, rootPath, sortFiles, visible]);
 
   const toggleFolder = async (folderPath: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -165,7 +171,7 @@ const SidebarFileTree = ({
     const isExpanded = expandedFolders.has(file.path);
     const isLoading = loadingFolders.has(file.path);
     const hasChildren = folderContents.has(file.path);
-    const children = folderContents.get(file.path) ?? [];
+    const children = visible(folderContents.get(file.path) ?? []);
 
     return (
       <div key={file.path}>
@@ -240,7 +246,9 @@ const SidebarFileTree = ({
                   />
                 ) : null;
               })()}
-            <span className="flex-1 truncate">{file.name}</span>
+            <span className="flex-1 truncate">
+              {getDisplayName(file.name, file.is_dir, showFileExtensions)}
+            </span>
           </div>
         </div>
 

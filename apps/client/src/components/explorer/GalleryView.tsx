@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FileEntry } from '@/lib/tauri-api';
 import { useDraggable } from '@/hooks/use-draggable';
@@ -115,6 +116,7 @@ const GalleryView = ({
   handleFileRightClick,
   handleBackgroundRightClick,
 }: ViewComponentProps) => {
+  const { showFileExtensions } = useAppSettings();
   const [focusedFile, setFocusedFile] = useState<FileEntry | null>(null);
   const [previewError, setPreviewError] = useState(false);
   const [previewDimensions, setPreviewDimensions] = useState<{ w: number; h: number } | null>(null);
@@ -273,7 +275,9 @@ const GalleryView = ({
         {/* File info overlay */}
         {displayFile && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent px-4 py-2">
-            <div className="truncate text-sm font-medium text-white">{displayFile.name}</div>
+            <div className="truncate text-sm font-medium text-white">
+              {getDisplayName(displayFile.name, displayFile.is_dir, showFileExtensions)}
+            </div>
             <div className="text-xs text-white/70">
               {displayFile.is_dir ? 'Folder' : formatFileSize(displayFile.size)}
               {displayFile.modified > 0 && <> &middot; {formatDate(displayFile.modified)}</>}
