@@ -304,7 +304,8 @@
       "autoFolderSizesDesc": "在详细视图中自动计算并显示文件夹大小",
       "preview": "预览",
       "markdownPreview": "Markdown 预览",
-      "markdownPreviewDesc": "渲染 Markdown 文件而非显示原始文本"
+      "markdownPreviewDesc": "渲染 Markdown 文件而非显示原始文本",
+      "autoView": "自动（按文件夹内容）"
     },
     "ai": {
       "agent": "助手",

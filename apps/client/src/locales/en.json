@@ -304,7 +304,8 @@
       "autoFolderSizesDesc": "Automatically calculate and display folder sizes in details view",
       "preview": "Preview",
       "markdownPreview": "Markdown Preview",
-      "markdownPreviewDesc": "Render markdown files instead of showing raw text"
+      "markdownPreviewDesc": "Render markdown files instead of showing raw text",
+      "autoView": "Automatic (by folder content)"
     },
     "ai": {
       "agent": "Agent",

@@ -304,7 +304,8 @@
       "autoFolderSizesDesc": "Otomatis menghitung dan menampilkan ukuran folder di tampilan detail",
       "preview": "Pratinjau",
       "markdownPreview": "Pratinjau Markdown",
-      "markdownPreviewDesc": "Render file markdown alih-alih menampilkan teks mentah"
+      "markdownPreviewDesc": "Render file markdown alih-alih menampilkan teks mentah",
+      "autoView": "Otomatis (sesuai isi folder)"
     },
     "ai": {
       "agent": "Agen",

@@ -59,6 +59,41 @@ const removeSavedViewMode = (path: string): void => {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
 };
 
+// ── Global default (Settings > File Explorer > Default View) ─────────────────
+
+/** Maps the settings value to a view mode. `null` means "auto-detect by folder content". */
+const SETTINGS_VIEW_MAP: Record<string, ViewMode | null> = {
+  auto: null,
+  grid: 'medium',
+  list: 'list',
+  details: 'details',
+};
+
+const getGlobalDefaultView = (): ViewMode | null => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+    if (raw) {
+      const parsed: unknown = JSON.parse(raw);
+      if (parsed && typeof parsed === 'object') {
+        const value = (parsed as Record<string, unknown>).defaultView;
+        if (typeof value === 'string' && value in SETTINGS_VIEW_MAP) {
+          return SETTINGS_VIEW_MAP[value];
+        }
+      }
+    }
+  } catch {
+    /* ignore parse errors — fall back to grid */
+  }
+  return 'medium';
+};
+
+/** View for a folder without a saved preference: the global default, or auto-detection. */
+const resolveDefaultView = (files: FileEntry[], currentPath: string): ViewMode => {
+  const globalDefault = getGlobalDefaultView();
+  if (globalDefault !== null) return globalDefault;
+  return files.length > 0 ? detectOptimalView(files, currentPath) : 'medium';
+};
+
 // ── Auto-detection logic ──────────────────────────────────────────────────────
 
 const MEDIA_EXTENSIONS = new Set([
@@ -135,18 +170,10 @@ export const useSmartView = (files: FileEntry[], currentPath: string): SmartView
       return;
     }
 
-    // Priority 2: Auto-detect based on contents (only when files are loaded)
-    if (files.length > 0 && !userOverrodeRef.current) {
-      const detected = detectOptimalView(files, currentPath);
-      setSuggestedView(detected);
-      setIsAutoDetected(true);
-      return;
-    }
-
-    // Priority 3: Global default
+    // Priority 2: Global default from settings ("auto" = detect by folder content)
     if (!userOverrodeRef.current) {
-      setSuggestedView('medium');
-      setIsAutoDetected(false);
+      setSuggestedView(resolveDefaultView(files, currentPath));
+      setIsAutoDetected(getGlobalDefaultView() === null && files.length > 0);
     }
   }, [currentPath, files]);
 
@@ -163,15 +190,9 @@ export const useSmartView = (files: FileEntry[], currentPath: string): SmartView
   const clearSavedView = useCallback(() => {
     removeSavedViewMode(currentPath);
     userOverrodeRef.current = false;
-    // Re-detect
-    if (files.length > 0) {
-      const detected = detectOptimalView(files, currentPath);
-      setSuggestedView(detected);
-      setIsAutoDetected(true);
-    } else {
-      setSuggestedView('medium');
-      setIsAutoDetected(false);
-    }
+    // Fall back to the global default
+    setSuggestedView(resolveDefaultView(files, currentPath));
+    setIsAutoDetected(getGlobalDefaultView() === null && files.length > 0);
   }, [currentPath, files]);
 
   return {
