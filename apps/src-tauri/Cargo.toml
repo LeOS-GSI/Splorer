@@ -85,3 +85,7 @@ winreg = "0.55"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]
+
+[patch.crates-io]
+# Fix: Linux-Drag lieferte keine Dateien an Zielprogramme (siehe vendor/drag/SPLORER-PATCH.md)
+drag = { path = "vendor/drag" }
