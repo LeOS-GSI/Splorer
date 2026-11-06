@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { TauriAPI, type FileEntry, type ConflictFileInfo } from '@/lib/tauri-api';
 import { PATH_SEPARATOR, detectSep } from '@/lib/constants';
+import i18n from '@/i18n';
 import { isEditableFile } from '@/lib/editable-files';
 import { formatError } from '@/lib/file-operation-helpers';
 import { showConfirmationToast, showInputToast } from '@/components/ui/Toast';
@@ -314,7 +315,7 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
           } catch (err) {
             toastRef.current({
               variant: 'destructive',
-              title: 'Open File Failed',
+              title: i18n.t('toast.openFileFailed'),
               description: formatError(err),
             });
           }
@@ -327,8 +328,8 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
       handleDelete: async (_selectedFiles: Set<string>, refetchFn: () => void) => {
         if (_selectedFiles.size === 0) return;
         const confirmed = await showConfirmationToast({
-          title: 'Move to Recycle Bin',
-          description: `Are you sure you want to move ${_selectedFiles.size} item(s) to the recycle bin?`,
+          title: i18n.t('toast.moveToBinTitle'),
+          description: i18n.t('toast.moveToBinConfirm', { count: _selectedFiles.size }),
           confirmText: 'Move to Recycle Bin',
           cancelText: 'Cancel',
         });
@@ -337,21 +338,21 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
           for (const fp of Array.from(_selectedFiles)) await TauriAPI.moveToTrash(fp);
           refetchFn();
           toastRef.current({
-            title: 'Moved to Recycle Bin',
-            description: `Moved ${_selectedFiles.size} item(s)`,
+            title: i18n.t('toast.movedToTrash'),
+            description: i18n.t('toast.movedItemsDesc', { count: _selectedFiles.size }),
           });
         } catch (err) {
           toastRef.current({
             variant: 'destructive',
-            title: 'Delete Failed',
+            title: i18n.t('toast.deleteFailed'),
             description: formatError(err),
           });
         }
       },
       handleCreateFolder: async (path: string, refetchFn: () => void) => {
         const folderName = await showInputToast({
-          title: 'Create New Folder',
-          description: 'Enter a name for the new folder',
+          title: i18n.t('toast.createNewFolder'),
+          description: i18n.t('toast.enterNewFolderName'),
           placeholder: 'Folder name',
           submitText: 'Create',
           cancelText: 'Cancel',
@@ -361,11 +362,14 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
           const fp = path + (path.endsWith(PATH_SEPARATOR) ? '' : PATH_SEPARATOR) + folderName;
           await TauriAPI.createDirRecursive(fp);
           refetchFn();
-          toastRef.current({ title: 'Folder Created', description: `Created "${folderName}"` });
+          toastRef.current({
+            title: i18n.t('toast.folderCreated'),
+            description: i18n.t('toast.createdName', { name: folderName }),
+          });
         } catch (err) {
           toastRef.current({
             variant: 'destructive',
-            title: 'Create Folder Failed',
+            title: i18n.t('toast.createFolderFailed'),
             description: formatError(err),
           });
         }
@@ -437,8 +441,8 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
       copyFiles: (filesToCopy: FileEntry[]) => {
         fileOps.setClipboard({ files: filesToCopy, operation: 'copy' });
         toast({
-          title: 'Copied',
-          description: `${filesToCopy.length} item${filesToCopy.length > 1 ? 's' : ''} yanked`,
+          title: i18n.t('toast.copied'),
+          description: i18n.t('toast.itemsYanked', { count: filesToCopy.length }),
         });
       },
       pasteFiles: () => {
@@ -453,10 +457,15 @@ export const useXplorerActions = (deps: XplorerActionsDeps) => {
       addBookmark: (path: string) => {
         const name = path.split(/[/\\]/).pop() || path;
         TauriAPI.addBookmark(path, name)
-          .then(() => toast({ title: 'Bookmarked', description: `Added "${name}" to bookmarks` }))
+          .then(() =>
+            toast({
+              title: i18n.t('toast.bookmarked'),
+              description: i18n.t('toast.bookmarkedDesc', { name }),
+            }),
+          )
           .catch((err: unknown) =>
             toast({
-              title: 'Bookmark failed',
+              title: i18n.t('toast.bookmarkFailed'),
               description: formatError(err),
               variant: 'destructive',
             }),

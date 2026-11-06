@@ -35,14 +35,22 @@ pub async fn get_user_directories() -> Result<UserDirectories, String> {
         dirs::home_dir().ok_or_else(|| "Could not determine home directory".to_string())?;
     let home = home_path.to_string_lossy().to_string();
 
+    // Use the real (localized) XDG user dirs, e.g. ~/Bilder on German systems.
+    // Fall back to the English default name if XDG has no entry.
+    let resolve = |xdg: Option<std::path::PathBuf>, fallback: &str| -> String {
+        xdg.unwrap_or_else(|| home_path.join(fallback))
+            .to_string_lossy()
+            .to_string()
+    };
+
     Ok(UserDirectories {
         home: home.clone(),
-        documents: home_path.join("Documents").to_string_lossy().to_string(),
-        downloads: home_path.join("Downloads").to_string_lossy().to_string(),
-        desktop: home_path.join("Desktop").to_string_lossy().to_string(),
-        pictures: home_path.join("Pictures").to_string_lossy().to_string(),
-        videos: home_path.join("Videos").to_string_lossy().to_string(),
-        music: home_path.join("Music").to_string_lossy().to_string(),
+        documents: resolve(dirs::document_dir(), "Documents"),
+        downloads: resolve(dirs::download_dir(), "Downloads"),
+        desktop: resolve(dirs::desktop_dir(), "Desktop"),
+        pictures: resolve(dirs::picture_dir(), "Pictures"),
+        videos: resolve(dirs::video_dir(), "Videos"),
+        music: resolve(dirs::audio_dir(), "Music"),
     })
 }
 

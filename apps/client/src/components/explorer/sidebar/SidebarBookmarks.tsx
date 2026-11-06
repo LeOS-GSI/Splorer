@@ -56,7 +56,7 @@ const SidebarBookmarks = ({
     <div
       className="border-xp-border border-b"
       role="region"
-      aria-label="Favorites"
+      aria-label={t('sidebar.favorites')}
       data-sidebar-section="favorites"
     >
       <button
@@ -133,8 +133,8 @@ const SidebarBookmarks = ({
                   <button
                     onClick={(e) => handleRemoveBookmark(bookmark.path, e)}
                     className="text-xp-text-muted hover:text-xp-red ml-2 flex-shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
-                    title="Remove bookmark"
-                    aria-label={`Remove bookmark for ${bookmark.name}`}
+                    title={t('sidebar.removeBookmark')}
+                    aria-label={t('sidebar.removeBookmarkFor', { name: bookmark.name })}
                   >
                     <span aria-hidden="true">×</span>
                   </button>

@@ -264,7 +264,7 @@ describe('LeftSidebar', () => {
         expect(screen.getByText('MyFolder')).toBeInTheDocument();
       });
 
-      const removeButton = screen.getByTitle('Remove bookmark');
+      const removeButton = screen.getByTitle('removeBookmark');
       fireEvent.click(removeButton);
 
       expect(TauriAPI.removeBookmark).toHaveBeenCalledWith('C:\\Users\\Test\\MyFolder');
@@ -308,7 +308,7 @@ describe('LeftSidebar', () => {
       render(<LeftSidebar {...mockProps} />);
 
       await waitFor(() => {
-        expect(screen.getByText('RECENT')).toBeInTheDocument();
+        expect(screen.getByText('recent')).toBeInTheDocument();
       });
     });
 
@@ -325,11 +325,11 @@ describe('LeftSidebar', () => {
       render(<LeftSidebar {...mockProps} />);
 
       await waitFor(() => {
-        expect(screen.getByText('RECENT')).toBeInTheDocument();
+        expect(screen.getByText('recent')).toBeInTheDocument();
       });
 
       // Click to expand the RECENT section
-      fireEvent.click(screen.getByText('RECENT'));
+      fireEvent.click(screen.getByText('recent'));
 
       await waitFor(() => {
         expect(screen.getByText('recent.txt')).toBeInTheDocument();
@@ -344,7 +344,7 @@ describe('LeftSidebar', () => {
       });
 
       const toggleBtn = await waitFor(() => {
-        const btn = screen.getByLabelText('Toggle recent files');
+        const btn = screen.getByLabelText('toggleRecent');
         expect(btn).toBeInTheDocument();
         return btn;
       });
@@ -358,7 +358,7 @@ describe('LeftSidebar', () => {
         expect(toggleBtn).toHaveAttribute('aria-expanded', 'true');
       });
 
-      expect(screen.getByText('No recent files')).toBeInTheDocument();
+      expect(screen.getByText('noRecentFiles')).toBeInTheDocument();
     });
   });
 

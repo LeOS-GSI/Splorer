@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef } from 'react';
 import type { VimMode } from '@/hooks/use-vim-mode';
 
@@ -157,7 +158,7 @@ const VimModeIndicator = React.memo(
     };
 
     return (
-      <div style={containerStyle} title={`Vim mode: ${label}`}>
+      <div style={containerStyle} title={i18n.t('explorer.vimMode', { mode: label })}>
         {/* Learning mode hints (shown above) */}
         {learningMode && (
           <div style={hintsStyle} aria-hidden="true">
@@ -166,7 +167,12 @@ const VimModeIndicator = React.memo(
         )}
 
         {/* Mode badge */}
-        <span style={badgeStyle} role="status" aria-label={`Vim mode: ${label}`} aria-live="polite">
+        <span
+          style={badgeStyle}
+          role="status"
+          aria-label={i18n.t('explorer.vimMode', { mode: label })}
+          aria-live="polite"
+        >
           <span style={dotStyle} aria-hidden="true" />
           {label}
         </span>
@@ -175,8 +181,8 @@ const VimModeIndicator = React.memo(
         {pendingKeys && (
           <span
             style={pendingStyle}
-            title={`Pending keys: ${pendingKeys}_`}
-            aria-label={`Pending key sequence: ${pendingKeys}`}
+            title={i18n.t('explorer.pendingKeys', { keys: pendingKeys })}
+            aria-label={i18n.t('explorer.pendingKeysAria', { keys: pendingKeys })}
           >
             {pendingKeys}_
           </span>

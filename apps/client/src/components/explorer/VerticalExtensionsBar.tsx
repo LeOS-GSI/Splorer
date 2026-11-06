@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useMemo, useSyncExternalStore } from 'react';
 import { useLocation } from 'wouter';
 import { extensionHost } from '@/lib/extension-host';
@@ -39,8 +40,8 @@ const VerticalExtensionsBar = ({
 
   // Core panels (always shown, part of the app core)
   const corePanels = [
-    { id: 'preview', icon: <Eye size={18} />, label: 'File Preview' },
-    { id: 'tokenizer', icon: <Search size={18} />, label: 'Content Search' },
+    { id: 'preview', icon: <Eye size={18} />, label: i18n.t('explorer.filePreview') },
+    { id: 'tokenizer', icon: <Search size={18} />, label: i18n.t('explorer.contentSearch') },
   ];
 
   // System panels (always shown, not extension-managed)

@@ -48,7 +48,10 @@
     "error": {
       "somethingWentWrong": "Etwas ist schiefgelaufen",
       "tryAgain": "Erneut versuchen"
-    }
+    },
+    "retry": "Erneut versuchen",
+    "saving": "Wird gespeichert …",
+    "tryAgain": "Erneut versuchen"
   },
   "updater": {
     "available": "Splorer {{version}} ist verfügbar",
@@ -72,7 +75,30 @@
     "drives": "LAUFWERKE",
     "volumes": "DATENTRÄGER",
     "fileTree": "ORDNERBAUM",
-    "navigateTo": "Zum Ordner {{label}} wechseln"
+    "navigateTo": "Zum Ordner {{label}} wechseln",
+    "recentFilesAria": "Zuletzt verwendete Dateien",
+    "toggleRecent": "Zuletzt verwendete Dateien ein-/ausklappen",
+    "noRecentFiles": "Keine zuletzt verwendeten Dateien",
+    "removeBookmark": "Lesezeichen entfernen",
+    "collectionsAria": "Filter",
+    "toggleCollections": "Filter ein-/ausklappen",
+    "createCollection": "Neuen Filter erstellen",
+    "collectionTooltip_one": "{{name}} – {{count}} Bedingung",
+    "collectionTooltip_other": "{{name}} – {{count}} Bedingungen",
+    "smartFolder": " (intelligenter Ordner)",
+    "quickFilter": " (Schnellfilter)",
+    "fileTreeAria": "Ordnerbaum",
+    "directoryTreeAria": "Verzeichnisbaum",
+    "quickAccessAria": "Schnellzugriff",
+    "tabsAria": "Seitenleisten-Tabs",
+    "fileExplorer": "Dateiansicht",
+    "searchFilesAria": "Dateien suchen (Strg+Umschalt+F)",
+    "searchShortcut": "Suchen (Strg+Umschalt+F)",
+    "sidebarAria": "Seitenleiste der Dateiansicht",
+    "extensionTabUnavailable": "Erweiterungs-Tab nicht verfügbar",
+    "removeBookmarkFor": "Lesezeichen für {{name}} entfernen",
+    "contentsOf": "Inhalt von {{name}}",
+    "rootDrive": "Laufwerk {{path}}"
   },
   "topBar": {
     "appTitle": "Splorer",
@@ -100,7 +126,8 @@
     "minimize": "Minimieren",
     "maximize": "Maximieren",
     "restore": "Wiederherstellen",
-    "closeWindow": "Fenster schließen"
+    "closeWindow": "Fenster schließen",
+    "windowControls": "Fenstersteuerung"
   },
   "statusBar": {
     "fileCount": "Dateianzahl und Auswahl",
@@ -196,7 +223,13 @@
     "bookmarkFolder": "Diesen Ordner als Lesezeichen speichern",
     "pinToSidebar": "An Seitenleiste anheften",
     "lockFile": "Datei sperren",
-    "unlockFile": "Datei entsperren"
+    "unlockFile": "Datei entsperren",
+    "bulkRenameShort": "Mehrfach umbenennen",
+    "wordCount": "Wörter zählen",
+    "calculateHash": "Prüfsumme berechnen",
+    "fileHash": "Prüfsumme",
+    "wordCountDesc": "{{words}} Wörter · {{lines}} Zeilen · {{chars}} Zeichen",
+    "fileHashDesc": "SHA-256: {{hash}} – in die Zwischenablage kopiert"
   },
   "drives": {
     "eject": "Auswerfen",
@@ -330,7 +363,9 @@
       "vimBookmark": "Ordner als Lesezeichen",
       "vimRepeatLast": "Letzte Aktion wiederholen",
       "vimClearExit": "Leeren / beenden",
-      "keyBindings": "Tastenbelegung"
+      "keyBindings": "Tastenbelegung",
+      "resetOne": "Auf Standard zurücksetzen",
+      "resetAll": "Alle Tastenkürzel auf Standard zurücksetzen"
     },
     "tokenizer": {
       "title": "Datei-Tokenizer",
@@ -499,7 +534,9 @@
       "sponsorTitle": "Splorer unterstützen",
       "sponsorDescription": "Splorer ist frei und quelloffen. Wenn er Ihnen nützlich ist, unterstützen Sie bitte das Projekt, damit die Entwicklung weitergehen kann. Jeder Beitrag, egal wie klein, hilft.",
       "sponsorButton": "Auf GitHub unterstützen",
-      "license": "Lizenziert unter AGPL-3.0. Mit Liebe gemacht."
+      "license": "Lizenziert unter AGPL-3.0. Mit Liebe gemacht.",
+      "repo": "GitHub-Repository",
+      "basedOn": "Basiert auf Xplorer von Justin Kimlim"
     }
   },
   "tour": {
@@ -566,7 +603,8 @@
     "recentFiles": "Zuletzt verwendete Dateien",
     "allCommands": "Alle Befehle",
     "commands": "Befehle",
-    "filesAndFolders": "Dateien & Ordner"
+    "filesAndFolders": "Dateien & Ordner",
+    "goTo": "Gehe zu {{path}}"
   },
   "operationBar": {
     "groupByDate": "Nach Datum gruppieren",
@@ -1085,6 +1123,136 @@
       "toastCopyCompleteDesc_other": "{{count}} Dateien kopiert.",
       "toastCopyWithErrorsTitle": "Kopieren mit Fehlern abgeschlossen",
       "toastCopyWithErrorsDesc": "{{copied}} kopiert, {{failed}} fehlgeschlagen: {{errors}}"
+    },
+    "pathBm": {
+      "labelPlaceholder": "Bezeichnung …",
+      "empty": "Leer",
+      "navigate": "öffnen",
+      "assign": "zuweisen",
+      "assignCurrent": "Aktuellen Pfad zuweisen",
+      "editLabel": "Bezeichnung bearbeiten"
+    },
+    "fileComparison": {
+      "failed": "Vergleich fehlgeschlagen",
+      "identical": "Die Dateien sind identisch",
+      "differ": "Die Dateien unterscheiden sich",
+      "linesAdded": "Zeilen hinzugefügt",
+      "linesRemoved": "Zeilen entfernt",
+      "linesModified": "Zeilen geändert",
+      "bytesDifferent": "Abweichende Bytes",
+      "noDiff": "Keine Unterschiede gefunden",
+      "theFilesIdentical": "Die Dateien sind identisch",
+      "sbsUnavailable": "Ansicht nebeneinander nicht verfügbar",
+      "sbsHint": "Diese Ansicht gibt es nur für Text-, Bild- und Videodateien",
+      "title": "Dateivergleich",
+      "comparing": "Dateien werden verglichen …",
+      "sideBySide": "Nebeneinander",
+      "unable": "Die ausgewählten Dateien können nicht verglichen werden",
+      "refresh": "Vergleich aktualisieren",
+      "typeBadge": "Vergleich: {{type}}",
+      "processedIn": "Verarbeitet in {{ms}} ms",
+      "algorithm": "Algorithmus: {{name}}",
+      "totalLines": "Zeilen gesamt: {{a}} / {{b}}"
+    },
+    "templates": {
+      "title": "Neu aus Vorlage",
+      "empty": "Keine Vorlagen in dieser Kategorie.",
+      "deleteCustom": "Eigene Vorlage löschen",
+      "deleteNamed": "Vorlage {{name}} löschen"
+    },
+    "password": {
+      "connection": "Verbindung:",
+      "server": "Server:",
+      "formAria": "Passwortformular",
+      "placeholder": "Passwort eingeben",
+      "remember": "Passwort für diese Sitzung merken",
+      "securityNotice": "Sicherheitshinweis",
+      "cancelAria": "Anmeldung abbrechen",
+      "securityText": "Passwörter werden sicher im Arbeitsspeicher gehalten und nur dann auf dem Datenträger gespeichert, wenn Sie die Verbindung ausdrücklich mit Passwort speichern."
+    },
+    "xtension": {
+      "requestedPermissions": "Angeforderte Berechtigungen",
+      "installing": "Wird installiert …"
+    },
+    "conflict": {
+      "replaceTitle": "Vorhandene Datei ersetzen",
+      "keepBothTitle": "Beide Dateien behalten",
+      "keepBoth": "Beide behalten",
+      "skipTitle": "Diese Datei überspringen",
+      "replaceAll": "Alle ersetzen",
+      "renameAll": "Alle umbenennen",
+      "skipAll": "Alle überspringen",
+      "alreadyHasFile": "Am Ziel gibt es bereits eine Datei mit dem Namen:",
+      "alreadyHasFolder": "Am Ziel gibt es bereits einen Ordner mit dem Namen:",
+      "overwriteFile": "Vorhandene Datei überschreiben",
+      "overwriteFolder": "Vorhandenen Ordner überschreiben"
+    },
+    "shortcuts": {
+      "unbound": "Nicht belegt",
+      "searchPlaceholder": "Tastenkürzel suchen …",
+      "loading": "Tastenkürzel werden geladen …",
+      "customize": "In den Einstellungen anpassen",
+      "count": "{{count}} Tastenkürzel"
+    },
+    "pasteRename": {
+      "emptyName": "Der Name darf nicht leer sein",
+      "exists": "Im Ordner gibt es bereits eine Datei mit diesem Namen",
+      "order": "Reihenfolge:",
+      "pasteNames": "Neue Namen einfügen (einer pro Zeile):",
+      "errors": "Fehler beim Umbenennen:",
+      "invalidChars": "Enthält ungültige Zeichen ({{chars}})",
+      "duplicateLine": "Doppelt mit Zeile {{line}}",
+      "extChange": "Dateiendung ändert sich von „{{from}}“ zu „{{to}}“",
+      "none": "(keine)",
+      "placeholder": "{{count}} Namen eingeben, einer pro Zeile …\n\nz. B.\nfoto-001.jpg\nfoto-002.jpg\nfoto-003.jpg",
+      "countMismatch": "Anzahl stimmt nicht: {{names}} für {{files}} eingefügt.",
+      "nameCount_one": "{{count}} Name",
+      "nameCount_other": "{{count}} Namen"
+    },
+    "rename": {
+      "currentName": "Aktueller Name",
+      "newName": "Neuer Name"
+    },
+    "layouts": {
+      "title": "Arbeitsbereich-Layouts",
+      "namePlaceholder": "Name des Layouts …",
+      "load": "Layout laden",
+      "toggleHint": "Strg+Umschalt+L zum Ein-/Ausblenden",
+      "saveCurrent": "Aktuelles speichern",
+      "empty": "Noch keine gespeicherten Layouts.",
+      "emptyHint": "Klicken Sie auf „Aktuelles speichern“, um die aktuelle Anordnung zu sichern."
+    },
+    "review": {
+      "title": "Erweiterung prüfen",
+      "verified": "Verifiziert – Signatur stimmt überein",
+      "unsigned": "Unsigniert – Diese Erweiterung wurde nicht verifiziert",
+      "noPermissions": "Diese Erweiterung fordert keine besonderen Berechtigungen an.",
+      "dangerousCount": "{{count}} gefährlich"
+    },
+    "tagCategories": {
+      "title": "Schlagwort-Kategorien",
+      "close": "Dialog „Schlagwort-Kategorien“ schließen",
+      "empty": "Noch keine Kategorien – fügen Sie unten eine hinzu.",
+      "cycleColor": "Klicken, um die Farbe zu wechseln",
+      "cycleColorAria": "Farben durchschalten",
+      "namePlaceholder": "Name der Kategorie …",
+      "noParent": "Keine übergeordnete (Hauptkategorie)",
+      "add": "Kategorie hinzufügen",
+      "editNamed": "Kategorie {{name}} bearbeiten",
+      "deleteNamed": "Kategorie {{name}} löschen"
+    },
+    "moveTree": {
+      "resolve": "Auflösen …",
+      "loadingDest": "Inhalt des Ziels wird geladen …",
+      "noData": "Keine Daten verfügbar",
+      "subtitle": "Vorschau der entstehenden Ordnerstruktur",
+      "sizeSummary": "{{incoming}} in Ordner mit {{existing}}"
+    },
+    "metadata": {
+      "empty": "Keine Metadatenfelder – klicken Sie unten auf „Feld hinzufügen“.",
+      "select": "Auswählen …",
+      "removeField": "Feld entfernen",
+      "addField": "Feld hinzufügen"
     }
   },
   "openWith": {
@@ -1206,7 +1374,15 @@
     "searchInContents": "In Dateiinhalten suchen",
     "searchingContents": "Dateiinhalte werden durchsucht …",
     "contentMatches": "Treffer im Inhalt ({{count}})",
-    "noContentResults": "Auch in den Dateiinhalten wurden keine Treffer gefunden"
+    "noContentResults": "Auch in den Dateiinhalten wurden keine Treffer gefunden",
+    "relevanceExact": "Exakt",
+    "relevanceSemantic": "Inhaltlich",
+    "chipToday": "Heute",
+    "chipYesterday": "Gestern",
+    "chipLastWeek": "Letzte Woche",
+    "chipLastMonth": "Letzter Monat",
+    "chipThisYear": "Dieses Jahr",
+    "matchLabel": "Treffer: "
   },
   "fileGrid": {
     "emptyFolder": "Dieser Ordner ist leer",
@@ -1311,7 +1487,94 @@
     "tokenizerIndexingError": "Fehler",
     "tokenizerIndexingErrorDesc": "Indizierung konnte nicht gestartet werden",
     "tokenizerReset": "Zurückgesetzt",
-    "tokenizerResetDesc": "Einstellungen auf Standard zurückgesetzt. Klicken Sie auf Speichern, um sie zu übernehmen."
+    "tokenizerResetDesc": "Einstellungen auf Standard zurückgesetzt. Klicken Sie auf Speichern, um sie zu übernehmen.",
+    "openFileFailed": "Öffnen fehlgeschlagen",
+    "openFileFailedDesc": "„{{name}}“ konnte nicht geöffnet werden: {{error}}",
+    "moveFailed": "Verschieben fehlgeschlagen",
+    "moveFailedDesc": "„{{name}}“ konnte nicht verschoben werden: {{error}}",
+    "moved": "Verschoben",
+    "movedFilesTo_one": "{{count}} Datei nach {{destination}} verschoben",
+    "movedFilesTo_other": "{{count}} Dateien nach {{destination}} verschoben",
+    "copyFailed": "Kopieren fehlgeschlagen",
+    "copyFailedDesc": "„{{name}}“ konnte nicht kopiert werden: {{error}}",
+    "copied": "Kopiert",
+    "cut": "Ausgeschnitten",
+    "copiedFilesTo_one": "{{count}} Datei nach {{destination}} kopiert",
+    "copiedFilesTo_other": "{{count}} Dateien nach {{destination}} kopiert",
+    "compressed": "Komprimiert",
+    "compressedDesc_one": "{{archive}} mit {{count}} Datei erstellt",
+    "compressedDesc_other": "{{archive}} mit {{count}} Dateien erstellt",
+    "compressionFailed": "Komprimieren fehlgeschlagen",
+    "deleteCrossTabTitle": "Alle tabübergreifend ausgewählten Dateien löschen",
+    "deleteCrossTabDesc": "Möchten Sie wirklich {{count}} Datei(en) aus {{tabs}} Tab(s) in den Papierkorb verschieben?",
+    "deleteFailed": "Löschen fehlgeschlagen",
+    "deleteFailedDesc": "„{{name}}“ konnte nicht gelöscht werden: {{error}}",
+    "deleteItemsFailedDesc": "Elemente konnten nicht gelöscht werden: {{error}}",
+    "deleteGenericFailedDesc": "Löschen fehlgeschlagen: {{error}}",
+    "deleted": "Gelöscht",
+    "movedToBin_one": "{{count}} Datei in den Papierkorb verschoben",
+    "movedToBin_other": "{{count}} Dateien in den Papierkorb verschoben",
+    "itemsDeleted_one": "{{count}} Element erfolgreich gelöscht",
+    "itemsDeleted_other": "{{count}} Elemente erfolgreich gelöscht",
+    "itemsMovedToTrash_one": "{{count}} Element in den Papierkorb verschoben",
+    "itemsMovedToTrash_other": "{{count}} Elemente in den Papierkorb verschoben",
+    "error": "Fehler",
+    "itemsCopiedToClipboard_one": "{{count}} Element in die Zwischenablage kopiert",
+    "itemsCopiedToClipboard_other": "{{count}} Elemente in die Zwischenablage kopiert",
+    "itemsCutToClipboard_one": "{{count}} Element ausgeschnitten",
+    "itemsCutToClipboard_other": "{{count}} Elemente ausgeschnitten",
+    "itemsCopied_one": "{{count}} Element kopiert",
+    "itemsCopied_other": "{{count}} Elemente kopiert",
+    "itemsCut_one": "{{count}} Element ausgeschnitten",
+    "itemsCut_other": "{{count}} Elemente ausgeschnitten",
+    "itemsYanked_one": "{{count}} Element kopiert",
+    "itemsYanked_other": "{{count}} Elemente kopiert",
+    "nothingToPaste": "Nichts zum Einfügen",
+    "clipboardEmpty": "Die Zwischenablage ist leer",
+    "deleteFileTitle": "Datei löschen",
+    "deleteFileConfirm": "Möchten Sie „{{name}}“ wirklich löschen?",
+    "renameTitle": "Umbenennen",
+    "enterNewName": "Neuen Namen eingeben:",
+    "newFolderTitle": "Neuer Ordner",
+    "enterFolderName": "Ordnernamen eingeben:",
+    "newFileTitle": "Neue Datei",
+    "enterFileName": "Dateinamen eingeben:",
+    "createNewFolder": "Neuen Ordner erstellen",
+    "enterNewFolderName": "Geben Sie einen Namen für den neuen Ordner ein",
+    "createdName": "„{{name}}“ erstellt",
+    "duplicateFailed": "Duplizieren fehlgeschlagen",
+    "duplicateFailedDesc": "„{{name}}“ konnte nicht dupliziert werden: {{error}}",
+    "duplicated": "Dupliziert",
+    "duplicatedDesc_one": "{{count}} Element dupliziert",
+    "duplicatedDesc_other": "{{count}} Elemente dupliziert",
+    "fileLocked": "Datei gesperrt",
+    "fileLockedDesc": "„{{name}}“ ist jetzt schreibgeschützt",
+    "lockFailed": "Sperren fehlgeschlagen",
+    "lockFailedDesc": "„{{name}}“ konnte nicht gesperrt werden: {{error}}",
+    "fileUnlocked": "Datei entsperrt",
+    "fileUnlockedDesc": "„{{name}}“ ist jetzt beschreibbar",
+    "unlockFailed": "Entsperren fehlgeschlagen",
+    "unlockFailedDesc": "„{{name}}“ konnte nicht entsperrt werden: {{error}}",
+    "moveToBinTitle": "In den Papierkorb verschieben",
+    "moveToBinConfirmOne": "Möchten Sie dieses Element wirklich in den Papierkorb verschieben?",
+    "moveToBinConfirm": "Möchten Sie {{count}} Element(e) wirklich in den Papierkorb verschieben?",
+    "movedItemsDesc": "{{count}} Element(e) verschoben",
+    "undo": "Rückgängig",
+    "undoFailed": "Rückgängig machen fehlgeschlagen",
+    "redo": "Wiederholen",
+    "redoFailed": "Wiederholen fehlgeschlagen",
+    "savedToBookmarkSlot": "Als Lesezeichen {{slot}} gespeichert",
+    "bookmarkSlot": "Lesezeichen {{slot}}",
+    "bookmarked": "Lesezeichen gesetzt",
+    "bookmarkedDesc": "„{{name}}“ zu den Lesezeichen hinzugefügt",
+    "bookmarkFailed": "Lesezeichen konnte nicht gesetzt werden",
+    "pasteWithErrors": "Einfügen mit Fehlern abgeschlossen",
+    "pasteMoved_one": "{{count}} Element verschoben",
+    "pasteMoved_other": "{{count}} Elemente verschoben",
+    "pasteCopied_one": "{{count}} Element kopiert",
+    "pasteCopied_other": "{{count}} Elemente kopiert",
+    "pasteErrorsMoved": "{{ok}} verschoben, {{failed}} fehlgeschlagen: {{errors}}",
+    "pasteErrorsCopied": "{{ok}} kopiert, {{failed}} fehlgeschlagen: {{errors}}"
   },
   "extensions": {
     "devMode": "DEV",
@@ -1601,7 +1864,9 @@
     "terminal": {
       "placeholder": "Befehl eingeben …",
       "clearTitle": "Leeren („clear“ eingeben)",
-      "clear": "Leeren"
+      "clear": "Leeren",
+      "newTerminal": "Neues Terminal",
+      "tabLabel": "Terminal {{n}}"
     },
     "recommendations": {
       "tabSimilar": "Ähnlich",
@@ -1628,6 +1893,144 @@
       "copyReport": "Bericht kopieren",
       "confirmMoveToTrash_one": "{{count}} doppelte Datei in den Papierkorb verschieben?",
       "confirmMoveToTrash_other": "{{count}} doppelte Dateien in den Papierkorb verschieben?"
+    },
+    "common": {
+      "sizeLabel": "Größe:",
+      "typeLabel": "Typ:",
+      "modifiedLabel": "Geändert:",
+      "relevanceExact": "Exakt",
+      "relevanceSemantic": "Inhaltlich",
+      "noRecentFiles": "Keine zuletzt verwendeten Dateien",
+      "closePanel": "Bereich schließen",
+      "refreshStats": "Statistik aktualisieren",
+      "collapseAll": "Alle Abschnitte einklappen",
+      "relevanceFuzzy": "Unscharf",
+      "relevanceMetadata": "Metadaten"
+    },
+    "storage": {
+      "analyzing": "Speicher wird analysiert …",
+      "analyze": "Speicher analysieren",
+      "title": "Speicheranalyse",
+      "refresh": "Analyse aktualisieren",
+      "diskUsage": "Speicherbelegung",
+      "fileTypes": "Dateitypen (Top 10 nach Größe)",
+      "sizeDistribution": "Größenverteilung",
+      "scanned": "{{files}} Dateien / {{dirs}} Ordner durchsucht",
+      "processed": "{{size}} verarbeitet",
+      "failed": "Analyse fehlgeschlagen: {{error}}",
+      "free": "Frei: {{percent}} % ({{size}})",
+      "files": "{{n}} Dateien"
+    },
+    "preview": {
+      "failedToLoad": "Vorschau konnte nicht geladen werden",
+      "error": "Vorschaufehler",
+      "failed": "Vorschau fehlgeschlagen",
+      "noPreview": "Keine Vorschau verfügbar",
+      "doubleClickOpen": "Doppelklick zum Öffnen",
+      "folderContents": "Ordnerinhalt",
+      "totalSize": "Gesamtgröße:",
+      "files": "Dateien:",
+      "folders": "Ordner:",
+      "totalItems": "Elemente gesamt:",
+      "calculating": "Größe wird berechnet …",
+      "clickCalculate": "Klicken, um die Ordnergröße zu berechnen",
+      "noFileSelected": "Keine Datei für die Vorschau ausgewählt",
+      "selectFile": "Wählen Sie eine Datei für die Vorschau",
+      "mimeType": "MIME-Typ:",
+      "category": "Kategorie:",
+      "path": "Pfad:",
+      "copyPath": "Pfad in die Zwischenablage kopieren",
+      "previewOf": "Vorschau von {{name}}",
+      "showProps": "Dateieigenschaften anzeigen",
+      "hideProps": "Dateieigenschaften ausblenden"
+    },
+    "performance": {
+      "title": "Leistungsdaten",
+      "fileOrganizer": "Dateiorganisation",
+      "systemStats": "Systemstatistik",
+      "totalSize": "Gesamtgröße",
+      "foldersCached": "Ordner im Cache",
+      "jsHeap": "JS-Speichernutzung",
+      "indexingStatus": "Indizierungsstatus",
+      "searchTokenizer": "Such-Tokenizer",
+      "indexedFiles": "Indizierte Dateien",
+      "totalTokens": "Tokens gesamt",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "recentOps": "Letzte Vorgänge",
+      "noRecentOps": "Keine letzten Vorgänge",
+      "cleanup": "Aufräumvorschläge",
+      "scanning": "Ordner wird durchsucht …",
+      "duplicateCleanup": "Duplikate bereinigen",
+      "noDuplicates": "Keine Duplikate in diesem Ordner gefunden.",
+      "typeDistribution": "Verteilung nach Typ",
+      "largestFiles": "Größte Dateien",
+      "oldestFiles": "Älteste Dateien",
+      "projectDirSkipped": "Dies ist ein Projektordner. Die Dateiorganisation wird übersprungen, um die Projektstruktur nicht zu beschädigen.",
+      "previewMoves_one": "Vorschau: {{count}} Datei wird verschoben",
+      "previewMoves_other": "Vorschau: {{count}} Dateien werden verschoben",
+      "groups_one": "{{count}} Gruppe",
+      "groups_other": "{{count}} Gruppen",
+      "wasted": "{{size}} verschwendet"
+    },
+    "previewNav": {
+      "prevTitle": "Vorherige Datei (Pfeil links)",
+      "prev": "Vorherige Datei",
+      "nextTitle": "Nächste Datei (Pfeil rechts)",
+      "next": "Nächste Datei",
+      "compareWithPrev": "Mit vorheriger Datei vergleichen",
+      "compare": "Vergleichen",
+      "recent": "Zuletzt angesehene Dateien",
+      "recentShort": "Zuletzt"
+    },
+    "bottom": {
+      "tabsAria": "Tabs des unteren Bereichs",
+      "closeShortcut": "Schließen (Strg+J)",
+      "close": "Unteren Bereich schließen",
+      "noExternalChanges": "Keine externen Dateiänderungen erkannt",
+      "output": "Ausgabe"
+    },
+    "clipboard": {
+      "empty": "Kein Zwischenablage-Verlauf",
+      "emptyHint": "Kopieren oder schneiden Sie Dateien aus, um sie hier zu sehen",
+      "clear": "Zwischenablage-Verlauf leeren",
+      "pasteHereTitle": "Diese Dateien in den aktuellen Ordner einfügen",
+      "pasteHere": "Hier einfügen"
+    },
+    "activity": {
+      "showInExplorer": "Im Ordner anzeigen",
+      "clear": "Aktivitätsprotokoll leeren",
+      "paused": "Protokoll pausiert – Einträge werden weiter gesammelt",
+      "empty": "Noch keine Aktivitäten aufgezeichnet",
+      "from": "von {{name}}"
+    },
+    "extensions": {
+      "uninstallFailed": "Deinstallation fehlgeschlagen",
+      "validationFailed": "Prüfung fehlgeschlagen",
+      "installFailed": "Installation fehlgeschlagen",
+      "themeManager": "Design-Verwaltung",
+      "installFromFolder": "Erweiterung aus Ordner installieren",
+      "uninstallFailedDesc": "Erweiterung konnte nicht deinstalliert werden: {{error}}",
+      "validationFailedDesc": "Erweiterung konnte nicht geprüft werden: {{error}}",
+      "installFailedDesc": "Erweiterung konnte nicht installiert werden: {{error}}"
+    },
+    "undo": {
+      "undoThis": "Diesen rückgängig machen",
+      "undoThisAndAfter": "Diesen + alle danach rückgängig machen",
+      "redoThis": "Diesen wiederholen",
+      "showDetails": "Details anzeigen",
+      "replay": "Auf Auswahl anwenden",
+      "clearAbove": "Verlauf darüber löschen",
+      "replayDesc": "Derselbe Vorgang wird auf die aktuell ausgewählten Dateien angewendet:",
+      "operation": "Vorgang:",
+      "destination": "Ziel:",
+      "undoShortcut": "Rückgängig (Strg+Z)",
+      "redoShortcut": "Wiederholen (Strg+Y)",
+      "clearAll": "Gesamten Verlauf löschen",
+      "currentPosition": "Aktuelle Position",
+      "empty": "Keine Vorgänge im Verlauf",
+      "bulkDesc": "Sammelvorgang {{operation}} ({{count}} Dateien)",
+      "duration": "Dauer: {{duration}} – {{files}}",
+      "replayOp": "{{operation}} erneut anwenden"
     }
   },
   "splitView": {
@@ -1648,7 +2051,9 @@
     "splitDown": "Unten teilen",
     "maximizePane": "Bereich maximieren",
     "restorePane": "Bereich wiederherstellen",
-    "closePane": "Bereich schließen"
+    "closePane": "Bereich schließen",
+    "loadingEditor": "Editor wird geladen …",
+    "selectedCount": "{{count}} ausgewählt"
   },
   "comparison": {
     "sideBySide": "Nebeneinander",
@@ -1667,7 +2072,13 @@
     "deletions_one": "Löschung",
     "deletions_other": "Löschungen",
     "modifications_one": "Änderung",
-    "modifications_other": "Änderungen"
+    "modifications_other": "Änderungen",
+    "marked": "Datei zum Vergleich vorgemerkt",
+    "error": "Vergleichsfehler",
+    "markedDesc": "{{name}} ist zum Vergleich bereit",
+    "expandUnchanged": "Klicken, um {{count}} unveränderte Zeilen aufzuklappen",
+    "showUnchanged_one": "{{count}} unveränderte Zeile anzeigen",
+    "showUnchanged_other": "{{count}} unveränderte Zeilen anzeigen"
   },
   "previews": {
     "audio": {
@@ -1682,7 +2093,8 @@
     "text": {
       "title": "Textvorschau",
       "loading": "Text wird geladen …",
-      "cannotPreview": "Textvorschau nicht möglich"
+      "cannotPreview": "Textvorschau nicht möglich",
+      "failedToLoad": "Textdatei konnte nicht geladen werden"
     },
     "compare": {
       "comparing2Files": "Vergleich von 2 Dateien",
@@ -1706,7 +2118,59 @@
       "metaFileType": "Dateityp",
       "metaMimeType": "MIME-Typ",
       "metaNone": "(keine)",
-      "metaUnknown": "(unbekannt)"
+      "metaUnknown": "(unbekannt)",
+      "failedToRead": "Datei(en) konnten nicht gelesen werden"
+    },
+    "video": {
+      "loading": "Video wird geladen …",
+      "cannotPreview": "Videovorschau nicht möglich",
+      "formatNotSupported": "Das Videoformat wird möglicherweise nicht unterstützt"
+    },
+    "csv": {
+      "failedToLoad": "CSV-Datei konnte nicht geladen werden",
+      "title": "CSV-Vorschau",
+      "loading": "CSV wird geladen …",
+      "cannotPreview": "CSV-Vorschau nicht möglich",
+      "first100": "Die ersten 100 Zeilen werden angezeigt. Doppelklick öffnet die ganze Datei.",
+      "noData": "Keine Daten in der CSV-Datei gefunden"
+    },
+    "code": {
+      "failedToLoad": "Code-Datei konnte nicht geladen werden",
+      "cannotPreview": "Codevorschau nicht möglich"
+    },
+    "json": {
+      "failedToLoad": "JSON-Datei konnte nicht geladen werden",
+      "title": "JSON-Vorschau",
+      "loading": "JSON wird geladen …",
+      "cannotPreview": "JSON-Vorschau nicht möglich"
+    },
+    "markdown": {
+      "failedToLoad": "Markdown-Datei konnte nicht geladen werden",
+      "title": "Markdown-Vorschau",
+      "loading": "Markdown wird geladen …",
+      "cannotPreview": "Markdown-Vorschau nicht möglich"
+    },
+    "image": {
+      "cannotPreview": "Bildvorschau nicht möglich",
+      "formatNotSupported": "Das Bildformat wird möglicherweise nicht unterstützt"
+    },
+    "pdf": {
+      "loading": "PDF wird geladen …",
+      "cannotPreview": "PDF-Vorschau nicht möglich",
+      "pageOf": "Seite {{page}} von {{total}}"
+    },
+    "document": {
+      "failedToLoad": "Dokument konnte nicht geladen werden",
+      "title": "Dokumentvorschau",
+      "loading": "Dokument wird geladen …",
+      "cannotPreview": "Dokumentvorschau nicht möglich"
+    },
+    "spreadsheet": {
+      "failedToLoad": "Tabelle konnte nicht geladen werden",
+      "title": "Tabellenvorschau",
+      "loading": "Tabelle wird geladen …",
+      "cannotPreview": "Tabellenvorschau nicht möglich",
+      "first50": "Die ersten 50 Zeilen werden angezeigt. Doppelklick öffnet die ganze Datei."
     }
   },
   "explorer": {
@@ -1792,11 +2256,378 @@
       "pressKey": "Drücken Sie",
       "orKey": "oder",
       "toClose": "zum Schließen"
-    }
+    },
+    "fileTreeAria": "Ordnerbaum",
+    "renameFileAria": "Datei umbenennen",
+    "togglePanel": "Bereich ein-/ausblenden (Strg+Umschalt+B)",
+    "toggleTerminal": "Terminal ein-/ausblenden (Strg+J)",
+    "sizeLabel": "Größe:",
+    "modifiedLabel": "Geändert:",
+    "typeLabel": "Typ:",
+    "extensionLabel": "Endung:",
+    "emptyFolder": "Leerer Ordner",
+    "extExample": "jpg, png, gif",
+    "filePreview": "Dateivorschau",
+    "contentSearch": "Inhaltssuche",
+    "folderColorLegend": "Legende der Ordnerfarben",
+    "galleryViewAria": "Galerieansicht",
+    "noFiles": "Keine Dateien",
+    "readOnly": "Schreibgeschützt",
+    "crossTabSelected": "Für tabübergreifenden Vorgang ausgewählt",
+    "fileListAria": "Dateiliste",
+    "colorLegendItem_one": "{{label}}: {{count}} Ordner",
+    "colorLegendItem_other": "{{label}}: {{count}} Ordner",
+    "clickToClearFilter": " (klicken, um Filter zu entfernen)",
+    "vimMode": "Vim-Modus: {{mode}}",
+    "pendingKeys": "Ausstehende Tasten: {{keys}}_",
+    "pendingKeysAria": "Ausstehende Tastenfolge: {{keys}}"
   },
   "search": {
     "indexSearching": "Index wird durchsucht …",
     "aiSearchTerms": "Suchbegriffe",
-    "aiMatchedItems": "Treffer aus Ordner"
+    "aiMatchedItems": "Treffer aus Ordner",
+    "filterAll": "Alle",
+    "filterFiles": "Dateien",
+    "filterFolders": "Ordner",
+    "filterDocuments": "Dokumente",
+    "filterImages": "Bilder",
+    "filterCode": "Code",
+    "filterVideos": "Videos",
+    "filterAudio": "Audio",
+    "filterArchives": "Archive",
+    "anyTime": "Beliebiger Zeitpunkt",
+    "today": "Heute",
+    "last7": "Letzte 7 Tage",
+    "last30": "Letzte 30 Tage",
+    "thisYear": "Dieses Jahr",
+    "customRange": "Eigener Zeitraum",
+    "anySize": "Beliebige Größe",
+    "extPlaceholder": "z. B. .pdf, .odt, .jpg",
+    "searching": "Wird gesucht …",
+    "searchingFileContents": "Dateiinhalte werden durchsucht …",
+    "resultsAria": "Suchergebnisse",
+    "tryShorter": "Versuchen Sie einen kürzeren oder anderen Suchbegriff",
+    "nameSearchTitle": "Dateien im aktuellen Ordnerbaum nach Namen suchen",
+    "indexSearchTitle": "Indexsuche: durchsucht alle indizierten Ordner und versteht Anfragen wie „große Bilder letzte Woche“",
+    "clearSearch": "Suche leeren",
+    "typeToSearch": "Tippen, um Dateien und Ordner zu suchen",
+    "togglePanelHint": "Strg+Umschalt+F blendet diesen Bereich ein/aus",
+    "indexSearch": "Indexsuche",
+    "searchingContents": "Inhalte werden durchsucht …",
+    "searchInContents": "In Dateiinhalten suchen",
+    "searchIndexInstead": "Stattdessen den Index durchsuchen",
+    "relevanceExact": "Exakt",
+    "relevanceSemantic": "Inhaltlich",
+    "contentMatchesFound_one": "{{count}} Treffer im Inhalt gefunden",
+    "contentMatchesFound_other": "{{count}} Treffer im Inhalt gefunden",
+    "noFilesMatching": "Keine Dateien passend zu „{{query}}“",
+    "foundInFolders": "{{files}} in {{folders}} gefunden",
+    "fileCount_one": "{{count}} Datei",
+    "fileCount_other": "{{count}} Dateien",
+    "folderCount_one": "{{count}} Ordner",
+    "folderCount_other": "{{count}} Ordnern",
+    "totalSuffix": " ({{count}} insgesamt)"
+  },
+  "viewModes": {
+    "large": "Große Symbole",
+    "medium": "Mittelgroße Symbole",
+    "small": "Kleine Symbole",
+    "tiles": "Kacheln",
+    "content": "Inhaltsansicht",
+    "list": "Listenansicht",
+    "details": "Detailansicht",
+    "tree": "Baumansicht",
+    "gallery": "Galerie",
+    "column": "Spaltenansicht"
+  },
+  "sortOptions": {
+    "name": "Name",
+    "dateModified": "Änderungsdatum",
+    "dateCreated": "Erstellungsdatum",
+    "size": "Größe",
+    "type": "Typ",
+    "extension": "Dateiendung"
+  },
+  "collections": {
+    "builtin": {
+      "builtin-large-files": "Große Dateien",
+      "builtin-recent-files": "Kürzlich geändert",
+      "builtin-images": "Bilder",
+      "builtin-documents": "Dokumente",
+      "builtin-code-files": "Quellcode"
+    }
+  },
+  "ui": {
+    "copyToClipboard": "In die Zwischenablage kopieren",
+    "saveAsFile": "Als Datei speichern",
+    "replaceSelectedCode": "Ausgewählten Code im Editor ersetzen",
+    "loadingFiles": "Dateien werden geladen",
+    "loadingPreview": "Vorschau wird geladen",
+    "loadingSidebar": "Seitenleiste wird geladen",
+    "dismissNotification": "Benachrichtigung schließen",
+    "searchIndex": "Suchindex",
+    "changes": {
+      "new": "+{{count}} neu",
+      "deleted": "−{{count}} gelöscht",
+      "modified": "~{{count}} geändert"
+    },
+    "indexedCount": "{{n}} indiziert"
+  },
+  "shortcutCategories": {
+    "fileOperations": "Dateivorgänge",
+    "navigation": "Navigation",
+    "selection": "Auswahl",
+    "search": "Suche & Filter",
+    "view": "Ansicht & Layout",
+    "application": "Anwendung",
+    "terminal": "Terminal",
+    "extensions": "Erweiterungen"
+  },
+  "bulkRename": {
+    "presets": {
+      "addPrefix": "Präfix hinzufügen",
+      "addPrefixDesc": "Text vor dem Dateinamen einfügen",
+      "addSuffix": "Suffix hinzufügen",
+      "addSuffixDesc": "Text vor der Dateiendung einfügen",
+      "replace": "Text ersetzen",
+      "replaceDesc": "Im Dateinamen suchen und ersetzen",
+      "numbering": "Fortlaufende Nummerierung",
+      "numberingDesc": "Umbenennen in praefix_001, praefix_002 …"
+    },
+    "templates": {
+      "camel": "Dateinamen in camelCase umwandeln",
+      "snake": "Dateinamen in snake_case umwandeln",
+      "kebab": "Dateinamen in kebab-case umwandeln",
+      "upper": "Dateinamen in GROSSBUCHSTABEN umwandeln",
+      "lower": "Dateinamen in kleinbuchstaben umwandeln",
+      "datePrefix": "Datum voranstellen",
+      "datePrefixDesc": "JJJJ-MM-TT vor den Dateinamen setzen",
+      "removeSpaces": "Leerzeichen entfernen",
+      "removeSpacesDesc": "Leerzeichen durch Unterstriche ersetzen"
+    },
+    "regex": {
+      "all": "Alles erfassen",
+      "oneOrMore": "Ein oder mehr Zeichen erfassen",
+      "digits": "Eine oder mehr Ziffern",
+      "word": "Wortzeichen",
+      "whitespace": "Leerraumzeichen",
+      "start": "Anfang des Namens",
+      "end": "Ende des Namens",
+      "dot": "Punkt (wörtlich)",
+      "nonDot": "Zeichen außer Punkt",
+      "ext": "Dateiendung",
+      "beforeDot": "Name vor dem ersten Punkt",
+      "upper": "Großbuchstabe"
+    },
+    "form": {
+      "templates": "Mustervorlagen",
+      "presets": "Schnellvorlagen",
+      "pattern": "Muster (Regex)",
+      "patternHint": "Gilt nur für den Dateinamen (nicht den ganzen Pfad). Verwendet Regex-Syntax.",
+      "regexRef": "Regex-Kurzreferenz",
+      "regexRefHint": "Klicken Sie auf ein Muster, um es ins Suchfeld einzufügen.",
+      "patternPlaceholder": "z. B. ^(.+)\\.txt$ oder suchtext",
+      "replacementPlaceholder": "z. B. $1_umbenannt.txt oder neuer_name"
+    },
+    "preview": {
+      "conflict": "Namenskonflikt – mehrere Dateien hätten denselben Namen",
+      "willRename": "Wird umbenannt",
+      "noChange": "Keine Änderung",
+      "changed": "{{count}} geändert",
+      "unchanged": "{{count}} unverändert"
+    },
+    "toast": {
+      "previewFailed": "Vorschau fehlgeschlagen",
+      "patternRequired": "Muster erforderlich",
+      "patternRequiredDesc": "Bitte geben Sie ein Regex-Muster ein oder wählen Sie eine Vorlage.",
+      "complete": "Mehrfach-Umbenennung abgeschlossen",
+      "partial": "Mehrfach-Umbenennung teilweise abgeschlossen",
+      "failed": "Mehrfach-Umbenennung fehlgeschlagen",
+      "completeDesc_one": "{{count}} Datei erfolgreich umbenannt.",
+      "completeDesc_other": "{{count}} Dateien erfolgreich umbenannt.",
+      "partialDesc": "{{ok}} erfolgreich, {{failed}} fehlgeschlagen."
+    }
+  },
+  "extPerm": {
+    "file_write": {
+      "label": "Dateien schreiben",
+      "desc": "Dateien auf Ihrem Computer erstellen und ändern"
+    },
+    "file_delete": {
+      "label": "Dateien löschen",
+      "desc": "Dateien endgültig von Ihrem Computer löschen"
+    },
+    "file_execute": {
+      "label": "Programme ausführen",
+      "desc": "Ausführbare Dateien und Skripte auf Ihrem Computer starten"
+    },
+    "native_invoke": {
+      "label": "Nativer Code",
+      "desc": "Nativen Code mit vollem Systemzugriff ausführen"
+    },
+    "system_commands": {
+      "label": "Systembefehle",
+      "desc": "Shell-Befehle auf Ihrem System ausführen"
+    },
+    "system_network": {
+      "label": "Netzwerkzugriff",
+      "desc": "Daten über das Internet senden und empfangen"
+    },
+    "directory_delete": {
+      "label": "Ordner löschen",
+      "desc": "Ordner samt Inhalt löschen"
+    },
+    "ui_modify": {
+      "label": "Oberfläche ändern",
+      "desc": "Aussehen und Layout der App ändern"
+    },
+    "system_info": {
+      "label": "Systeminformationen",
+      "desc": "Informationen über Betriebssystem und Hardware lesen"
+    },
+    "xplorer_settings": {
+      "label": "App-Einstellungen",
+      "desc": "Splorer-Einstellungen lesen und ändern"
+    },
+    "xplorer_extensions": {
+      "label": "Erweiterungen verwalten",
+      "desc": "Andere Erweiterungen installieren, deaktivieren oder entfernen"
+    },
+    "file_read": {
+      "label": "Dateien lesen",
+      "desc": "Dateiinhalte auf Ihrem Computer lesen"
+    },
+    "directory_create": {
+      "label": "Ordner erstellen",
+      "desc": "Neue Ordner erstellen"
+    },
+    "directory_list": {
+      "label": "Ordnerinhalte auflisten",
+      "desc": "Dateien in Ordnern anzeigen"
+    },
+    "ui_panels": {
+      "label": "Bereiche hinzufügen",
+      "desc": "Eigene Bereiche zur Seitenleiste hinzufügen"
+    },
+    "ui_notifications": {
+      "label": "Benachrichtigungen anzeigen",
+      "desc": "Hinweise und Meldungen anzeigen"
+    },
+    "ui_clipboard": {
+      "label": "Zwischenablage-Zugriff",
+      "desc": "Zwischenablage lesen und schreiben"
+    },
+    "xplorer_themes": {
+      "label": "Designs registrieren",
+      "desc": "Eigene Farbdesigns hinzufügen"
+    },
+    "xplorer_history": {
+      "label": "Navigationsverlauf",
+      "desc": "Navigationsverlauf lesen"
+    }
+  },
+  "folderColors": {
+    "urgent": "Dringend",
+    "important": "Wichtig",
+    "inProgress": "In Arbeit",
+    "active": "Aktiv",
+    "archive": "Archiv",
+    "personal": "Persönlich",
+    "review": "Prüfen",
+    "inactive": "Inaktiv"
+  },
+  "validation": {
+    "nameEmpty": "Der Name darf nicht leer sein",
+    "nameTrailing": "Der Name darf nicht mit einem Punkt oder Leerzeichen enden",
+    "invalidChars": "Der Name enthält ungültige Zeichen: {{chars}}",
+    "reserved": "„{{name}}“ ist ein reservierter Systemname",
+    "tooLong": "Der Name ist zu lang ({{length}}/255 Zeichen)",
+    "exists": "„{{name}}“ existiert in diesem Ordner bereits"
+  },
+  "cleanup": {
+    "emptyTrash": "Papierkorb leeren",
+    "showLarge": "Große Dateien anzeigen",
+    "tagFiles": "Dateien verschlagworten",
+    "trashTitle": "Papierkorb: {{count}} Elemente",
+    "trashDesc_one": "Der Papierkorb enthält {{count}} Element",
+    "trashDesc_other": "Der Papierkorb enthält {{count}} Elemente",
+    "largeTitle": "Große Dateien: {{count}}",
+    "largeDesc": "Dateien größer als 100 MB in diesem Ordner",
+    "untaggedTitle": "Dateien ohne Schlagwort: {{n}}",
+    "untaggedDesc": "Dateien ohne Schlagwörter in diesem Ordner"
+  },
+  "advSel": {
+    "updated": "Auswahl aktualisiert",
+    "noneFound": "Keine Dateien gefunden",
+    "noneInDate": "Keine Dateien im gewählten Zeitraum gefunden",
+    "noneInSize": "Keine Dateien im gewählten Größenbereich gefunden",
+    "inverted": "Auswahl umgekehrt",
+    "title": "Erweiterte Auswahl",
+    "byType": "Nach Dateityp auswählen …",
+    "byDate": "Nach Datum auswählen …",
+    "bySize": "Nach Größe auswählen …",
+    "invert": "Auswahl umkehren",
+    "allImages": "Alle Bilder auswählen",
+    "allDocuments": "Alle Dokumente auswählen",
+    "allVideos": "Alle Videos auswählen",
+    "allAudio": "Alle Audiodateien auswählen",
+    "dateTitle": "Nach Datum auswählen",
+    "oldest": "Älteste Datei:",
+    "newest": "Neueste Datei:",
+    "quick": "Schnellauswahl",
+    "custom": "Eigener Bereich",
+    "matching": "Passende Dateien:",
+    "sizeTitle": "Nach Größe auswählen",
+    "total": "Dateien gesamt:",
+    "smallest": "Kleinste:",
+    "largest": "Größte:",
+    "average": "Durchschnitt:",
+    "min": "Min.:",
+    "max": "Max.:",
+    "noLimit": "Keine Grenze",
+    "noMax": "Keine Obergrenze",
+    "typeTitle": "Nach Dateityp auswählen",
+    "customExt": "Eigene Dateiendung",
+    "extPlaceholder": "z. B. txt oder .md",
+    "clearAll": "Alle entfernen",
+    "selectFiles": "Dateien auswählen",
+    "ranges": {
+      "today": "Heute",
+      "yesterday": "Gestern",
+      "last7": "Letzte 7 Tage",
+      "last30": "Letzte 30 Tage",
+      "thisMonth": "Dieser Monat",
+      "lastMonth": "Letzter Monat",
+      "thisYear": "Dieses Jahr"
+    },
+    "sizes": {
+      "tiny": "Winzig (< 10 KB)",
+      "small": "Klein (10 KB – 100 KB)",
+      "medium": "Mittel (100 KB – 1 MB)",
+      "large": "Groß (1 MB – 10 MB)",
+      "veryLarge": "Sehr groß (10 MB – 100 MB)",
+      "huge": "Riesig (> 100 MB)"
+    },
+    "byExtDesc_one": "{{count}} Datei mit Endung(en) ausgewählt: {{exts}}",
+    "byExtDesc_other": "{{count}} Dateien mit Endung(en) ausgewählt: {{exts}}",
+    "noneWithExt": "Keine Dateien mit den gewählten Endungen gefunden",
+    "byDateDesc_one": "{{count}} Datei ausgewählt, geändert zwischen {{from}} und {{to}}",
+    "byDateDesc_other": "{{count}} Dateien ausgewählt, geändert zwischen {{from}} und {{to}}",
+    "largerThan": "größer als {{size}}",
+    "between": "zwischen {{min}} und {{max}}",
+    "bySizeDesc_one": "{{count}} Datei ausgewählt ({{range}})",
+    "bySizeDesc_other": "{{count}} Dateien ausgewählt ({{range}})",
+    "similarDesc_one": "{{count}} ähnliche Datei ausgewählt (gleicher Typ: {{type}})",
+    "similarDesc_other": "{{count}} ähnliche Dateien ausgewählt (gleicher Typ: {{type}})",
+    "invertedDesc_one": "Jetzt ist {{count}} Datei ausgewählt",
+    "invertedDesc_other": "Jetzt sind {{count}} Dateien ausgewählt",
+    "patternDesc_one": "{{count}} Datei passend zum Muster „{{pattern}}“ ausgewählt",
+    "patternDesc_other": "{{count}} Dateien passend zum Muster „{{pattern}}“ ausgewählt",
+    "noPatternMatch": "Keine Dateien passen zum Muster „{{pattern}}“",
+    "similar": "Ähnliche Dateien auswählen",
+    "selectN": "{{count}} Dateien auswählen"
+  },
+  "themes": {
+    "light": "Hell"
   }
 }

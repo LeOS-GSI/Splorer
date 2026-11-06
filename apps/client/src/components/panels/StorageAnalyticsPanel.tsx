@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useCallback, useEffect } from 'react';
 import { listenToEvent } from '@/lib/transport';
 import { TauriAPI, StorageAnalytics, StorageAnalysisProgress } from '@/lib/tauri-api';
@@ -107,14 +108,20 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
           className="loading-spinner h-8 w-8 rounded-full border-2 border-current border-t-transparent"
           style={{ borderColor: 'var(--xp-blue)', borderTopColor: 'transparent' }}
         />
-        <p className="text-xp-text-muted text-sm">Analyzing storage...</p>
+        <p className="text-xp-text-muted text-sm">{i18n.t('panels.storage.analyzing')}</p>
         {progress && (
           <div className="text-xp-text-muted w-full space-y-1 text-xs">
             <p>
-              {formatNumber(progress.files_processed)} files /{' '}
-              {formatNumber(progress.dirs_processed)} folders scanned
+              {i18n.t('panels.storage.scanned', {
+                files: formatNumber(progress.files_processed),
+                dirs: formatNumber(progress.dirs_processed),
+              })}
             </p>
-            <p>{formatFileSize(progress.bytes_processed)} processed</p>
+            <p>
+              {i18n.t('panels.storage.processed', {
+                size: formatFileSize(progress.bytes_processed),
+              })}
+            </p>
             <p className="truncate opacity-60" title={progress.current_path}>
               {truncatePath(progress.current_path, 40)}
             </p>
@@ -136,14 +143,14 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
           }}
         >
           <p className="text-sm" style={{ color: 'var(--xp-red)' }}>
-            Analysis failed: {error}
+            {i18n.t('panels.storage.failed', { error })}
           </p>
         </div>
         <button
           onClick={runAnalysis}
           className="bg-xp-surface-light hover:bg-xp-blue text-xp-text w-full rounded-lg px-3 py-2 text-sm transition-colors"
         >
-          Retry
+          {i18n.t('common.retry')}
         </button>
       </div>
     );
@@ -164,7 +171,7 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
             onClick={runAnalysis}
             className="bg-xp-blue rounded-lg px-4 py-2 text-sm text-white transition-colors hover:opacity-90"
           >
-            Analyze Storage
+            {i18n.t('panels.storage.analyze')}
           </button>
         )}
       </div>
@@ -195,7 +202,7 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="min-w-0 flex-1">
-          <h3 className="text-xp-text text-sm font-semibold">Storage Analytics</h3>
+          <h3 className="text-xp-text text-sm font-semibold">{i18n.t('panels.storage.title')}</h3>
           <p className="text-xp-text-muted truncate text-xs" title={analyzedPath}>
             {analyzedPath}
           </p>
@@ -203,7 +210,7 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
         <button
           onClick={runAnalysis}
           className="bg-xp-surface-light hover:bg-xp-blue border-xp-border ml-2 shrink-0 rounded border px-2 py-1 text-xs transition-colors hover:text-white"
-          title="Refresh analysis"
+          title={i18n.t('panels.storage.refresh')}
         >
           Refresh
         </button>
@@ -269,7 +276,9 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
           }}
         >
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-xp-text text-xs font-medium">Disk Usage</span>
+            <span className="text-xp-text text-xs font-medium">
+              {i18n.t('panels.storage.diskUsage')}
+            </span>
             <span className="text-xp-text-muted text-xs">
               {formatFileSize(used_size)} / {formatFileSize(total_size)}
             </span>
@@ -297,7 +306,10 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
           <div className="text-xp-text-muted mt-1.5 flex justify-between text-[10px]">
             <span>Used: {usedPercent}%</span>
             <span>
-              Free: {freePercent}% ({formatFileSize(free_size)})
+              {i18n.t('panels.storage.free', {
+                percent: freePercent,
+                size: formatFileSize(free_size),
+              })}
             </span>
           </div>
         </div>
@@ -312,7 +324,9 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
             backdropFilter: 'blur(16px)',
           }}
         >
-          <h4 className="text-xp-text mb-2 text-xs font-medium">File Types (Top 10 by Size)</h4>
+          <h4 className="text-xp-text mb-2 text-xs font-medium">
+            {i18n.t('panels.storage.fileTypes')}
+          </h4>
           <div className="space-y-1.5">
             {top10Types.map((t, i) => {
               const pct = totalFilesSize > 0 ? (t.total_size / totalFilesSize) * 100 : 0;
@@ -345,7 +359,7 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
                     />
                   </div>
                   <div className="text-xp-text-muted mt-0.5 text-[10px]">
-                    {formatNumber(t.count)} files
+                    {i18n.t('panels.storage.files', { n: formatNumber(t.count) })}
                   </div>
                 </div>
               );
@@ -363,7 +377,9 @@ const StorageAnalyticsPanel = ({ currentPath, navigateToPath }: StorageAnalytics
             backdropFilter: 'blur(16px)',
           }}
         >
-          <h4 className="text-xp-text mb-2 text-xs font-medium">Size Distribution</h4>
+          <h4 className="text-xp-text mb-2 text-xs font-medium">
+            {i18n.t('panels.storage.sizeDistribution')}
+          </h4>
           <div className="space-y-1.5">
             {size_categories.map((cat, i) => {
               const barWidth = maxCatSize > 0 ? (cat.total_size / maxCatSize) * 100 : 0;

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 import { formatFileSize } from '@/lib/utils';
 import type { CleanupSuggestion } from '@/hooks/use-performance-stats';
@@ -80,7 +81,7 @@ const MetricCards = ({
             ...smallBtnStyle,
             opacity: isLoading ? 0.5 : 1,
           }}
-          title="Refresh stats"
+          title={i18n.t('panels.common.refreshStats')}
         >
           {isLoading ? 'Loading...' : 'Refresh'}
         </button>
@@ -88,19 +89,28 @@ const MetricCards = ({
 
       {/* System Stats Card */}
       <div style={cardStyle}>
-        <div style={cardTitleStyle}>System Stats</div>
+        <div style={cardTitleStyle}>{i18n.t('panels.performance.systemStats')}</div>
         <StatRow label="Files" value={directoryStats.fileCount.toLocaleString()} />
         <StatRow label="Folders" value={directoryStats.folderCount.toLocaleString()} />
-        <StatRow label="Total Size" value={formatFileSize(directoryStats.totalSize)} />
-        <StatRow label="Folders Cached" value={`${directoryStats.cachedFolderCount} folders`} />
+        <StatRow
+          label={i18n.t('panels.performance.totalSize')}
+          value={formatFileSize(directoryStats.totalSize)}
+        />
+        <StatRow
+          label={i18n.t('panels.performance.foldersCached')}
+          value={`${directoryStats.cachedFolderCount} folders`}
+        />
         {memoryUsage !== null && (
-          <StatRow label="JS Heap Usage" value={formatFileSize(memoryUsage)} />
+          <StatRow
+            label={i18n.t('panels.performance.jsHeap')}
+            value={formatFileSize(memoryUsage)}
+          />
         )}
       </div>
 
       {/* Indexing Status Card */}
       <div style={cardStyle}>
-        <div style={cardTitleStyle}>Indexing Status</div>
+        <div style={cardTitleStyle}>{i18n.t('panels.performance.indexingStatus')}</div>
 
         {/* Search Tokenizer */}
         <div>
@@ -112,7 +122,7 @@ const MetricCards = ({
             }}
           >
             <span style={{ fontSize: 12, color: 'var(--xp-text-secondary)' }}>
-              Search Tokenizer
+              {i18n.t('panels.performance.searchTokenizer')}
             </span>
             <span
               style={{
@@ -128,11 +138,17 @@ const MetricCards = ({
               {indexingStatus.isTokenizerIndexing ? 'Indexing' : 'Ready'}
             </span>
           </div>
-          <StatRow label="Indexed Files" value={indexingStatus.tokenTotalFiles.toLocaleString()} />
-          <StatRow label="Total Tokens" value={indexingStatus.tokenTotalTokens.toLocaleString()} />
+          <StatRow
+            label={i18n.t('panels.performance.indexedFiles')}
+            value={indexingStatus.tokenTotalFiles.toLocaleString()}
+          />
+          <StatRow
+            label={i18n.t('panels.performance.totalTokens')}
+            value={indexingStatus.tokenTotalTokens.toLocaleString()}
+          />
           {indexingStatus.tokenLastUpdated > 0 && (
             <StatRow
-              label="Last Updated"
+              label={i18n.t('panels.performance.lastUpdated')}
               value={new Date(indexingStatus.tokenLastUpdated * 1000).toLocaleTimeString()}
             />
           )}
@@ -158,11 +174,11 @@ const MetricCards = ({
 
       {/* Recent Operations Card */}
       <div style={cardStyle}>
-        <div style={cardTitleStyle}>Recent Operations</div>
+        <div style={cardTitleStyle}>{i18n.t('panels.performance.recentOps')}</div>
 
         {recentOps.length === 0 ? (
           <div style={{ fontSize: 12, color: 'var(--xp-text-secondary)', padding: '4px 0' }}>
-            No recent operations
+            {i18n.t('panels.performance.noRecentOps')}
           </div>
         ) : (
           <>
@@ -271,7 +287,7 @@ const MetricCards = ({
       {/* Cleanup Suggestions Card */}
       {suggestions.length > 0 && (
         <div style={cardStyle}>
-          <div style={cardTitleStyle}>Cleanup Suggestions</div>
+          <div style={cardTitleStyle}>{i18n.t('panels.performance.cleanup')}</div>
           {suggestions.map((s, i) => (
             <div
               key={s.id}

@@ -4,6 +4,7 @@
  * Uses inline styles with CSS variables (--xp-*) to match the rest of the app.
  */
 
+import i18n from '@/i18n';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   getLayouts,
@@ -496,14 +497,14 @@ const WorkspaceLayoutDialog = ({
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
-      aria-label="Workspace Layouts"
+      aria-label={i18n.t('dialogs.layouts.title')}
     >
       <div style={s.dialog}>
         {/* Header */}
         <div style={s.header}>
           <div style={s.titleRow}>
             <IconLayout />
-            <h2 style={s.title}>Workspace Layouts</h2>
+            <h2 style={s.title}>{i18n.t('dialogs.layouts.title')}</h2>
             <span style={s.badge}>{layouts.length} / 10</span>
           </div>
           <button
@@ -538,7 +539,7 @@ const WorkspaceLayoutDialog = ({
                 type="text"
                 value={saveInput}
                 onChange={(e) => setSaveInput(e.target.value)}
-                placeholder="Layout name..."
+                placeholder={i18n.t('dialogs.layouts.namePlaceholder')}
                 style={{ ...s.nameInput, flex: 1 }}
                 maxLength={50}
               />
@@ -547,10 +548,10 @@ const WorkspaceLayoutDialog = ({
                 style={{ ...s.primaryBtn, opacity: saveInput.trim() ? 1 : 0.5 }}
                 disabled={!saveInput.trim()}
               >
-                Save
+                {i18n.t('common.save')}
               </button>
               <button type="button" style={s.ghostBtn} onClick={() => setSavingName(false)}>
-                Cancel
+                {i18n.t('common.cancel')}
               </button>
             </form>
           ) : (
@@ -570,7 +571,7 @@ const WorkspaceLayoutDialog = ({
                 disabled={layouts.length >= 10}
                 title={layouts.length >= 10 ? 'Maximum 10 layouts reached' : undefined}
               >
-                <IconSave /> Save Current
+                <IconSave /> {i18n.t('dialogs.layouts.saveCurrent')}
               </button>
               <button
                 style={s.ghostBtn}
@@ -594,9 +595,9 @@ const WorkspaceLayoutDialog = ({
         <div style={s.body}>
           {layouts.length === 0 ? (
             <div style={s.emptyState}>
-              No saved layouts yet.
+              {i18n.t('dialogs.layouts.empty')}
               <br />
-              Click "Save Current" to save your current workspace arrangement.
+              {i18n.t('dialogs.layouts.emptyHint')}
             </div>
           ) : (
             layouts.map((wl) => {
@@ -654,7 +655,7 @@ const WorkspaceLayoutDialog = ({
                       {/* Load */}
                       <button
                         style={s.iconBtn}
-                        title="Load layout"
+                        title={i18n.t('dialogs.layouts.load')}
                         aria-label={`Load ${wl.name}`}
                         onClick={() => handleLoad(wl)}
                         onMouseEnter={(e) => {
@@ -732,7 +733,7 @@ const WorkspaceLayoutDialog = ({
             </span>{' '}
             to close
           </span>
-          <span>Ctrl+Shift+L to toggle</span>
+          <span>{i18n.t('dialogs.layouts.toggleHint')}</span>
         </div>
       </div>
     </div>

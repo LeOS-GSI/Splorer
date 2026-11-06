@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import { PreviewProps } from '@/lib/preview-factory';
 import { convertAssetUrl } from '@/lib/transport';
@@ -65,7 +66,7 @@ const PdfPreview = ({ file, onError, onLoad }: PreviewProps) => {
           <div className="text-xp-text-muted text-center">
             <div className="animate-pulse">
               <div className="bg-xp-bg mx-auto mb-2 h-20 w-16 rounded" />
-              <p className="text-xs">Loading PDF...</p>
+              <p className="text-xs">{i18n.t('previews.pdf.loading')}</p>
             </div>
           </div>
         </div>
@@ -81,7 +82,7 @@ const PdfPreview = ({ file, onError, onLoad }: PreviewProps) => {
                 clipRule="evenodd"
               />
             </svg>
-            <p className="text-sm">Cannot preview PDF</p>
+            <p className="text-sm">{i18n.t('previews.pdf.cannotPreview')}</p>
             <p className="mt-1 text-xs opacity-70">{error}</p>
           </div>
         </div>
@@ -117,7 +118,7 @@ const PdfPreview = ({ file, onError, onLoad }: PreviewProps) => {
               </button>
 
               <span className="text-xp-text-muted">
-                Page {pageNumber} of {numPages}
+                {i18n.t('previews.pdf.pageOf', { page: pageNumber, total: numPages })}
               </span>
 
               <button

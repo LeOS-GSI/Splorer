@@ -6,6 +6,7 @@
  * Right panel: destination tree (result after merge, with conflict markers)
  */
 
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   FolderInput,
@@ -446,7 +447,7 @@ const DestTreeNode = React.memo(
                   }}
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <option value="">Resolve...</option>
+                  <option value="">{i18n.t('dialogs.moveTree.resolve')}</option>
                   <option value="skip">Skip</option>
                   <option value="overwrite">Overwrite</option>
                   <option value="rename">Rename</option>
@@ -619,9 +620,7 @@ const MoveTreePreviewDialog = ({
                 {verb} {data.sourceFiles.length} file{data.sourceFiles.length > 1 ? 's' : ''} to{' '}
                 {destName}
               </h2>
-              <div style={S.subtitle}>
-                Preview the resulting directory structure before {verb.toLowerCase()}ing
-              </div>
+              <div style={S.subtitle}>{i18n.t('dialogs.moveTree.subtitle')}</div>
             </div>
           </div>
           <button
@@ -672,7 +671,7 @@ const MoveTreePreviewDialog = ({
                   >
                     <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                   </svg>
-                  Loading destination contents...
+                  {i18n.t('dialogs.moveTree.loadingDest')}
                 </div>
               ) : treeResult ? (
                 treeResult.tree.map((node) => (
@@ -686,7 +685,7 @@ const MoveTreePreviewDialog = ({
                   />
                 ))
               ) : (
-                <div style={S.loading}>No data available</div>
+                <div style={S.loading}>{i18n.t('dialogs.moveTree.noData')}</div>
               )}
             </div>
           </div>
@@ -698,8 +697,11 @@ const MoveTreePreviewDialog = ({
             {treeResult && (
               <>
                 <span>
-                  {verb}ing {formatFileSize(treeResult.totalIncomingSize)} into{' '}
-                  {formatFileSize(treeResult.totalExistingSize)} folder
+                  {verb}:{' '}
+                  {i18n.t('dialogs.moveTree.sizeSummary', {
+                    incoming: formatFileSize(treeResult.totalIncomingSize),
+                    existing: formatFileSize(treeResult.totalExistingSize),
+                  })}
                 </span>
                 {conflictsCount > 0 && (
                   <span
@@ -728,7 +730,7 @@ const MoveTreePreviewDialog = ({
               }
               onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
-              Cancel
+              {i18n.t('common.cancel')}
             </button>
             <button
               style={{

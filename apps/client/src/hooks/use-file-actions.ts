@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
 import { formatError } from '@/lib/file-operation-helpers';
+import i18n from '@/i18n';
 import { runExternalOpenHandler } from '@/lib/open-with';
 import { showConfirmationToast } from '@/components/ui/Toast';
 import type { TabItem, EditorGroup } from '@/types/split-view';
@@ -98,8 +99,11 @@ export const useFileActions = (deps: FileActionsDeps) => {
         console.error('Failed to open file:', error);
         toast({
           variant: 'destructive',
-          title: 'Open File Failed',
-          description: `Failed to open "${file.name}": ${formatError(error)}`,
+          title: i18n.t('toast.openFileFailed'),
+          description: i18n.t('toast.openFileFailedDesc', {
+            name: file.name,
+            error: formatError(error),
+          }),
         });
       }
     },
@@ -141,8 +145,11 @@ export const useFileActions = (deps: FileActionsDeps) => {
         console.error('Failed to open file:', error);
         toast({
           variant: 'destructive',
-          title: 'Open File Failed',
-          description: `Failed to open "${file.name}": ${formatError(error)}`,
+          title: i18n.t('toast.openFileFailed'),
+          description: i18n.t('toast.openFileFailedDesc', {
+            name: file.name,
+            error: formatError(error),
+          }),
         });
       }
     },
@@ -169,15 +176,18 @@ export const useFileActions = (deps: FileActionsDeps) => {
         } catch (err) {
           toast({
             variant: 'destructive',
-            title: 'Move Failed',
-            description: `Failed to move "${file.name}": ${formatError(err)}`,
+            title: i18n.t('toast.moveFailed'),
+            description: i18n.t('toast.moveFailedDesc', {
+              name: file.name,
+              error: formatError(err),
+            }),
           });
         }
       }
       if (moved > 0) {
         toast({
-          title: 'Moved',
-          description: `Moved ${moved} file${moved !== 1 ? 's' : ''} to ${destination}`,
+          title: i18n.t('toast.moved'),
+          description: i18n.t('toast.movedFilesTo', { count: moved, destination }),
         });
         crossTabSelection.clearAll();
         refetch();
@@ -203,15 +213,18 @@ export const useFileActions = (deps: FileActionsDeps) => {
         } catch (err) {
           toast({
             variant: 'destructive',
-            title: 'Copy Failed',
-            description: `Failed to copy "${file.name}": ${formatError(err)}`,
+            title: i18n.t('toast.copyFailed'),
+            description: i18n.t('toast.copyFailedDesc', {
+              name: file.name,
+              error: formatError(err),
+            }),
           });
         }
       }
       if (copied > 0) {
         toast({
-          title: 'Copied',
-          description: `Copied ${copied} file${copied !== 1 ? 's' : ''} to ${destination}`,
+          title: i18n.t('toast.copied'),
+          description: i18n.t('toast.copiedFilesTo', { count: copied, destination }),
         });
         crossTabSelection.clearAll();
         refetch();
@@ -236,15 +249,18 @@ export const useFileActions = (deps: FileActionsDeps) => {
           follow_symlinks: false,
         });
         toast({
-          title: 'Compressed',
-          description: `Created ${archiveName} with ${filePaths.length} file${filePaths.length !== 1 ? 's' : ''}`,
+          title: i18n.t('toast.compressed'),
+          description: i18n.t('toast.compressedDesc', {
+            archive: archiveName,
+            count: filePaths.length,
+          }),
         });
         crossTabSelection.clearAll();
         refetch();
       } catch (err) {
         toast({
           variant: 'destructive',
-          title: 'Compression Failed',
+          title: i18n.t('toast.compressionFailed'),
           description: formatError(err),
         });
       }
@@ -255,8 +271,11 @@ export const useFileActions = (deps: FileActionsDeps) => {
   const handleCrossTabDeleteAll = useCallback(async () => {
     const allFiles = crossTabSelection.getAllSelectedFiles();
     const confirmed = await showConfirmationToast({
-      title: 'Delete All Cross-Tab Files',
-      description: `Are you sure you want to move ${allFiles.length} file(s) from ${crossTabSelection.selectedTabCount} tab(s) to the recycle bin?`,
+      title: i18n.t('toast.deleteCrossTabTitle'),
+      description: i18n.t('toast.deleteCrossTabDesc', {
+        count: allFiles.length,
+        tabs: crossTabSelection.selectedTabCount,
+      }),
       confirmText: 'Move to Recycle Bin',
       cancelText: 'Cancel',
     });
@@ -269,15 +288,18 @@ export const useFileActions = (deps: FileActionsDeps) => {
       } catch (err) {
         toast({
           variant: 'destructive',
-          title: 'Delete Failed',
-          description: `Failed to delete "${file.name}": ${formatError(err)}`,
+          title: i18n.t('toast.deleteFailed'),
+          description: i18n.t('toast.deleteFailedDesc', {
+            name: file.name,
+            error: formatError(err),
+          }),
         });
       }
     }
     if (deleted > 0) {
       toast({
-        title: 'Deleted',
-        description: `Moved ${deleted} file${deleted !== 1 ? 's' : ''} to recycle bin`,
+        title: i18n.t('toast.deleted'),
+        description: i18n.t('toast.movedToBin', { count: deleted }),
       });
       crossTabSelection.clearAll();
       refetch();

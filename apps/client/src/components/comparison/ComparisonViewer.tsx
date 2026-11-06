@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 import type { SideBySideLine } from '@/lib/file-comparison';
@@ -391,11 +392,11 @@ const CollapsedSection = ({ count, onExpand }: { count: number; onExpand: () => 
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLElement).style.backgroundColor = 'rgba(99, 102, 241, 0.06)';
       }}
-      title={`Click to expand ${count} unchanged lines`}
+      title={i18n.t('comparison.expandUnchanged', { count })}
     >
       <ChevronDown style={{ width: 12, height: 12, color: 'var(--xp-blue)', marginRight: 6 }} />
       <span style={{ fontSize: 11, color: 'var(--xp-blue)', userSelect: 'none' }}>
-        Show {count} unchanged line{count !== 1 ? 's' : ''}
+        {i18n.t('comparison.showUnchanged', { count })}
       </span>
     </div>
   );

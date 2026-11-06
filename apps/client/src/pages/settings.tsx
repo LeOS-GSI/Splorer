@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect } from 'react';
 import { TauriAPI } from '@/lib/tauri-api';
 import { useLocation } from 'wouter';
@@ -200,7 +201,7 @@ const Settings = () => {
                   className="text-xp-text hover:bg-xp-surface-light flex w-full items-center gap-3 rounded-md p-2 text-left transition-colors"
                 >
                   <Github size={18} className="text-xp-text-muted" />
-                  <span className="text-sm">GitHub Repository</span>
+                  <span className="text-sm">{i18n.t('settings.about.repo')}</span>
                   <ExternalLink size={14} className="text-xp-text-muted ml-auto" />
                 </button>
                 <button
@@ -208,7 +209,7 @@ const Settings = () => {
                   className="text-xp-text hover:bg-xp-surface-light flex w-full items-center gap-3 rounded-md p-2 text-left transition-colors"
                 >
                   <Github size={18} className="text-xp-text-muted" />
-                  <span className="text-sm">Based on Xplorer by Justin Kimlim</span>
+                  <span className="text-sm">{i18n.t('settings.about.basedOn')}</span>
                   <ExternalLink size={14} className="text-xp-text-muted ml-auto" />
                 </button>
               </div>

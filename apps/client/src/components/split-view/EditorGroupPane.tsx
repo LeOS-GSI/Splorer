@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
@@ -521,7 +522,7 @@ const EditorGroupPane = ({
           <React.Suspense
             fallback={
               <div className="text-xp-text-muted flex h-full items-center justify-center">
-                Loading editor...
+                {i18n.t('splitView.loadingEditor')}
               </div>
             }
           >

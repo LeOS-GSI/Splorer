@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useWindowEvent } from '@/hooks/use-window-event';
+import i18n from '@/i18n';
 import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
 import { STORAGE_KEYS } from '@/lib/storage-keys';
 import { PATH_SEPARATOR } from '@/lib/constants';
@@ -247,8 +248,8 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
           return;
         }
         const folderName = await showInputToast({
-          title: 'Create New Folder',
-          description: 'Enter a name for the new folder',
+          title: i18n.t('toast.createNewFolder'),
+          description: i18n.t('toast.enterNewFolderName'),
           placeholder: 'Folder name',
           submitText: 'Create',
           cancelText: 'Cancel',
@@ -259,11 +260,14 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
             currentPath + (currentPath.endsWith(PATH_SEPARATOR) ? '' : PATH_SEPARATOR) + folderName;
           await TauriAPI.createDirRecursive(fp);
           refetch();
-          toast({ title: 'Folder Created', description: `Created "${folderName}"` });
+          toast({
+            title: i18n.t('toast.folderCreated'),
+            description: i18n.t('toast.createdName', { name: folderName }),
+          });
         } catch (err) {
           toast({
             variant: 'destructive',
-            title: 'Create Folder Failed',
+            title: i18n.t('toast.createFolderFailed'),
             description: formatError(err),
           });
         }
@@ -306,7 +310,7 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
           } catch (err) {
             toast({
               variant: 'destructive',
-              title: 'Duplicate Failed',
+              title: i18n.t('toast.duplicateFailed'),
               description: formatError(err),
             });
           }
@@ -314,8 +318,8 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         if (duplicated > 0) {
           refetch();
           toast({
-            title: 'Duplicated',
-            description: `Duplicated ${duplicated} item${duplicated > 1 ? 's' : ''}`,
+            title: i18n.t('toast.duplicated'),
+            description: i18n.t('toast.duplicatedDesc', { count: duplicated }),
           });
         }
       },
@@ -460,13 +464,17 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         TauriAPI.undoOperation()
           .then((result) => {
             if (result.success) {
-              toast({ title: 'Undo', description: result.message });
+              toast({ title: i18n.t('toast.undo'), description: result.message });
               refetch();
             }
           })
           .catch((err) => {
             console.error('Undo operation failed:', err);
-            toast({ variant: 'destructive', title: 'Undo Failed', description: formatError(err) });
+            toast({
+              variant: 'destructive',
+              title: i18n.t('toast.undoFailed'),
+              description: formatError(err),
+            });
           });
         return;
       }
@@ -475,13 +483,17 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
         TauriAPI.redoOperation()
           .then((result) => {
             if (result.success) {
-              toast({ title: 'Redo', description: result.message });
+              toast({ title: i18n.t('toast.redo'), description: result.message });
               refetch();
             }
           })
           .catch((err) => {
             console.error('Redo operation failed:', err);
-            toast({ variant: 'destructive', title: 'Redo Failed', description: formatError(err) });
+            toast({
+              variant: 'destructive',
+              title: i18n.t('toast.redoFailed'),
+              description: formatError(err),
+            });
           });
         return;
       }
@@ -544,13 +556,19 @@ export const useXplorerEffects = (deps: XplorerEffectsDeps) => {
       if (e.shiftKey) {
         if (currentPath && !currentPath.startsWith('splorer://')) {
           assignPathBookmark(slot, currentPath);
-          toast({ title: `Saved to bookmark ${slot}`, description: getFolderName(currentPath) });
+          toast({
+            title: i18n.t('toast.savedToBookmarkSlot', { slot }),
+            description: getFolderName(currentPath),
+          });
         }
       } else {
         const bm = getBookmarkBySlot(slot);
         if (bm) {
           navigateWithHistory(bm.path);
-          toast({ title: `Bookmark ${slot}`, description: bm.label || getFolderName(bm.path) });
+          toast({
+            title: i18n.t('toast.bookmarkSlot', { slot }),
+            description: bm.label || getFolderName(bm.path),
+          });
         }
       }
     };

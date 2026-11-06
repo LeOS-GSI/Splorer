@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { TauriAPI, type FileEntry, type AuditEntry, type TokenIndex } from '@/lib/tauri-api';
 
@@ -126,10 +127,10 @@ export const usePerformanceStats = (
         );
         newSuggestions.push({
           id: 'trash',
-          title: `Trash: ${trashList.length} items`,
-          description: `Recycle bin contains ${trashList.length} item${trashList.length !== 1 ? 's' : ''}`,
+          title: i18n.t('cleanup.trashTitle', { count: trashList.length }),
+          description: i18n.t('cleanup.trashDesc', { count: trashList.length }),
           estimatedSize: trashSize,
-          actionLabel: 'Empty Trash',
+          actionLabel: i18n.t('cleanup.emptyTrash'),
           actionType: 'action',
         });
       }
@@ -140,10 +141,10 @@ export const usePerformanceStats = (
         const largeSize = largeFiles.reduce((sum, f) => sum + f.size, 0);
         newSuggestions.push({
           id: 'large-files',
-          title: `Large files: ${largeFiles.length} files`,
-          description: `Files larger than 100 MB in this folder`,
+          title: i18n.t('cleanup.largeTitle', { count: largeFiles.length }),
+          description: i18n.t('cleanup.largeDesc'),
           estimatedSize: largeSize,
-          actionLabel: 'Show Large Files',
+          actionLabel: i18n.t('cleanup.showLarge'),
           actionType: 'navigate',
         });
       }
@@ -165,10 +166,12 @@ export const usePerformanceStats = (
           if (untaggedCount > 0) {
             newSuggestions.push({
               id: 'untagged',
-              title: `Untagged files: ${untaggedCount}${samplePaths.length < files.filter((f) => !f.is_dir).length ? '+' : ''}`,
-              description: `Files without any tags in this folder`,
+              title: i18n.t('cleanup.untaggedTitle', {
+                n: `${untaggedCount}${samplePaths.length < files.filter((f) => !f.is_dir).length ? '+' : ''}`,
+              }),
+              description: i18n.t('cleanup.untaggedDesc'),
               estimatedSize: 0,
-              actionLabel: 'Tag Files',
+              actionLabel: i18n.t('cleanup.tagFiles'),
               actionType: 'navigate',
             });
           }

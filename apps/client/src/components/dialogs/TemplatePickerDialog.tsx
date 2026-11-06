@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {
   getAllTemplates,
@@ -403,12 +404,12 @@ const TemplatePickerDialog = ({
       onKeyDown={handleKeyDown}
       role="dialog"
       aria-modal="true"
-      aria-label="New from Template"
+      aria-label={i18n.t('dialogs.templates.title')}
     >
       <div style={s.dialog} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div style={s.header}>
-          <h2 style={s.title}>New from Template</h2>
+          <h2 style={s.title}>{i18n.t('dialogs.templates.title')}</h2>
           <button style={s.closeBtn} onClick={onClose} aria-label="Close">
             <svg
               width="18"
@@ -455,7 +456,7 @@ const TemplatePickerDialog = ({
           {/* Template grid */}
           <div style={s.mainPanel}>
             {filteredTemplates.length === 0 ? (
-              <div style={s.emptyState}>No templates in this category.</div>
+              <div style={s.emptyState}>{i18n.t('dialogs.templates.empty')}</div>
             ) : (
               <div style={s.templateGrid}>
                 {filteredTemplates.map((template) => (
@@ -489,8 +490,10 @@ const TemplatePickerDialog = ({
                         <button
                           style={s.deleteBtn}
                           onClick={(e) => handleDeleteCustom(e, template.id)}
-                          title="Delete custom template"
-                          aria-label={`Delete template ${template.name}`}
+                          title={i18n.t('dialogs.templates.deleteCustom')}
+                          aria-label={i18n.t('dialogs.templates.deleteNamed', {
+                            name: template.name,
+                          })}
                         >
                           <svg
                             width="12"
@@ -559,7 +562,7 @@ const TemplatePickerDialog = ({
           <div>{/* Placeholder for future "Manage Custom Templates" link */}</div>
           <div style={s.footerActions}>
             <button style={s.btnCancel} onClick={onClose}>
-              Cancel
+              {i18n.t('common.cancel')}
             </button>
             <button
               style={s.btnCreate(!selectedTemplate || !filename.trim())}

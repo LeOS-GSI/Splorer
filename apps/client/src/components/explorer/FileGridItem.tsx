@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { createPortal } from 'react-dom';
@@ -242,7 +243,7 @@ const InlineRenameInput = React.memo(
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           title={validation.message || undefined}
-          aria-label="Rename file"
+          aria-label={i18n.t('explorer.renameFileAria')}
           aria-invalid={!validation.valid}
           style={{
             flex: 1,

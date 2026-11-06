@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { PreviewProps } from '@/lib/preview-factory';
 import { convertAssetUrl } from '@/lib/transport';
@@ -95,7 +96,7 @@ const VideoPreview = ({ file, onError, onLoad }: PreviewProps) => {
           <div className="text-xp-text-muted text-center">
             <div className="animate-pulse">
               <div className="bg-xp-bg mx-auto mb-2 h-16 w-16 rounded" />
-              <p className="text-xs">Loading video...</p>
+              <p className="text-xs">{i18n.t('previews.video.loading')}</p>
             </div>
           </div>
         </div>
@@ -203,8 +204,8 @@ const VideoPreview = ({ file, onError, onLoad }: PreviewProps) => {
                 clipRule="evenodd"
               />
             </svg>
-            <p className="text-sm">Cannot preview video</p>
-            <p className="mt-1 text-xs opacity-70">The video format may not be supported</p>
+            <p className="text-sm">{i18n.t('previews.video.cannotPreview')}</p>
+            <p className="mt-1 text-xs opacity-70">{i18n.t('previews.video.formatNotSupported')}</p>
           </div>
         </div>
       )}

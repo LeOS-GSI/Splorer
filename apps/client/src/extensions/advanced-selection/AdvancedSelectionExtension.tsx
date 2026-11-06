@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useCallback, useEffect } from 'react';
 import { FileEntry } from '@/lib/tauri-api';
 import {
@@ -61,13 +62,16 @@ export const AdvancedSelectionExtension = ({
       if (matched.length > 0) {
         setSelectedFiles(new Set(matched));
         showToast({
-          title: 'Selection Updated',
-          description: `Selected ${matched.length} file${matched.length !== 1 ? 's' : ''} with extension${extensions.length > 1 ? 's' : ''}: ${extensions.map((e) => `.${e}`).join(', ')}`,
+          title: i18n.t('advSel.updated'),
+          description: i18n.t('advSel.byExtDesc', {
+            count: matched.length,
+            exts: extensions.map((e) => `.${e}`).join(', '),
+          }),
         });
       } else {
         showToast({
-          title: 'No Files Found',
-          description: `No files found with the selected extension${extensions.length > 1 ? 's' : ''}`,
+          title: i18n.t('advSel.noneFound'),
+          description: i18n.t('advSel.noneWithExt'),
           variant: 'destructive',
         });
       }
@@ -81,13 +85,17 @@ export const AdvancedSelectionExtension = ({
       if (matched.length > 0) {
         setSelectedFiles(new Set(matched));
         showToast({
-          title: 'Selection Updated',
-          description: `Selected ${matched.length} file${matched.length !== 1 ? 's' : ''} modified between ${dateFrom.toLocaleDateString()} and ${dateTo.toLocaleDateString()}`,
+          title: i18n.t('advSel.updated'),
+          description: i18n.t('advSel.byDateDesc', {
+            count: matched.length,
+            from: dateFrom.toLocaleDateString(),
+            to: dateTo.toLocaleDateString(),
+          }),
         });
       } else {
         showToast({
-          title: 'No Files Found',
-          description: 'No files found in the selected date range',
+          title: i18n.t('advSel.noneFound'),
+          description: i18n.t('advSel.noneInDate'),
           variant: 'destructive',
         });
       }
@@ -102,16 +110,16 @@ export const AdvancedSelectionExtension = ({
         setSelectedFiles(new Set(matched));
         const sizeDesc =
           maxSize === Infinity
-            ? `larger than ${formatSize(minSize)}`
-            : `between ${formatSize(minSize)} and ${formatSize(maxSize)}`;
+            ? i18n.t('advSel.largerThan', { size: formatSize(minSize) })
+            : i18n.t('advSel.between', { min: formatSize(minSize), max: formatSize(maxSize) });
         showToast({
-          title: 'Selection Updated',
-          description: `Selected ${matched.length} file${matched.length !== 1 ? 's' : ''} ${sizeDesc}`,
+          title: i18n.t('advSel.updated'),
+          description: i18n.t('advSel.bySizeDesc', { count: matched.length, range: sizeDesc }),
         });
       } else {
         showToast({
-          title: 'No Files Found',
-          description: 'No files found in the selected size range',
+          title: i18n.t('advSel.noneFound'),
+          description: i18n.t('advSel.noneInSize'),
           variant: 'destructive',
         });
       }
@@ -126,8 +134,11 @@ export const AdvancedSelectionExtension = ({
       const allMatched = [file.path, ...matched];
       setSelectedFiles(new Set(allMatched));
       showToast({
-        title: 'Selection Updated',
-        description: `Selected ${allMatched.length} similar file${allMatched.length !== 1 ? 's' : ''} (same type: ${file.file_type})`,
+        title: i18n.t('advSel.updated'),
+        description: i18n.t('advSel.similarDesc', {
+          count: allMatched.length,
+          type: file.file_type,
+        }),
       });
     },
     [files, setSelectedFiles, showToast],
@@ -137,8 +148,8 @@ export const AdvancedSelectionExtension = ({
     const matched = invertSelection(files, selectedFiles);
     setSelectedFiles(new Set(matched));
     showToast({
-      title: 'Selection Inverted',
-      description: `Now selecting ${matched.length} file${matched.length !== 1 ? 's' : ''}`,
+      title: i18n.t('advSel.inverted'),
+      description: i18n.t('advSel.invertedDesc', { count: matched.length }),
     });
   }, [files, selectedFiles, setSelectedFiles, showToast]);
 
@@ -148,13 +159,13 @@ export const AdvancedSelectionExtension = ({
       if (matched.length > 0) {
         setSelectedFiles(new Set(matched));
         showToast({
-          title: 'Selection Updated',
-          description: `Selected ${matched.length} file${matched.length !== 1 ? 's' : ''} matching pattern "${pattern}"`,
+          title: i18n.t('advSel.updated'),
+          description: i18n.t('advSel.patternDesc', { count: matched.length, pattern }),
         });
       } else {
         showToast({
-          title: 'No Files Found',
-          description: `No files match the pattern "${pattern}"`,
+          title: i18n.t('advSel.noneFound'),
+          description: i18n.t('advSel.noPatternMatch', { pattern }),
           variant: 'destructive',
         });
       }
@@ -166,7 +177,7 @@ export const AdvancedSelectionExtension = ({
   useEffect(() => {
     const advancedSelectionExtension: ContextMenuExtension = {
       id: 'advanced-selection',
-      name: 'Advanced Selection',
+      name: i18n.t('advSel.title'),
 
       getFileActions: (file: FileEntry, _selectedFiles: Set<string>) => {
         const items: ContextMenuItem[] = [];
@@ -174,7 +185,7 @@ export const AdvancedSelectionExtension = ({
         // Add "Select Similar" option
         items.push({
           id: 'select-similar',
-          label: `Select Similar Files`,
+          label: i18n.t('advSel.similar'),
           icon: <Link size={14} className="inline-block" />,
           action: () => handleSelectSimilar(file),
         });
@@ -188,24 +199,24 @@ export const AdvancedSelectionExtension = ({
         // Add Advanced Selection submenu
         items.push({
           id: 'advanced-selection',
-          label: 'Advanced Selection',
+          label: i18n.t('advSel.title'),
           icon: <Sparkles size={14} className="inline-block" />,
           submenu: [
             {
               id: 'select-by-extension',
-              label: 'Select by File Type...',
+              label: i18n.t('advSel.byType'),
               icon: <FileText size={14} className="inline-block" />,
               action: () => setExtensionDialogOpen(true),
             },
             {
               id: 'select-by-date',
-              label: 'Select by Date...',
+              label: i18n.t('advSel.byDate'),
               icon: <Calendar size={14} className="inline-block" />,
               action: () => setDateDialogOpen(true),
             },
             {
               id: 'select-by-size',
-              label: 'Select by Size...',
+              label: i18n.t('advSel.bySize'),
               icon: <BarChart3 size={14} className="inline-block" />,
               action: () => setSizeDialogOpen(true),
             },
@@ -216,7 +227,7 @@ export const AdvancedSelectionExtension = ({
             },
             {
               id: 'invert-selection',
-              label: 'Invert Selection',
+              label: i18n.t('advSel.invert'),
               icon: <RotateCcw size={14} className="inline-block" />,
               shortcut: 'Ctrl+I',
               action: handleInvertSelection,
@@ -228,27 +239,27 @@ export const AdvancedSelectionExtension = ({
             },
             {
               id: 'select-all-images',
-              label: 'Select All Images',
+              label: i18n.t('advSel.allImages'),
               icon: <ImageIcon size={14} className="inline-block" />,
               action: () =>
                 handleSelectByExtension(['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp']),
             },
             {
               id: 'select-all-documents',
-              label: 'Select All Documents',
+              label: i18n.t('advSel.allDocuments'),
               icon: <StickyNote size={14} className="inline-block" />,
               action: () => handleSelectByExtension(['doc', 'docx', 'pdf', 'txt', 'rtf', 'odt']),
             },
             {
               id: 'select-all-videos',
-              label: 'Select All Videos',
+              label: i18n.t('advSel.allVideos'),
               icon: <Film size={14} className="inline-block" />,
               action: () =>
                 handleSelectByExtension(['mp4', 'avi', 'mkv', 'mov', 'wmv', 'flv', 'webm']),
             },
             {
               id: 'select-all-audio',
-              label: 'Select All Audio',
+              label: i18n.t('advSel.allAudio'),
               icon: <Music size={14} className="inline-block" />,
               action: () =>
                 handleSelectByExtension(['mp3', 'wav', 'flac', 'aac', 'ogg', 'wma', 'm4a']),

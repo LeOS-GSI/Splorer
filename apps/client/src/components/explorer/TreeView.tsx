@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useMemo } from 'react';
 import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { FileEntry, TauriAPI } from '@/lib/tauri-api';
@@ -153,7 +154,7 @@ const TreeView = ({
                   clipRule="evenodd"
                 />
               </svg>
-              Loading...
+              {i18n.t('common.loading')}
             </div>
           )}
         </div>
@@ -165,7 +166,7 @@ const TreeView = ({
     <div
       className="overflow-hidden text-sm"
       role="tree"
-      aria-label="File tree"
+      aria-label={i18n.t('explorer.fileTreeAria')}
       onContextMenu={handleBackgroundRightClick || undefined}
     >
       {sortedFiles.map((file) => renderFileItem(file, 0))}

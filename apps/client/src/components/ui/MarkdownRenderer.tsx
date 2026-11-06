@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState } from 'react';
 
 interface MarkdownRendererProps {
@@ -91,7 +92,7 @@ const CodeBlockWithActions = ({
         <button
           onClick={handleCopy}
           className="border-xp-border bg-xp-surface text-xp-text-muted hover:text-xp-text rounded border px-2 py-0.5 text-[10px]"
-          title="Copy to clipboard"
+          title={i18n.t('ui.copyToClipboard')}
         >
           {copied ? 'Copied!' : 'Copy'}
         </button>
@@ -99,16 +100,16 @@ const CodeBlockWithActions = ({
           <button
             onClick={() => onSaveAsFile(code, language)}
             className="border-xp-border bg-xp-surface text-xp-text-muted hover:text-xp-text rounded border px-2 py-0.5 text-[10px]"
-            title="Save as file"
+            title={i18n.t('ui.saveAsFile')}
           >
-            Save as file
+            {i18n.t('ui.saveAsFile')}
           </button>
         )}
         {onApplyCode && (
           <button
             onClick={() => onApplyCode(code)}
             className="border-xp-border bg-xp-surface text-xp-text-muted hover:text-xp-text rounded border px-2 py-0.5 text-[10px]"
-            title="Replace selected code in editor"
+            title={i18n.t('ui.replaceSelectedCode')}
           >
             Apply
           </button>

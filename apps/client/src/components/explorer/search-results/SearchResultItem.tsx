@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 import { formatFileSize, getFileIcon } from '@/lib/utils';
 import type { FileEntry, SearchResult } from '@/lib/tauri-api';
@@ -116,9 +117,9 @@ export const AIResultRow = React.memo(({ result, query, onSelect }: AIResultRowP
   const relevanceBadge = (() => {
     switch (result.relevance_type) {
       case 'exact':
-        return { label: 'Exact', color: '#22c55e' };
+        return { label: i18n.t('search.relevanceExact'), color: '#22c55e' };
       case 'semantic':
-        return { label: 'Semantic', color: '#6366f1' };
+        return { label: i18n.t('search.relevanceSemantic'), color: '#6366f1' };
       case 'fuzzy':
         return { label: 'Fuzzy', color: '#eab308' };
       case 'metadata':

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -186,7 +187,7 @@ const VirtualizedColumnPane = ({
               fontSize: '12px',
             }}
           >
-            Empty folder
+            {i18n.t('explorer.emptyFolder')}
           </div>
         )}
       </div>
@@ -395,22 +396,22 @@ const ColumnView = ({
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Size:</span>
+              <span>{i18n.t('explorer.sizeLabel')}</span>
               <span>{formatFileSize(selectedFileForPreview.size)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Modified:</span>
+              <span>{i18n.t('explorer.modifiedLabel')}</span>
               <span>{formatDate(selectedFileForPreview.modified)}</span>
             </div>
             {selectedFileForPreview.file_type && (
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Type:</span>
+                <span>{i18n.t('explorer.typeLabel')}</span>
                 <span>{selectedFileForPreview.file_type}</span>
               </div>
             )}
             {getExtension(selectedFileForPreview.name) && (
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Extension:</span>
+                <span>{i18n.t('explorer.extensionLabel')}</span>
                 <span>.{getExtension(selectedFileForPreview.name)}</span>
               </div>
             )}

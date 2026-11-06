@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useEffect, useRef } from 'react';
 import { AlertTriangle, FileIcon, FolderClosed, Replace, Copy, X, ArrowRight } from 'lucide-react';
 import type { ConflictFileInfo } from '@/lib/tauri-api';
@@ -118,10 +119,12 @@ export const FileConflictDialog = ({
           <AlertTriangle className="text-xp-yellow mt-0.5 h-6 w-6 flex-shrink-0" />
           <div>
             <h3 id="conflict-title" className="text-xp-text text-base font-semibold">
-              File Conflict
+              {i18n.t('dialogs.fileConflict')}
             </h3>
             <p className="text-xp-text-muted mt-1 text-sm">
-              The destination already has a {isDir ? 'folder' : 'file'} named:
+              {isDir
+                ? i18n.t('dialogs.conflict.alreadyHasFolder')
+                : i18n.t('dialogs.conflict.alreadyHasFile')}
             </p>
           </div>
         </div>
@@ -165,13 +168,15 @@ export const FileConflictDialog = ({
           <button
             onClick={() => onResolve('replace', false)}
             className="bg-xp-surface-light hover:bg-xp-red/15 border-xp-border hover:border-xp-red/40 flex w-full items-center gap-3 rounded-md border px-4 py-2.5 text-left text-sm transition-colors"
-            aria-label="Replace existing file"
+            aria-label={i18n.t('dialogs.conflict.replaceTitle')}
           >
             <Replace className="text-xp-red h-4 w-4 flex-shrink-0" />
             <div>
               <div className="text-xp-text font-medium">Replace</div>
               <div className="text-xp-text-muted text-xs">
-                Overwrite the existing {isDir ? 'folder' : 'file'}
+                {isDir
+                  ? i18n.t('dialogs.conflict.overwriteFolder')
+                  : i18n.t('dialogs.conflict.overwriteFile')}
               </div>
             </div>
           </button>
@@ -179,11 +184,11 @@ export const FileConflictDialog = ({
           <button
             onClick={() => onResolve('keep-both', false)}
             className="bg-xp-surface-light hover:bg-xp-blue/15 border-xp-border hover:border-xp-blue/40 flex w-full items-center gap-3 rounded-md border px-4 py-2.5 text-left text-sm transition-colors"
-            aria-label="Keep both files"
+            aria-label={i18n.t('dialogs.conflict.keepBothTitle')}
           >
             <Copy className="text-xp-blue h-4 w-4 flex-shrink-0" />
             <div>
-              <div className="text-xp-text font-medium">Keep Both</div>
+              <div className="text-xp-text font-medium">{i18n.t('dialogs.conflict.keepBoth')}</div>
               <div className="text-xp-text-muted text-xs">
                 Save with a renamed copy (e.g. &quot;{getKeepBothName(fileName)}&quot;)
               </div>
@@ -193,7 +198,7 @@ export const FileConflictDialog = ({
           <button
             onClick={() => onResolve('skip', false)}
             className="bg-xp-surface-light hover:bg-xp-surface border-xp-border flex w-full items-center gap-3 rounded-md border px-4 py-2.5 text-left text-sm transition-colors"
-            aria-label="Skip this file"
+            aria-label={i18n.t('dialogs.conflict.skipTitle')}
           >
             <X className="text-xp-text-muted h-4 w-4 flex-shrink-0" />
             <div>
@@ -216,19 +221,19 @@ export const FileConflictDialog = ({
                 onClick={() => onResolve('replace', true)}
                 className="border-xp-border hover:bg-xp-red/15 hover:border-xp-red/40 text-xp-text flex-1 rounded border px-3 py-1.5 text-xs transition-colors"
               >
-                Replace All
+                {i18n.t('dialogs.conflict.replaceAll')}
               </button>
               <button
                 onClick={() => onResolve('keep-both', true)}
                 className="border-xp-border hover:bg-xp-blue/15 hover:border-xp-blue/40 text-xp-text flex-1 rounded border px-3 py-1.5 text-xs transition-colors"
               >
-                Rename All
+                {i18n.t('dialogs.conflict.renameAll')}
               </button>
               <button
                 onClick={() => onResolve('skip', true)}
                 className="border-xp-border hover:bg-xp-surface text-xp-text flex-1 rounded border px-3 py-1.5 text-xs transition-colors"
               >
-                Skip All
+                {i18n.t('dialogs.conflict.skipAll')}
               </button>
             </div>
           </div>

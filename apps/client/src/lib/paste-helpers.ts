@@ -3,6 +3,7 @@
  * action and the keyboard-shortcut paste handler in useFileOperations.
  */
 
+import i18n from '@/i18n';
 import { TauriAPI, type FileEntry, type ConflictFileInfo } from '@/lib/tauri-api';
 import { detectSep } from '@/lib/constants';
 import { toast as rawToast } from '@/hooks/use-toast';
@@ -153,16 +154,21 @@ export const showPasteResultToast = (
     variant?: 'default' | 'destructive';
   }) => void,
 ): void => {
-  const verbPast = result.isCut ? 'moved' : 'copied';
   if (result.errors.length === 0) {
     toast({
-      title: result.isCut ? 'Moved' : 'Copied',
-      description: `${result.succeeded} item${result.succeeded > 1 ? 's' : ''} ${verbPast}`,
+      title: result.isCut ? i18n.t('toast.moved') : i18n.t('toast.copied'),
+      description: result.isCut
+        ? i18n.t('toast.pasteMoved', { count: result.succeeded })
+        : i18n.t('toast.pasteCopied', { count: result.succeeded }),
     });
   } else {
     toast({
-      title: 'Paste completed with errors',
-      description: `${result.succeeded} ${verbPast}, ${result.errors.length} failed: ${result.errors.slice(0, 3).join('; ')}${result.errors.length > 3 ? '...' : ''}`,
+      title: i18n.t('toast.pasteWithErrors'),
+      description: i18n.t(result.isCut ? 'toast.pasteErrorsMoved' : 'toast.pasteErrorsCopied', {
+        ok: result.succeeded,
+        failed: result.errors.length,
+        errors: `${result.errors.slice(0, 3).join('; ')}${result.errors.length > 3 ? '...' : ''}`,
+      }),
       variant: 'destructive',
     });
   }

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import { PreviewProps } from '@/lib/preview-factory';
 import { TauriAPI } from '@/lib/tauri-api';
@@ -53,7 +54,8 @@ const CsvPreview = ({ file, onError, onLoad }: PreviewProps) => {
 
         onLoad?.();
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load CSV file';
+        const errorMessage =
+          err instanceof Error ? err.message : i18n.t('previews.csv.failedToLoad');
         setError(errorMessage);
         onError?.(err instanceof Error ? err : new Error(errorMessage));
       } finally {
@@ -68,7 +70,7 @@ const CsvPreview = ({ file, onError, onLoad }: PreviewProps) => {
   return (
     <div className="mt-4">
       <div className="mb-2 flex items-center justify-between">
-        <h4 className="text-xp-text-muted text-xs font-medium">CSV Preview</h4>
+        <h4 className="text-xp-text-muted text-xs font-medium">{i18n.t('previews.csv.title')}</h4>
         {meta && (
           <span className="text-xp-text-muted text-xs">
             {meta.rowCount} rows • delimiter: "{meta.delimiter}"
@@ -80,7 +82,7 @@ const CsvPreview = ({ file, onError, onLoad }: PreviewProps) => {
         <div className="bg-xp-surface border-xp-border text-xp-text-muted rounded border p-4 text-center">
           <div className="animate-pulse">
             <div className="bg-xp-bg mb-2 h-48 w-full rounded" />
-            <p className="text-xs">Loading CSV...</p>
+            <p className="text-xs">{i18n.t('previews.csv.loading')}</p>
           </div>
         </div>
       )}
@@ -94,7 +96,7 @@ const CsvPreview = ({ file, onError, onLoad }: PreviewProps) => {
               clipRule="evenodd"
             />
           </svg>
-          <p className="text-xs">Cannot preview CSV</p>
+          <p className="text-xs">{i18n.t('previews.csv.cannotPreview')}</p>
           <p className="mt-1 text-xs opacity-70">{error}</p>
         </div>
       ) : null}
@@ -140,14 +142,14 @@ const CsvPreview = ({ file, onError, onLoad }: PreviewProps) => {
 
           {data.length >= 99 && (
             <p className="text-xp-text-muted mt-2 text-center text-xs">
-              Showing first 100 rows. Double-click to open full file.
+              {i18n.t('previews.csv.first100')}
             </p>
           )}
         </>
       )}
       {!error && data.length === 0 && (
         <div className="bg-xp-surface border-xp-border text-xp-text-muted rounded border p-4 text-center">
-          <p className="text-xs">No data found in CSV file</p>
+          <p className="text-xs">{i18n.t('previews.csv.noData')}</p>
         </div>
       )}
     </div>

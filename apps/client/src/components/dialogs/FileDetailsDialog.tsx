@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef } from 'react';
 import {
   TauriAPI,
@@ -69,7 +70,9 @@ const FileDetailsDialog = ({
               <FileText className="text-xp-blue h-4 w-4" />
             </div>
             <div className="min-w-0">
-              <h2 className="text-xp-text text-sm font-semibold">File Details</h2>
+              <h2 className="text-xp-text text-sm font-semibold">
+                {i18n.t('dialogs.fileDetails')}
+              </h2>
               <p className="text-xp-text-muted max-w-[280px] truncate text-xs" title={filePath}>
                 {fileName}
               </p>
@@ -276,9 +279,9 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
         {/* eslint-disable-next-line no-nested-ternary */}
         {loading ? (
-          <p className="text-xp-text-muted text-sm">Loading...</p>
+          <p className="text-xp-text-muted text-sm">{i18n.t('common.loading')}</p>
         ) : notes.length === 0 && !showAddForm ? (
-          <p className="text-xp-text-muted text-sm italic">No notes yet — add one below.</p>
+          <p className="text-xp-text-muted text-sm italic">{i18n.t('dialogs.notes.empty')}</p>
         ) : (
           notes.map((note) => (
             <div key={note.id} className="border-xp-border overflow-hidden rounded-md border">
@@ -334,14 +337,14 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
                         onChange={(e) => setEditContent(e.target.value)}
                         rows={5}
                         className="bg-xp-bg border-xp-border text-xp-text focus:border-xp-blue w-full resize-y rounded border px-3 py-1.5 text-sm transition-colors focus:outline-none"
-                        placeholder="Note content (markdown supported)..."
+                        placeholder={i18n.t('dialogs.notes.contentPlaceholder')}
                       />
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => setEditingNoteId(null)}
                           className="text-xp-text-muted hover:text-xp-text rounded px-2.5 py-1 text-xs transition-colors"
                         >
-                          Cancel
+                          {i18n.t('common.cancel')}
                         </button>
                         <button
                           onClick={() => handleUpdateNote(note.id)}
@@ -349,7 +352,7 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
                           className="bg-xp-blue flex items-center space-x-1 rounded px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-opacity-90 disabled:opacity-40"
                         >
                           <Check className="h-3 w-3" />
-                          <span>Save</span>
+                          <span>{i18n.t('common.save')}</span>
                         </button>
                       </div>
                     </div>
@@ -357,7 +360,9 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
                     <div className="pt-2">
                       <p className="text-xp-text whitespace-pre-wrap text-sm">
                         {note.content || (
-                          <span className="text-xp-text-muted italic">No content</span>
+                          <span className="text-xp-text-muted italic">
+                            {i18n.t('dialogs.notes.noContent')}
+                          </span>
                         )}
                       </p>
                       <p className="text-xp-text-muted mt-2 text-xs">
@@ -382,7 +387,7 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
                 if (e.key === 'Escape') setShowAddForm(false);
               }}
               className="bg-xp-bg border-xp-border text-xp-text placeholder-xp-text-muted focus:border-xp-blue w-full rounded border px-3 py-1.5 text-sm transition-colors focus:outline-none"
-              placeholder="Note title..."
+              placeholder={i18n.t('dialogs.notes.titlePlaceholder')}
               maxLength={100}
             />
             <textarea
@@ -390,14 +395,14 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
               onChange={(e) => setNewContent(e.target.value)}
               rows={4}
               className="bg-xp-bg border-xp-border text-xp-text placeholder-xp-text-muted focus:border-xp-blue w-full resize-y rounded border px-3 py-1.5 text-sm transition-colors focus:outline-none"
-              placeholder="Note content (markdown supported)..."
+              placeholder={i18n.t('dialogs.notes.contentPlaceholder')}
             />
             <div className="flex items-center justify-end space-x-2">
               <button
                 onClick={() => setShowAddForm(false)}
                 className="text-xp-text-muted hover:text-xp-text rounded px-2.5 py-1 text-xs transition-colors"
               >
-                Cancel
+                {i18n.t('common.cancel')}
               </button>
               <button
                 onClick={handleAddNote}
@@ -409,7 +414,7 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
                 ) : (
                   <Check className="h-3 w-3" />
                 )}
-                <span>Add Note</span>
+                <span>{i18n.t('dialogs.notes.addNote')}</span>
               </button>
             </div>
           </div>
@@ -433,7 +438,7 @@ const NotesTab = ({ filePath }: { filePath: string }) => {
             className="bg-xp-blue flex items-center space-x-1.5 rounded px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-opacity-90"
           >
             <Plus className="h-3.5 w-3.5" />
-            <span>Add Note</span>
+            <span>{i18n.t('dialogs.notes.addNote')}</span>
           </button>
         )}
       </div>
@@ -512,11 +517,12 @@ const AnnotationsTab = ({ filePath }: { filePath: string }) => {
     <>
       <div className="flex-1 space-y-3 overflow-y-auto px-4 py-3">
         {(() => {
-          if (loading) return <p className="text-xp-text-muted text-sm">Loading...</p>;
+          if (loading)
+            return <p className="text-xp-text-muted text-sm">{i18n.t('common.loading')}</p>;
           if (annotations.length === 0) {
             return (
               <p className="text-xp-text-muted text-sm italic">
-                No annotations yet — add one below.
+                {i18n.t('dialogs.annotations.empty')}
               </p>
             );
           }
@@ -532,7 +538,7 @@ const AnnotationsTab = ({ filePath }: { filePath: string }) => {
                       <button
                         onClick={() => handleToggleResolved(a.id)}
                         className="text-xp-text-muted mt-0.5 flex-shrink-0 transition-colors hover:text-green-400"
-                        title="Mark as resolved"
+                        title={i18n.t('dialogs.annotations.markResolved')}
                       >
                         <Circle className="h-4 w-4" />
                       </button>
@@ -616,7 +622,7 @@ const AnnotationsTab = ({ filePath }: { filePath: string }) => {
                 handleAdd();
               }
             }}
-            placeholder="Add an annotation..."
+            placeholder={i18n.t('dialogs.annotations.inputPlaceholder')}
             maxLength={500}
             className="bg-xp-bg border-xp-border text-xp-text placeholder-xp-text-muted focus:border-xp-blue flex-1 rounded border px-3 py-1.5 text-sm transition-colors focus:outline-none"
           />
@@ -732,11 +738,12 @@ const MetadataTab = ({ filePath, onClose }: { filePath: string; onClose: () => v
     <>
       <div className="flex-1 space-y-2 overflow-y-auto px-4 py-3">
         {(() => {
-          if (loading) return <p className="text-xp-text-muted text-sm">Loading...</p>;
+          if (loading)
+            return <p className="text-xp-text-muted text-sm">{i18n.t('common.loading')}</p>;
           if (fields.length === 0) {
             return (
               <p className="text-xp-text-muted text-sm italic">
-                No metadata fields — click Add Field below.
+                {i18n.t('dialogs.metadata.empty')}
               </p>
             );
           }
@@ -805,7 +812,7 @@ const MetadataTab = ({ filePath, onClose }: { filePath: string; onClose: () => v
                       onValueChange={(v) => handleFieldChange(field._localId, 'value', v)}
                     >
                       <SelectTrigger className="h-8 w-full">
-                        <SelectValue placeholder="Select..." />
+                        <SelectValue placeholder={i18n.t('dialogs.metadata.select')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="true">True</SelectItem>
@@ -848,7 +855,7 @@ const MetadataTab = ({ filePath, onClose }: { filePath: string; onClose: () => v
                   <button
                     onClick={() => handleRemoveField(field._localId)}
                     className="hover:bg-xp-surface-light text-xp-text-muted rounded p-1.5 transition-colors hover:text-red-400"
-                    title="Remove field"
+                    title={i18n.t('dialogs.metadata.removeField')}
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -863,7 +870,7 @@ const MetadataTab = ({ filePath, onClose }: { filePath: string; onClose: () => v
           className="text-xp-blue hover:bg-xp-surface-light border-xp-border flex w-full items-center justify-center space-x-1.5 rounded border border-dashed px-2 py-1.5 text-sm transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />
-          <span>Add Field</span>
+          <span>{i18n.t('dialogs.metadata.addField')}</span>
         </button>
 
         {error && (
@@ -879,7 +886,7 @@ const MetadataTab = ({ filePath, onClose }: { filePath: string; onClose: () => v
           onClick={onClose}
           className="text-xp-text-muted hover:text-xp-text hover:bg-xp-surface-light rounded px-3 py-1.5 text-sm transition-colors"
         >
-          Cancel
+          {i18n.t('common.cancel')}
         </button>
         <button
           onClick={handleSave}
@@ -889,12 +896,12 @@ const MetadataTab = ({ filePath, onClose }: { filePath: string; onClose: () => v
           {saving ? (
             <>
               <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              <span>Saving...</span>
+              <span>{i18n.t('common.saving')}</span>
             </>
           ) : (
             <>
               <Check className="h-3.5 w-3.5" />
-              <span>Save</span>
+              <span>{i18n.t('common.save')}</span>
             </>
           )}
         </button>

@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import i18n from '@/i18n';
 import { TauriAPI, type FileEntry, type ConflictFileInfo } from '@/lib/tauri-api';
 import { PATH_SEPARATOR, detectSep } from '@/lib/constants';
 import { showConfirmationToast, showInputToast } from '@/components/ui/Toast';
@@ -244,8 +245,11 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
             await TauriAPI.openFile(file.path);
           } catch (error) {
             toastRef.current({
-              title: 'Open failed',
-              description: `Failed to open "${file.name}": ${formatError(error)}`,
+              title: i18n.t('toast.openFileFailed'),
+              description: i18n.t('toast.openFileFailedDesc', {
+                name: file.name,
+                error: formatError(error),
+              }),
               variant: 'destructive',
             });
           }
@@ -280,7 +284,7 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
           (opts) =>
             toastRef.current({
               ...opts,
-              description: `${filesToCopy.length} item${filesToCopy.length > 1 ? 's' : ''} copied to clipboard`,
+              description: i18n.t('toast.itemsCopiedToClipboard', { count: filesToCopy.length }),
             }),
         );
       },
@@ -293,7 +297,7 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
           (opts) =>
             toastRef.current({
               ...opts,
-              description: `${filesToCut.length} item${filesToCut.length > 1 ? 's' : ''} cut to clipboard`,
+              description: i18n.t('toast.itemsCutToClipboard', { count: filesToCut.length }),
             }),
         );
       },
@@ -301,8 +305,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
         const currentClipboard = clipboardRef.current;
         if (!currentClipboard) {
           toastRef.current({
-            title: 'Nothing to paste',
-            description: 'Clipboard is empty',
+            title: i18n.t('toast.nothingToPaste'),
+            description: i18n.t('toast.clipboardEmpty'),
             variant: 'destructive',
           });
           return;
@@ -321,14 +325,14 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
             setSelectedFilesRef.current(new Set());
             emitFilesChangedRef.current();
             toastRef.current({
-              title: 'Deleted',
-              description: `${filesToDelete.length} item${filesToDelete.length > 1 ? 's' : ''} deleted successfully`,
+              title: i18n.t('toast.deleted'),
+              description: i18n.t('toast.itemsDeleted', { count: filesToDelete.length }),
             });
           } catch (error) {
             console.error('Delete operation failed:', error);
             toastRef.current({
-              title: 'Delete failed',
-              description: `Failed to delete items: ${formatError(error)}`,
+              title: i18n.t('toast.deleteFailed'),
+              description: i18n.t('toast.deleteItemsFailedDesc', { error: formatError(error) }),
               variant: 'destructive',
             });
           }
@@ -338,8 +342,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
           dialogsRef.current.openBatchConfirmDialog('delete', filesToDelete, doDelete);
         } else {
           const result = await showConfirmationToast({
-            title: 'Delete File',
-            description: `Are you sure you want to delete "${filesToDelete[0]?.name}"?`,
+            title: i18n.t('toast.deleteFileTitle'),
+            description: i18n.t('toast.deleteFileConfirm', { name: filesToDelete[0]?.name }),
             confirmText: 'Delete',
             cancelText: 'Cancel',
           });
@@ -348,8 +352,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
       },
       rename: async (file: FileEntry) => {
         const newName = await showInputToast({
-          title: 'Rename',
-          description: 'Enter new name:',
+          title: i18n.t('toast.renameTitle'),
+          description: i18n.t('toast.enterNewName'),
           placeholder: file.name,
           submitText: 'Rename',
           cancelText: 'Cancel',
@@ -378,8 +382,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
       },
       createFolder: async (parentPath: string) => {
         const folderName = await showInputToast({
-          title: 'New Folder',
-          description: 'Enter folder name:',
+          title: i18n.t('toast.newFolderTitle'),
+          description: i18n.t('toast.enterFolderName'),
           placeholder: 'New Folder',
           submitText: 'Create',
           cancelText: 'Cancel',
@@ -408,8 +412,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
       },
       createFile: async (parentPath: string) => {
         const fileName = await showInputToast({
-          title: 'New File',
-          description: 'Enter file name:',
+          title: i18n.t('toast.newFileTitle'),
+          description: i18n.t('toast.enterFileName'),
           placeholder: 'New File.txt',
           submitText: 'Create',
           cancelText: 'Cancel',
@@ -521,8 +525,11 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
             console.error('Failed to open file:', error);
             toastRef.current({
               variant: 'destructive',
-              title: 'Open File Failed',
-              description: `Failed to open "${file.name}": ${formatError(error)}`,
+              title: i18n.t('toast.openFileFailed'),
+              description: i18n.t('toast.openFileFailedDesc', {
+                name: file.name,
+                error: formatError(error),
+              }),
             });
           });
         });
@@ -585,8 +592,11 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
             duplicated++;
           } catch (error) {
             toastRef.current({
-              title: 'Duplicate failed',
-              description: `Failed to duplicate "${file.name}": ${formatError(error)}`,
+              title: i18n.t('toast.duplicateFailed'),
+              description: i18n.t('toast.duplicateFailedDesc', {
+                name: file.name,
+                error: formatError(error),
+              }),
               variant: 'destructive',
             });
           }
@@ -594,8 +604,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
         if (duplicated > 0) {
           emitFilesChangedRef.current();
           toastRef.current({
-            title: 'Duplicated',
-            description: `Duplicated ${duplicated} item${duplicated > 1 ? 's' : ''}`,
+            title: i18n.t('toast.duplicated'),
+            description: i18n.t('toast.duplicatedDesc', { count: duplicated }),
           });
         }
       },
@@ -646,8 +656,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
       },
       createNewFile: async (parentPath: string) => {
         const fileName = await showInputToast({
-          title: 'New File',
-          description: 'Enter file name:',
+          title: i18n.t('toast.newFileTitle'),
+          description: i18n.t('toast.enterFileName'),
           placeholder: 'filename.ext',
           submitText: 'Create',
           cancelText: 'Cancel',
@@ -721,13 +731,16 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
           await TauriAPI.setFilePermissions(file.path, permissions);
           emitFilesChangedRef.current();
           toastRef.current({
-            title: 'File locked',
-            description: `"${file.name}" is now read-only`,
+            title: i18n.t('toast.fileLocked'),
+            description: i18n.t('toast.fileLockedDesc', { name: file.name }),
           });
         } catch (error) {
           toastRef.current({
-            title: 'Lock failed',
-            description: `Failed to lock "${file.name}": ${formatError(error)}`,
+            title: i18n.t('toast.lockFailed'),
+            description: i18n.t('toast.lockFailedDesc', {
+              name: file.name,
+              error: formatError(error),
+            }),
             variant: 'destructive',
           });
         }
@@ -739,13 +752,16 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
           await TauriAPI.setFilePermissions(file.path, permissions);
           emitFilesChangedRef.current();
           toastRef.current({
-            title: 'File unlocked',
-            description: `"${file.name}" is now writable`,
+            title: i18n.t('toast.fileUnlocked'),
+            description: i18n.t('toast.fileUnlockedDesc', { name: file.name }),
           });
         } catch (error) {
           toastRef.current({
-            title: 'Unlock failed',
-            description: `Failed to unlock "${file.name}": ${formatError(error)}`,
+            title: i18n.t('toast.unlockFailed'),
+            description: i18n.t('toast.unlockFailedDesc', {
+              name: file.name,
+              error: formatError(error),
+            }),
             variant: 'destructive',
           });
         }
@@ -801,8 +817,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
       dialogs.openBatchConfirmDialog('delete', selectedEntries, doDelete);
     } else {
       const confirmed = await showConfirmationToast({
-        title: 'Move to Recycle Bin',
-        description: `Are you sure you want to move this item to the recycle bin?`,
+        title: i18n.t('toast.moveToBinTitle'),
+        description: i18n.t('toast.moveToBinConfirmOne'),
         confirmText: 'Move to Recycle Bin',
         cancelText: 'Cancel',
       });
@@ -821,8 +837,8 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
 
   const handleCreateFolder = useCallback(async () => {
     const folderName = await showInputToast({
-      title: 'Create New Folder',
-      description: 'Enter a name for the new folder',
+      title: i18n.t('toast.createNewFolder'),
+      description: i18n.t('toast.enterNewFolderName'),
       placeholder: 'Folder name',
       submitText: 'Create',
       cancelText: 'Cancel',
@@ -891,15 +907,15 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
           emitFileActivity('remove', filePath);
         }
         toastRef.current({
-          title: 'Deleted',
-          description: `${selectedFilesArray.length} item${selectedFilesArray.length > 1 ? 's' : ''} moved to trash`,
+          title: i18n.t('toast.deleted'),
+          description: i18n.t('toast.itemsMovedToTrash', { count: selectedFilesArray.length }),
         });
         setSelectedFiles(new Set());
         emitFilesChanged();
       } catch (error) {
         toastRef.current({
-          title: 'Error',
-          description: `Failed to delete: ${formatError(error)}`,
+          title: i18n.t('toast.error'),
+          description: i18n.t('toast.deleteGenericFailedDesc', { error: formatError(error) }),
           variant: 'destructive',
         });
       }

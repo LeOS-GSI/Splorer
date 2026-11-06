@@ -698,7 +698,7 @@ export class ContextMenuFactory {
         if (isText) {
           moreItems.push({
             id: 'word-count',
-            label: 'Word Count',
+            label: i18n.t('contextMenu.wordCount'),
             icon: mi(FileText),
             action: async () => {
               try {
@@ -710,7 +710,11 @@ export class ContextMenuFactory {
                   new CustomEvent('xplorer:extension-toast', {
                     detail: {
                       title: file.name,
-                      description: `${words.toLocaleString()} words · ${lines.toLocaleString()} lines · ${chars.toLocaleString()} chars`,
+                      description: i18n.t('contextMenu.wordCountDesc', {
+                        words: words.toLocaleString(),
+                        lines: lines.toLocaleString(),
+                        chars: chars.toLocaleString(),
+                      }),
                     },
                   }),
                 );
@@ -725,7 +729,7 @@ export class ContextMenuFactory {
       if (!file.is_dir) {
         moreItems.push({
           id: 'calculate-hash',
-          label: 'Calculate Hash',
+          label: i18n.t('contextMenu.calculateHash'),
           icon: mi(Fingerprint),
           action: async () => {
             try {
@@ -737,8 +741,8 @@ export class ContextMenuFactory {
               window.dispatchEvent(
                 new CustomEvent('xplorer:extension-toast', {
                   detail: {
-                    title: 'File Hash',
-                    description: `SHA-256: ${sha256} — copied to clipboard`,
+                    title: i18n.t('contextMenu.fileHash'),
+                    description: i18n.t('contextMenu.fileHashDesc', { hash: sha256 }),
                   },
                 }),
               );

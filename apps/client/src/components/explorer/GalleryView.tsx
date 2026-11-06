@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef } from 'react';
 import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -210,7 +211,7 @@ const GalleryView = ({
     <div
       ref={bgDropRef}
       className="flex h-full flex-col overflow-hidden"
-      aria-label="Gallery view"
+      aria-label={i18n.t('explorer.galleryViewAria')}
       onContextMenu={handleBackgroundRightClick || undefined}
     >
       {/* -- Large preview area -- */}
@@ -222,7 +223,7 @@ const GalleryView = ({
       >
         {(() => {
           if (!displayFile) {
-            return <div className="text-xp-text-muted text-sm">No files</div>;
+            return <div className="text-xp-text-muted text-sm">{i18n.t('explorer.noFiles')}</div>;
           }
           if (isDisplayImage && !previewError) {
             return (

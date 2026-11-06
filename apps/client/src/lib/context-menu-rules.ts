@@ -5,6 +5,7 @@
  * Rules are persisted in localStorage under `xplorer:context-menu-rules`.
  */
 
+import i18n from '@/i18n';
 import type { FileEntry } from '@/lib/tauri-api';
 import { STORAGE_KEYS } from '@/lib/storage-keys';
 
@@ -32,35 +33,180 @@ const STORAGE_KEY = STORAGE_KEYS.CONTEXT_MENU_RULES;
 // ── Known menu items (for the rule editor dropdown) ────────────────
 
 const KNOWN_MENU_ITEMS: { id: string; label: string }[] = [
-  { id: 'open', label: 'Open' },
-  { id: 'open-new-tab', label: 'Open in New Tab' },
-  { id: 'open-with', label: 'Open with...' },
-  { id: 'open-in-editor', label: 'Edit' },
-  { id: 'copy', label: 'Copy' },
-  { id: 'cut', label: 'Cut' },
-  { id: 'paste', label: 'Paste' },
-  { id: 'duplicate', label: 'Duplicate' },
-  { id: 'create-symlink', label: 'Create Link' },
-  { id: 'rename', label: 'Rename' },
-  { id: 'bulk-rename', label: 'Bulk Rename' },
-  { id: 'delete', label: 'Delete' },
-  { id: 'secure-delete', label: 'Secure Delete' },
-  { id: 'archive', label: 'Archive' },
-  { id: 'compress', label: 'Add to archive...' },
-  { id: 'extract', label: 'Extract here' },
-  { id: 'encrypt', label: 'Encrypt' },
-  { id: 'decrypt', label: 'Decrypt' },
-  { id: 'compare', label: 'Compare' },
-  { id: 'open-terminal', label: 'Open in Terminal' },
-  { id: 'calculate-folder-size', label: 'Calculate Folder Size' },
-  { id: 'file-details', label: 'File Details' },
-  { id: 'manage-tags', label: 'Tags...' },
-  { id: 'copy-path', label: 'Copy Path' },
-  { id: 'copy-name', label: 'Copy Name' },
-  { id: 'version-history', label: 'Version History' },
-  { id: 'pin-to-sidebar', label: 'Pin to Sidebar' },
-  { id: 'add-bookmark', label: 'Add to Bookmarks' },
-  { id: 'properties', label: 'Properties' },
+  {
+    id: 'open',
+    get label() {
+      return i18n.t('contextMenu.open');
+    },
+  },
+  {
+    id: 'open-new-tab',
+    get label() {
+      return i18n.t('contextMenu.openInNewTab');
+    },
+  },
+  {
+    id: 'open-with',
+    get label() {
+      return i18n.t('contextMenu.openWith');
+    },
+  },
+  {
+    id: 'open-in-editor',
+    get label() {
+      return i18n.t('contextMenu.edit');
+    },
+  },
+  {
+    id: 'copy',
+    get label() {
+      return i18n.t('contextMenu.copy');
+    },
+  },
+  {
+    id: 'cut',
+    get label() {
+      return i18n.t('contextMenu.cut');
+    },
+  },
+  {
+    id: 'paste',
+    get label() {
+      return i18n.t('contextMenu.paste');
+    },
+  },
+  {
+    id: 'duplicate',
+    get label() {
+      return i18n.t('contextMenu.duplicate');
+    },
+  },
+  {
+    id: 'create-symlink',
+    get label() {
+      return i18n.t('contextMenu.createLink');
+    },
+  },
+  {
+    id: 'rename',
+    get label() {
+      return i18n.t('contextMenu.rename');
+    },
+  },
+  {
+    id: 'bulk-rename',
+    get label() {
+      return i18n.t('contextMenu.bulkRenameShort');
+    },
+  },
+  {
+    id: 'delete',
+    get label() {
+      return i18n.t('contextMenu.delete');
+    },
+  },
+  {
+    id: 'secure-delete',
+    get label() {
+      return i18n.t('contextMenu.secureDelete');
+    },
+  },
+  {
+    id: 'archive',
+    get label() {
+      return i18n.t('contextMenu.archive');
+    },
+  },
+  {
+    id: 'compress',
+    get label() {
+      return i18n.t('contextMenu.addToArchive');
+    },
+  },
+  {
+    id: 'extract',
+    get label() {
+      return i18n.t('contextMenu.extractHere');
+    },
+  },
+  {
+    id: 'encrypt',
+    get label() {
+      return i18n.t('contextMenu.encrypt');
+    },
+  },
+  {
+    id: 'decrypt',
+    get label() {
+      return i18n.t('contextMenu.decrypt');
+    },
+  },
+  {
+    id: 'compare',
+    get label() {
+      return i18n.t('contextMenu.compare');
+    },
+  },
+  {
+    id: 'open-terminal',
+    get label() {
+      return i18n.t('contextMenu.openInTerminal');
+    },
+  },
+  {
+    id: 'calculate-folder-size',
+    get label() {
+      return i18n.t('contextMenu.calculateFolderSize');
+    },
+  },
+  {
+    id: 'file-details',
+    get label() {
+      return i18n.t('contextMenu.fileDetails');
+    },
+  },
+  {
+    id: 'manage-tags',
+    get label() {
+      return i18n.t('contextMenu.tags');
+    },
+  },
+  {
+    id: 'copy-path',
+    get label() {
+      return i18n.t('contextMenu.copyPath');
+    },
+  },
+  {
+    id: 'copy-name',
+    get label() {
+      return i18n.t('contextMenu.copyName');
+    },
+  },
+  {
+    id: 'version-history',
+    get label() {
+      return i18n.t('contextMenu.versionHistory');
+    },
+  },
+  {
+    id: 'pin-to-sidebar',
+    get label() {
+      return i18n.t('contextMenu.pinToSidebar');
+    },
+  },
+  {
+    id: 'add-bookmark',
+    get label() {
+      return i18n.t('contextMenu.addToBookmarks');
+    },
+  },
+  {
+    id: 'properties',
+    get label() {
+      return i18n.t('common.properties');
+    },
+  },
 ];
 
 // ── CRUD helpers ───────────────────────────────────────────────────

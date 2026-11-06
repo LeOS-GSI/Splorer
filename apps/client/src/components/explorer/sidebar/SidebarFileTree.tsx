@@ -253,7 +253,7 @@ const SidebarFileTree = ({
         </div>
 
         {file.is_dir && isExpanded && hasChildren && (
-          <div role="group" aria-label={`Contents of ${file.name}`}>
+          <div role="group" aria-label={t('sidebar.contentsOf', { name: file.name })}>
             {children.map((childFile) => renderFileItem(childFile, depth + 1))}
           </div>
         )}
@@ -265,7 +265,7 @@ const SidebarFileTree = ({
     <div
       className="flex-1 overflow-y-auto"
       role="region"
-      aria-label="File tree"
+      aria-label={t('sidebar.fileTreeAria')}
       tabIndex={0}
       data-sidebar-section="fileTree"
     >
@@ -283,14 +283,18 @@ const SidebarFileTree = ({
         {t('sidebar.fileTree')}
       </button>
       {!collapsed && (
-        <div className="space-y-0 px-3 pb-2" role="tree" aria-label="Directory tree">
+        <div
+          className="space-y-0 px-3 pb-2"
+          role="tree"
+          aria-label={t('sidebar.directoryTreeAria')}
+        >
           {sortedRootContents && (
             <div>
               <div
                 role="treeitem"
                 aria-selected={currentPath === rootPath}
                 aria-expanded={expandedFolders.has(rootPath)}
-                aria-label={`Root drive ${rootPath}`}
+                aria-label={t('sidebar.rootDrive', { path: rootPath })}
                 className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs font-medium transition-colors ${currentPath === rootPath ? 'bg-xp-blue text-xp-blue border-xp-blue border-l-2 bg-opacity-25' : 'text-xp-text'} `}
                 onClick={() => navigateToPath(rootPath)}
               >
@@ -319,7 +323,7 @@ const SidebarFileTree = ({
               </div>
 
               {expandedFolders.has(rootPath) && (
-                <div role="group" aria-label={`Contents of ${rootPath}`}>
+                <div role="group" aria-label={t('sidebar.contentsOf', { name: rootPath })}>
                   {sortedRootContents.map((file) => renderFileItem(file, 1))}
                 </div>
               )}

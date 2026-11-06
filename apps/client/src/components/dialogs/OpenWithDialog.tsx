@@ -1,6 +1,15 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppWindow, ChevronDown, ChevronUp, FileCode, Loader2, Monitor, Search, X } from 'lucide-react';
+import {
+  AppWindow,
+  ChevronDown,
+  ChevronUp,
+  FileCode,
+  Loader2,
+  Monitor,
+  Search,
+  X,
+} from 'lucide-react';
 import { TauriAPI, type DesktopApp } from '@/lib/tauri-api';
 import {
   type OpenHandler,
@@ -65,9 +74,7 @@ const OptionRow = ({
           </span>
         )}
       </div>
-      {description && (
-        <div className="text-xp-text-secondary truncate text-xs">{description}</div>
-      )}
+      {description && <div className="text-xp-text-secondary truncate text-xs">{description}</div>}
     </div>
     <div
       className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
@@ -259,7 +266,7 @@ const OpenWithDialog = ({ isOpen, onClose, filePath, onChoose }: OpenWithDialogP
             <button
               type="button"
               onClick={() => setShowAll((v) => !v)}
-              className="text-xp-text-secondary hover:text-xp-text flex w-full items-center gap-1.5 px-3 pt-2 pb-1 text-xs font-medium transition-colors"
+              className="text-xp-text-secondary hover:text-xp-text flex w-full items-center gap-1.5 px-3 pb-1 pt-2 text-xs font-medium transition-colors"
             >
               {showAll ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
               {showAll
@@ -273,7 +280,7 @@ const OpenWithDialog = ({ isOpen, onClose, filePath, onChoose }: OpenWithDialogP
               <div className="relative px-1 pb-1">
                 <Search
                   size={14}
-                  className="text-xp-text-secondary pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2"
+                  className="text-xp-text-secondary pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2"
                 />
                 <input
                   type="text"
@@ -281,7 +288,7 @@ const OpenWithDialog = ({ isOpen, onClose, filePath, onChoose }: OpenWithDialogP
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                   placeholder={t('openWith.searchApps', 'Search applications…')}
-                  className="bg-xp-bg border-xp-border text-xp-text focus:ring-xp-accent w-full rounded-md border py-1.5 pr-2 pl-8 text-sm outline-none focus:ring-1"
+                  className="bg-xp-bg border-xp-border text-xp-text focus:ring-xp-accent w-full rounded-md border py-1.5 pl-8 pr-2 text-sm outline-none focus:ring-1"
                 />
               </div>
               {others.map(renderApp)}

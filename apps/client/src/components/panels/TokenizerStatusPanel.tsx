@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -93,10 +94,10 @@ const TokenizerStatusPanel = () => {
   // Get content source badge
   const getSourceBadge = (relevanceType: string) => {
     const badges: Record<string, { label: string; color: string }> = {
-      exact: { label: 'Exact', color: 'bg-xp-green' },
-      semantic: { label: 'Semantic', color: 'bg-indigo-500' },
-      fuzzy: { label: 'Fuzzy', color: 'bg-yellow-500' },
-      metadata: { label: 'Metadata', color: 'bg-teal-500' },
+      exact: { label: i18n.t('panels.common.relevanceExact'), color: 'bg-xp-green' },
+      semantic: { label: i18n.t('panels.common.relevanceSemantic'), color: 'bg-indigo-500' },
+      fuzzy: { label: i18n.t('panels.common.relevanceFuzzy'), color: 'bg-yellow-500' },
+      metadata: { label: i18n.t('panels.common.relevanceMetadata'), color: 'bg-teal-500' },
     };
     return badges[relevanceType] || { label: relevanceType, color: 'bg-xp-blue' };
   };

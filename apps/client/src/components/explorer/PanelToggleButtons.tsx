@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 
 interface PanelToggleButtonsProps {
@@ -20,7 +21,7 @@ const PanelToggleButtons = React.memo(
           <button
             onClick={onToggleRightSidebar}
             className="xp-panel-toggle bg-xp-surface border-xp-border hover:bg-xp-surface-light rounded border p-2 shadow"
-            title="Toggle panel (Ctrl+Shift+B)"
+            title={i18n.t('explorer.togglePanel')}
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -36,7 +37,7 @@ const PanelToggleButtons = React.memo(
             data-tour="bottom-panel-toggle"
             onClick={onToggleBottomPanel}
             className="xp-panel-toggle bg-xp-surface border-xp-border hover:bg-xp-surface-light rounded border p-2 shadow"
-            title="Toggle terminal (Ctrl+J)"
+            title={i18n.t('explorer.toggleTerminal')}
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <path

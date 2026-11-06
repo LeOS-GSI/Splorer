@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, {
   useState,
   useEffect,
@@ -525,9 +526,9 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
     const getRelevanceBadge = (relevanceType: string): { label: string; color: string } => {
       switch (relevanceType) {
         case 'exact':
-          return { label: 'Exact', color: 'bg-xp-green' };
+          return { label: i18n.t('smartSearch.relevanceExact'), color: 'bg-xp-green' };
         case 'semantic':
-          return { label: 'Semantic', color: 'bg-indigo-500' };
+          return { label: i18n.t('smartSearch.relevanceSemantic'), color: 'bg-indigo-500' };
         case 'fuzzy':
           return { label: 'Fuzzy', color: 'bg-yellow-500' };
         case 'metadata':
@@ -588,11 +589,15 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
       if (pq.date_filter) {
         if (pq.date_filter.after) {
           const daysAgo = Math.round((Date.now() / 1000 - pq.date_filter.after) / 86400);
-          if (daysAgo <= 1) chips.push({ label: 'Today', type: 'date' });
-          else if (daysAgo <= 2) chips.push({ label: 'Yesterday', type: 'date' });
-          else if (daysAgo <= 7) chips.push({ label: 'Last Week', type: 'date' });
-          else if (daysAgo <= 30) chips.push({ label: 'Last Month', type: 'date' });
-          else if (daysAgo <= 365) chips.push({ label: 'This Year', type: 'date' });
+          if (daysAgo <= 1) chips.push({ label: i18n.t('smartSearch.chipToday'), type: 'date' });
+          else if (daysAgo <= 2)
+            chips.push({ label: i18n.t('smartSearch.chipYesterday'), type: 'date' });
+          else if (daysAgo <= 7)
+            chips.push({ label: i18n.t('smartSearch.chipLastWeek'), type: 'date' });
+          else if (daysAgo <= 30)
+            chips.push({ label: i18n.t('smartSearch.chipLastMonth'), type: 'date' });
+          else if (daysAgo <= 365)
+            chips.push({ label: i18n.t('smartSearch.chipThisYear'), type: 'date' });
         }
         if (pq.date_filter.before && !pq.date_filter.after) {
           chips.push({ label: 'Old', type: 'date' });
@@ -849,7 +854,9 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
                       <div className="space-y-1">
                         {result.matches.slice(0, 2).map((match) => (
                           <div key={match.token} className="text-xs">
-                            <span className="text-xp-text-muted">Match: </span>
+                            <span className="text-xp-text-muted">
+                              {i18n.t('smartSearch.matchLabel')}
+                            </span>
                             <span className="rounded bg-yellow-300 bg-opacity-20 px-1">
                               {match.token}
                             </span>

@@ -48,7 +48,10 @@
     "error": {
       "somethingWentWrong": "Something went wrong",
       "tryAgain": "Try again"
-    }
+    },
+    "retry": "Retry",
+    "saving": "Saving...",
+    "tryAgain": "Try Again"
   },
   "updater": {
     "available": "Splorer {{version}} is available",
@@ -72,7 +75,30 @@
     "drives": "DRIVES",
     "volumes": "VOLUMES",
     "fileTree": "FILE TREE",
-    "navigateTo": "Navigate to {{label}} folder"
+    "navigateTo": "Navigate to {{label}} folder",
+    "recentFilesAria": "Recent files",
+    "toggleRecent": "Toggle recent files",
+    "noRecentFiles": "No recent files",
+    "removeBookmark": "Remove bookmark",
+    "collectionsAria": "Collections",
+    "toggleCollections": "Toggle collections",
+    "createCollection": "Create new collection",
+    "collectionTooltip_one": "{{name}} - {{count}} filter",
+    "collectionTooltip_other": "{{name}} - {{count}} filters",
+    "smartFolder": " (smart folder)",
+    "quickFilter": " (quick filter)",
+    "fileTreeAria": "File tree",
+    "directoryTreeAria": "Directory tree",
+    "quickAccessAria": "Quick access",
+    "tabsAria": "Sidebar tabs",
+    "fileExplorer": "File Explorer",
+    "searchFilesAria": "Search files (Ctrl+Shift+F)",
+    "searchShortcut": "Search (Ctrl+Shift+F)",
+    "sidebarAria": "File explorer sidebar",
+    "extensionTabUnavailable": "Extension tab not available",
+    "removeBookmarkFor": "Remove bookmark for {{name}}",
+    "contentsOf": "Contents of {{name}}",
+    "rootDrive": "Root drive {{path}}"
   },
   "topBar": {
     "appTitle": "Splorer",
@@ -100,7 +126,8 @@
     "minimize": "Minimize",
     "maximize": "Maximize",
     "restore": "Restore",
-    "closeWindow": "Close window"
+    "closeWindow": "Close window",
+    "windowControls": "Window controls"
   },
   "statusBar": {
     "fileCount": "File count and selection",
@@ -196,7 +223,13 @@
     "bookmarkFolder": "Bookmark this folder",
     "pinToSidebar": "Pin to Sidebar",
     "lockFile": "Lock File",
-    "unlockFile": "Unlock File"
+    "unlockFile": "Unlock File",
+    "bulkRenameShort": "Bulk Rename",
+    "wordCount": "Word Count",
+    "calculateHash": "Calculate Hash",
+    "fileHash": "File Hash",
+    "wordCountDesc": "{{words}} words · {{lines}} lines · {{chars}} chars",
+    "fileHashDesc": "SHA-256: {{hash}} — copied to clipboard"
   },
   "drives": {
     "eject": "Eject",
@@ -330,7 +363,9 @@
       "vimBookmark": "Bookmark dir",
       "vimRepeatLast": "Repeat last",
       "vimClearExit": "Clear / exit",
-      "keyBindings": "Key Bindings"
+      "keyBindings": "Key Bindings",
+      "resetOne": "Reset to default",
+      "resetAll": "Reset all shortcuts to defaults"
     },
     "tokenizer": {
       "title": "File Tokenizer",
@@ -499,7 +534,9 @@
       "sponsorTitle": "Support Splorer",
       "sponsorDescription": "Splorer is free and open source. If you find it useful, please consider sponsoring the project to help keep development going. Every contribution, no matter how small, makes a difference.",
       "sponsorButton": "Sponsor on GitHub",
-      "license": "Licensed under AGPL-3.0. Made with love."
+      "license": "Licensed under AGPL-3.0. Made with love.",
+      "repo": "GitHub Repository",
+      "basedOn": "Based on Xplorer by Justin Kimlim"
     }
   },
   "tour": {
@@ -566,7 +603,8 @@
     "recentFiles": "Recent Files",
     "allCommands": "All Commands",
     "commands": "Commands",
-    "filesAndFolders": "Files & Folders"
+    "filesAndFolders": "Files & Folders",
+    "goTo": "Go to {{path}}"
   },
   "operationBar": {
     "groupByDate": "Group by Date",
@@ -1085,6 +1123,136 @@
       "toastCopyCompleteDesc_other": "{{count}} files copied.",
       "toastCopyWithErrorsTitle": "Copy completed with errors",
       "toastCopyWithErrorsDesc": "{{copied}} copied, {{failed}} failed: {{errors}}"
+    },
+    "pathBm": {
+      "labelPlaceholder": "Label...",
+      "empty": "Empty",
+      "navigate": "navigate",
+      "assign": "assign",
+      "assignCurrent": "Assign Current Path",
+      "editLabel": "Edit Label"
+    },
+    "fileComparison": {
+      "failed": "Comparison failed",
+      "identical": "Files are identical",
+      "differ": "Files differ",
+      "linesAdded": "Lines Added",
+      "linesRemoved": "Lines Removed",
+      "linesModified": "Lines Modified",
+      "bytesDifferent": "Bytes Different",
+      "noDiff": "No differences found",
+      "theFilesIdentical": "The files are identical",
+      "sbsUnavailable": "Side-by-side view not available",
+      "sbsHint": "This view is only available for text, image, and video files",
+      "title": "File Comparison",
+      "comparing": "Comparing files...",
+      "sideBySide": "Side by Side",
+      "unable": "Unable to compare the selected files",
+      "refresh": "Refresh Comparison",
+      "typeBadge": "{{type}} comparison",
+      "processedIn": "Processed in {{ms}}ms",
+      "algorithm": "Algorithm: {{name}}",
+      "totalLines": "Total lines: {{a}} / {{b}}"
+    },
+    "templates": {
+      "title": "New from Template",
+      "empty": "No templates in this category.",
+      "deleteCustom": "Delete custom template",
+      "deleteNamed": "Delete template {{name}}"
+    },
+    "password": {
+      "connection": "Connection:",
+      "server": "Server:",
+      "formAria": "password form",
+      "placeholder": "Enter your password",
+      "remember": "Remember password for this session",
+      "securityNotice": "Security Notice",
+      "cancelAria": "Cancel authentication",
+      "securityText": "Passwords are stored securely in memory and are not saved to disk unless you explicitly save the connection with a password."
+    },
+    "xtension": {
+      "requestedPermissions": "Requested Permissions",
+      "installing": "Installing..."
+    },
+    "conflict": {
+      "replaceTitle": "Replace existing file",
+      "keepBothTitle": "Keep both files",
+      "keepBoth": "Keep Both",
+      "skipTitle": "Skip this file",
+      "replaceAll": "Replace All",
+      "renameAll": "Rename All",
+      "skipAll": "Skip All",
+      "alreadyHasFile": "The destination already has a file named:",
+      "alreadyHasFolder": "The destination already has a folder named:",
+      "overwriteFile": "Overwrite the existing file",
+      "overwriteFolder": "Overwrite the existing folder"
+    },
+    "shortcuts": {
+      "unbound": "Unbound",
+      "searchPlaceholder": "Search shortcuts...",
+      "loading": "Loading shortcuts...",
+      "customize": "Customize in Settings",
+      "count": "{{count}} shortcuts"
+    },
+    "pasteRename": {
+      "emptyName": "Name cannot be empty",
+      "exists": "A file with this name already exists in the directory",
+      "order": "Order:",
+      "pasteNames": "Paste new names (one per line):",
+      "errors": "Rename errors:",
+      "invalidChars": "Contains invalid characters ({{chars}})",
+      "duplicateLine": "Duplicate of line {{line}}",
+      "extChange": "Extension changes from \"{{from}}\" to \"{{to}}\"",
+      "none": "(none)",
+      "placeholder": "Enter {{count}} names, one per line...\n\ne.g.\nphoto-001.jpg\nphoto-002.jpg\nphoto-003.jpg",
+      "countMismatch": "Count mismatch: {{names}} pasted for {{files}}.",
+      "nameCount_one": "{{count}} name",
+      "nameCount_other": "{{count}} names"
+    },
+    "rename": {
+      "currentName": "Current Name",
+      "newName": "New Name"
+    },
+    "layouts": {
+      "title": "Workspace Layouts",
+      "namePlaceholder": "Layout name...",
+      "load": "Load layout",
+      "toggleHint": "Ctrl+Shift+L to toggle",
+      "saveCurrent": "Save Current",
+      "empty": "No saved layouts yet.",
+      "emptyHint": "Click \"Save Current\" to save your current workspace arrangement."
+    },
+    "review": {
+      "title": "Review Extension",
+      "verified": "Verified — Signature matches",
+      "unsigned": "Unsigned — This extension has not been verified",
+      "noPermissions": "This extension requests no special permissions.",
+      "dangerousCount": "{{count}} dangerous"
+    },
+    "tagCategories": {
+      "title": "Tag Categories",
+      "close": "Close tag categories dialog",
+      "empty": "No tag categories yet — add one below.",
+      "cycleColor": "Click to cycle color",
+      "cycleColorAria": "Cycle through color options",
+      "namePlaceholder": "Category name...",
+      "noParent": "No parent (root category)",
+      "add": "Add Category",
+      "editNamed": "Edit category {{name}}",
+      "deleteNamed": "Delete category {{name}}"
+    },
+    "moveTree": {
+      "resolve": "Resolve...",
+      "loadingDest": "Loading destination contents...",
+      "noData": "No data available",
+      "subtitle": "Preview the resulting directory structure",
+      "sizeSummary": "{{incoming}} into {{existing}} folder"
+    },
+    "metadata": {
+      "empty": "No metadata fields — click Add Field below.",
+      "select": "Select...",
+      "removeField": "Remove field",
+      "addField": "Add Field"
     }
   },
   "openWith": {
@@ -1206,7 +1374,15 @@
     "searchInContents": "Search in file contents",
     "searchingContents": "Searching file contents...",
     "contentMatches": "Content matches ({{count}})",
-    "noContentResults": "No matches found in file contents either"
+    "noContentResults": "No matches found in file contents either",
+    "relevanceExact": "Exact",
+    "relevanceSemantic": "Semantic",
+    "chipToday": "Today",
+    "chipYesterday": "Yesterday",
+    "chipLastWeek": "Last Week",
+    "chipLastMonth": "Last Month",
+    "chipThisYear": "This Year",
+    "matchLabel": "Match: "
   },
   "fileGrid": {
     "emptyFolder": "This folder is empty",
@@ -1311,7 +1487,94 @@
     "tokenizerIndexingError": "Error",
     "tokenizerIndexingErrorDesc": "Failed to start indexing",
     "tokenizerReset": "Reset",
-    "tokenizerResetDesc": "Settings restored to defaults. Click Save to apply."
+    "tokenizerResetDesc": "Settings restored to defaults. Click Save to apply.",
+    "openFileFailed": "Open File Failed",
+    "openFileFailedDesc": "Failed to open \"{{name}}\": {{error}}",
+    "moveFailed": "Move Failed",
+    "moveFailedDesc": "Failed to move \"{{name}}\": {{error}}",
+    "moved": "Moved",
+    "movedFilesTo_one": "Moved {{count}} file to {{destination}}",
+    "movedFilesTo_other": "Moved {{count}} files to {{destination}}",
+    "copyFailed": "Copy Failed",
+    "copyFailedDesc": "Failed to copy \"{{name}}\": {{error}}",
+    "copied": "Copied",
+    "cut": "Cut",
+    "copiedFilesTo_one": "Copied {{count}} file to {{destination}}",
+    "copiedFilesTo_other": "Copied {{count}} files to {{destination}}",
+    "compressed": "Compressed",
+    "compressedDesc_one": "Created {{archive}} with {{count}} file",
+    "compressedDesc_other": "Created {{archive}} with {{count}} files",
+    "compressionFailed": "Compression Failed",
+    "deleteCrossTabTitle": "Delete All Cross-Tab Files",
+    "deleteCrossTabDesc": "Are you sure you want to move {{count}} file(s) from {{tabs}} tab(s) to the recycle bin?",
+    "deleteFailed": "Delete Failed",
+    "deleteFailedDesc": "Failed to delete \"{{name}}\": {{error}}",
+    "deleteItemsFailedDesc": "Failed to delete items: {{error}}",
+    "deleteGenericFailedDesc": "Failed to delete: {{error}}",
+    "deleted": "Deleted",
+    "movedToBin_one": "Moved {{count}} file to recycle bin",
+    "movedToBin_other": "Moved {{count}} files to recycle bin",
+    "itemsDeleted_one": "{{count}} item deleted successfully",
+    "itemsDeleted_other": "{{count}} items deleted successfully",
+    "itemsMovedToTrash_one": "{{count}} item moved to trash",
+    "itemsMovedToTrash_other": "{{count}} items moved to trash",
+    "error": "Error",
+    "itemsCopiedToClipboard_one": "{{count}} item copied to clipboard",
+    "itemsCopiedToClipboard_other": "{{count}} items copied to clipboard",
+    "itemsCutToClipboard_one": "{{count}} item cut to clipboard",
+    "itemsCutToClipboard_other": "{{count}} items cut to clipboard",
+    "itemsCopied_one": "{{count}} item copied",
+    "itemsCopied_other": "{{count}} items copied",
+    "itemsCut_one": "{{count}} item cut",
+    "itemsCut_other": "{{count}} items cut",
+    "itemsYanked_one": "{{count}} item yanked",
+    "itemsYanked_other": "{{count}} items yanked",
+    "nothingToPaste": "Nothing to paste",
+    "clipboardEmpty": "Clipboard is empty",
+    "deleteFileTitle": "Delete File",
+    "deleteFileConfirm": "Are you sure you want to delete \"{{name}}\"?",
+    "renameTitle": "Rename",
+    "enterNewName": "Enter new name:",
+    "newFolderTitle": "New Folder",
+    "enterFolderName": "Enter folder name:",
+    "newFileTitle": "New File",
+    "enterFileName": "Enter file name:",
+    "createNewFolder": "Create New Folder",
+    "enterNewFolderName": "Enter a name for the new folder",
+    "createdName": "Created \"{{name}}\"",
+    "duplicateFailed": "Duplicate Failed",
+    "duplicateFailedDesc": "Failed to duplicate \"{{name}}\": {{error}}",
+    "duplicated": "Duplicated",
+    "duplicatedDesc_one": "Duplicated {{count}} item",
+    "duplicatedDesc_other": "Duplicated {{count}} items",
+    "fileLocked": "File locked",
+    "fileLockedDesc": "\"{{name}}\" is now read-only",
+    "lockFailed": "Lock failed",
+    "lockFailedDesc": "Failed to lock \"{{name}}\": {{error}}",
+    "fileUnlocked": "File unlocked",
+    "fileUnlockedDesc": "\"{{name}}\" is now writable",
+    "unlockFailed": "Unlock failed",
+    "unlockFailedDesc": "Failed to unlock \"{{name}}\": {{error}}",
+    "moveToBinTitle": "Move to Recycle Bin",
+    "moveToBinConfirmOne": "Are you sure you want to move this item to the recycle bin?",
+    "moveToBinConfirm": "Are you sure you want to move {{count}} item(s) to the recycle bin?",
+    "movedItemsDesc": "Moved {{count}} item(s)",
+    "undo": "Undo",
+    "undoFailed": "Undo Failed",
+    "redo": "Redo",
+    "redoFailed": "Redo Failed",
+    "savedToBookmarkSlot": "Saved to bookmark {{slot}}",
+    "bookmarkSlot": "Bookmark {{slot}}",
+    "bookmarked": "Bookmarked",
+    "bookmarkedDesc": "Added \"{{name}}\" to bookmarks",
+    "bookmarkFailed": "Bookmark failed",
+    "pasteWithErrors": "Paste completed with errors",
+    "pasteMoved_one": "{{count}} item moved",
+    "pasteMoved_other": "{{count}} items moved",
+    "pasteCopied_one": "{{count}} item copied",
+    "pasteCopied_other": "{{count}} items copied",
+    "pasteErrorsMoved": "{{ok}} moved, {{failed}} failed: {{errors}}",
+    "pasteErrorsCopied": "{{ok}} copied, {{failed}} failed: {{errors}}"
   },
   "extensions": {
     "devMode": "DEV",
@@ -1601,7 +1864,9 @@
     "terminal": {
       "placeholder": "Type a command...",
       "clearTitle": "Clear (type 'clear')",
-      "clear": "Clear"
+      "clear": "Clear",
+      "newTerminal": "New Terminal",
+      "tabLabel": "Terminal {{n}}"
     },
     "recommendations": {
       "tabSimilar": "Similar",
@@ -1628,6 +1893,144 @@
       "copyReport": "Copy report",
       "confirmMoveToTrash_one": "Move {{count}} duplicate file to trash?",
       "confirmMoveToTrash_other": "Move {{count}} duplicate file(s) to trash?"
+    },
+    "common": {
+      "sizeLabel": "Size:",
+      "typeLabel": "Type:",
+      "modifiedLabel": "Modified:",
+      "relevanceExact": "Exact",
+      "relevanceSemantic": "Semantic",
+      "noRecentFiles": "No recent files",
+      "closePanel": "Close panel",
+      "refreshStats": "Refresh stats",
+      "collapseAll": "Collapse all sections",
+      "relevanceFuzzy": "Fuzzy",
+      "relevanceMetadata": "Metadata"
+    },
+    "storage": {
+      "analyzing": "Analyzing storage...",
+      "analyze": "Analyze Storage",
+      "title": "Storage Analytics",
+      "refresh": "Refresh analysis",
+      "diskUsage": "Disk Usage",
+      "fileTypes": "File Types (Top 10 by Size)",
+      "sizeDistribution": "Size Distribution",
+      "scanned": "{{files}} files / {{dirs}} folders scanned",
+      "processed": "{{size}} processed",
+      "failed": "Analysis failed: {{error}}",
+      "free": "Free: {{percent}}% ({{size}})",
+      "files": "{{n}} files"
+    },
+    "preview": {
+      "failedToLoad": "Failed to load preview",
+      "error": "Preview Error",
+      "failed": "Preview failed",
+      "noPreview": "No preview available",
+      "doubleClickOpen": "Double-click to open",
+      "folderContents": "Folder Contents",
+      "totalSize": "Total Size:",
+      "files": "Files:",
+      "folders": "Folders:",
+      "totalItems": "Total Items:",
+      "calculating": "Calculating size...",
+      "clickCalculate": "Click to calculate folder size",
+      "noFileSelected": "No file selected for preview",
+      "selectFile": "Select a file to preview",
+      "mimeType": "MIME Type:",
+      "category": "Category:",
+      "path": "Path:",
+      "copyPath": "Copy path to clipboard",
+      "previewOf": "Preview of {{name}}",
+      "showProps": "Show file properties",
+      "hideProps": "Hide file properties"
+    },
+    "performance": {
+      "title": "Performance Metrics",
+      "fileOrganizer": "File Organizer",
+      "systemStats": "System Stats",
+      "totalSize": "Total Size",
+      "foldersCached": "Folders Cached",
+      "jsHeap": "JS Heap Usage",
+      "indexingStatus": "Indexing Status",
+      "searchTokenizer": "Search Tokenizer",
+      "indexedFiles": "Indexed Files",
+      "totalTokens": "Total Tokens",
+      "lastUpdated": "Last Updated",
+      "recentOps": "Recent Operations",
+      "noRecentOps": "No recent operations",
+      "cleanup": "Cleanup Suggestions",
+      "scanning": "Scanning directory...",
+      "duplicateCleanup": "Duplicate Cleanup",
+      "noDuplicates": "No duplicates found in this directory.",
+      "typeDistribution": "Type distribution",
+      "largestFiles": "Largest files",
+      "oldestFiles": "Oldest files",
+      "projectDirSkipped": "This is a project directory. File organization is skipped to avoid breaking the project structure.",
+      "previewMoves_one": "Preview: {{count}} file to move",
+      "previewMoves_other": "Preview: {{count}} files to move",
+      "groups_one": "{{count}} group",
+      "groups_other": "{{count}} groups",
+      "wasted": "{{size}} wasted"
+    },
+    "previewNav": {
+      "prevTitle": "Previous file (Left arrow)",
+      "prev": "Previous file",
+      "nextTitle": "Next file (Right arrow)",
+      "next": "Next file",
+      "compareWithPrev": "Compare with previous file",
+      "compare": "Compare",
+      "recent": "Recently previewed files",
+      "recentShort": "Recent"
+    },
+    "bottom": {
+      "tabsAria": "Bottom panel tabs",
+      "closeShortcut": "Close (Ctrl+J)",
+      "close": "Close bottom panel",
+      "noExternalChanges": "No external file changes detected",
+      "output": "Output"
+    },
+    "clipboard": {
+      "empty": "No clipboard history",
+      "emptyHint": "Copy or cut files to see them here",
+      "clear": "Clear clipboard history",
+      "pasteHereTitle": "Paste these files to current directory",
+      "pasteHere": "Paste Here"
+    },
+    "activity": {
+      "showInExplorer": "Show in Explorer",
+      "clear": "Clear activity feed",
+      "paused": "Feed paused — entries are being collected",
+      "empty": "No activity recorded yet",
+      "from": "from {{name}}"
+    },
+    "extensions": {
+      "uninstallFailed": "Uninstall Failed",
+      "validationFailed": "Validation Failed",
+      "installFailed": "Install Failed",
+      "themeManager": "Theme Manager",
+      "installFromFolder": "Install extension from folder",
+      "uninstallFailedDesc": "Failed to uninstall extension: {{error}}",
+      "validationFailedDesc": "Failed to validate extension: {{error}}",
+      "installFailedDesc": "Failed to install extension: {{error}}"
+    },
+    "undo": {
+      "undoThis": "Undo This",
+      "undoThisAndAfter": "Undo This + All After",
+      "redoThis": "Redo This",
+      "showDetails": "Show Details",
+      "replay": "Replay on Selection",
+      "clearAbove": "Clear History Above",
+      "replayDesc": "This will apply the same operation pattern to your currently selected files:",
+      "operation": "Operation:",
+      "destination": "Destination:",
+      "undoShortcut": "Undo (Ctrl+Z)",
+      "redoShortcut": "Redo (Ctrl+Y)",
+      "clearAll": "Clear all history",
+      "currentPosition": "Current Position",
+      "empty": "No operations in history",
+      "bulkDesc": "Bulk {{operation}} ({{count}} files)",
+      "duration": "Duration: {{duration}} -- {{files}}",
+      "replayOp": "Replay {{operation}}"
     }
   },
   "splitView": {
@@ -1648,7 +2051,9 @@
     "splitDown": "Split down",
     "maximizePane": "Maximize pane",
     "restorePane": "Restore pane",
-    "closePane": "Close pane"
+    "closePane": "Close pane",
+    "loadingEditor": "Loading editor...",
+    "selectedCount": "{{count}} selected"
   },
   "comparison": {
     "sideBySide": "Side by Side",
@@ -1667,7 +2072,13 @@
     "deletions_one": "deletion",
     "deletions_other": "deletions",
     "modifications_one": "modification",
-    "modifications_other": "modifications"
+    "modifications_other": "modifications",
+    "marked": "File marked for comparison",
+    "error": "Comparison Error",
+    "markedDesc": "{{name}} is ready to compare",
+    "expandUnchanged": "Click to expand {{count}} unchanged lines",
+    "showUnchanged_one": "Show {{count}} unchanged line",
+    "showUnchanged_other": "Show {{count}} unchanged lines"
   },
   "previews": {
     "audio": {
@@ -1682,7 +2093,8 @@
     "text": {
       "title": "Text Preview",
       "loading": "Loading text...",
-      "cannotPreview": "Cannot preview text"
+      "cannotPreview": "Cannot preview text",
+      "failedToLoad": "Failed to load text file"
     },
     "compare": {
       "comparing2Files": "Comparing 2 files",
@@ -1706,7 +2118,59 @@
       "metaFileType": "File Type",
       "metaMimeType": "MIME Type",
       "metaNone": "(none)",
-      "metaUnknown": "(unknown)"
+      "metaUnknown": "(unknown)",
+      "failedToRead": "Failed to read file(s)"
+    },
+    "video": {
+      "loading": "Loading video...",
+      "cannotPreview": "Cannot preview video",
+      "formatNotSupported": "The video format may not be supported"
+    },
+    "csv": {
+      "failedToLoad": "Failed to load CSV file",
+      "title": "CSV Preview",
+      "loading": "Loading CSV...",
+      "cannotPreview": "Cannot preview CSV",
+      "first100": "Showing first 100 rows. Double-click to open full file.",
+      "noData": "No data found in CSV file"
+    },
+    "code": {
+      "failedToLoad": "Failed to load code file",
+      "cannotPreview": "Cannot preview code"
+    },
+    "json": {
+      "failedToLoad": "Failed to load JSON file",
+      "title": "JSON Preview",
+      "loading": "Loading JSON...",
+      "cannotPreview": "Cannot preview JSON"
+    },
+    "markdown": {
+      "failedToLoad": "Failed to load markdown file",
+      "title": "Markdown Preview",
+      "loading": "Loading markdown...",
+      "cannotPreview": "Cannot preview markdown"
+    },
+    "image": {
+      "cannotPreview": "Cannot preview image",
+      "formatNotSupported": "The image format may not be supported"
+    },
+    "pdf": {
+      "loading": "Loading PDF...",
+      "cannotPreview": "Cannot preview PDF",
+      "pageOf": "Page {{page}} of {{total}}"
+    },
+    "document": {
+      "failedToLoad": "Failed to load document",
+      "title": "Document Preview",
+      "loading": "Loading document...",
+      "cannotPreview": "Cannot preview document"
+    },
+    "spreadsheet": {
+      "failedToLoad": "Failed to load spreadsheet",
+      "title": "Spreadsheet Preview",
+      "loading": "Loading spreadsheet...",
+      "cannotPreview": "Cannot preview spreadsheet",
+      "first50": "Showing first 50 rows. Double-click to open full file."
     }
   },
   "explorer": {
@@ -1792,11 +2256,378 @@
       "pressKey": "Press",
       "orKey": "or",
       "toClose": "to close"
-    }
+    },
+    "fileTreeAria": "File tree",
+    "renameFileAria": "Rename file",
+    "togglePanel": "Toggle panel (Ctrl+Shift+B)",
+    "toggleTerminal": "Toggle terminal (Ctrl+J)",
+    "sizeLabel": "Size:",
+    "modifiedLabel": "Modified:",
+    "typeLabel": "Type:",
+    "extensionLabel": "Extension:",
+    "emptyFolder": "Empty folder",
+    "extExample": "jpg, png, gif",
+    "filePreview": "File Preview",
+    "contentSearch": "Content Search",
+    "folderColorLegend": "Folder color legend",
+    "galleryViewAria": "Gallery view",
+    "noFiles": "No files",
+    "readOnly": "Read-only",
+    "crossTabSelected": "Selected for cross-tab operation",
+    "fileListAria": "File list",
+    "colorLegendItem_one": "{{label}}: {{count}} folder",
+    "colorLegendItem_other": "{{label}}: {{count}} folders",
+    "clickToClearFilter": " (click to clear filter)",
+    "vimMode": "Vim mode: {{mode}}",
+    "pendingKeys": "Pending keys: {{keys}}_",
+    "pendingKeysAria": "Pending key sequence: {{keys}}"
   },
   "search": {
     "indexSearching": "Searching index...",
     "aiSearchTerms": "Search terms",
-    "aiMatchedItems": "Matched from folder"
+    "aiMatchedItems": "Matched from folder",
+    "filterAll": "All",
+    "filterFiles": "Files",
+    "filterFolders": "Folders",
+    "filterDocuments": "Documents",
+    "filterImages": "Images",
+    "filterCode": "Code",
+    "filterVideos": "Videos",
+    "filterAudio": "Audio",
+    "filterArchives": "Archives",
+    "anyTime": "Any time",
+    "today": "Today",
+    "last7": "Last 7 days",
+    "last30": "Last 30 days",
+    "thisYear": "This year",
+    "customRange": "Custom range",
+    "anySize": "Any size",
+    "extPlaceholder": "e.g. .ts, .tsx, .json",
+    "searching": "Searching...",
+    "searchingFileContents": "Searching file contents...",
+    "resultsAria": "Search results",
+    "tryShorter": "Try a shorter or different search term",
+    "nameSearchTitle": "Search files by name in the current directory tree",
+    "indexSearchTitle": "Index search: searches all indexed folders, understands queries like 'large images last week'",
+    "clearSearch": "Clear search",
+    "typeToSearch": "Type to search files and folders",
+    "togglePanelHint": "Ctrl+Shift+F to toggle this panel",
+    "indexSearch": "Index search",
+    "searchingContents": "Searching contents...",
+    "searchInContents": "Search in file contents",
+    "searchIndexInstead": "Search the index instead",
+    "relevanceExact": "Exact",
+    "relevanceSemantic": "Semantic",
+    "contentMatchesFound_one": "Found {{count}} content match",
+    "contentMatchesFound_other": "Found {{count}} content matches",
+    "noFilesMatching": "No files matching '{{query}}'",
+    "foundInFolders": "Found {{files}} in {{folders}}",
+    "fileCount_one": "{{count}} file",
+    "fileCount_other": "{{count}} files",
+    "folderCount_one": "{{count}} folder",
+    "folderCount_other": "{{count}} folders",
+    "totalSuffix": " ({{count}} total)"
+  },
+  "viewModes": {
+    "large": "Large Icons",
+    "medium": "Medium Icons",
+    "small": "Small Icons",
+    "tiles": "Tiles",
+    "content": "Content View",
+    "list": "List View",
+    "details": "Details View",
+    "tree": "Tree View",
+    "gallery": "Gallery",
+    "column": "Column View"
+  },
+  "sortOptions": {
+    "name": "Name",
+    "dateModified": "Date Modified",
+    "dateCreated": "Date Created",
+    "size": "Size",
+    "type": "Type",
+    "extension": "Extension"
+  },
+  "collections": {
+    "builtin": {
+      "builtin-large-files": "Large Files",
+      "builtin-recent-files": "Recent Files",
+      "builtin-images": "Images",
+      "builtin-documents": "Documents",
+      "builtin-code-files": "Code Files"
+    }
+  },
+  "ui": {
+    "copyToClipboard": "Copy to clipboard",
+    "saveAsFile": "Save as file",
+    "replaceSelectedCode": "Replace selected code in editor",
+    "loadingFiles": "Loading files",
+    "loadingPreview": "Loading preview",
+    "loadingSidebar": "Loading sidebar",
+    "dismissNotification": "Dismiss notification",
+    "searchIndex": "Search index",
+    "changes": {
+      "new": "+{{count}} new",
+      "deleted": "-{{count}} deleted",
+      "modified": "~{{count}} modified"
+    },
+    "indexedCount": "{{n}} indexed"
+  },
+  "shortcutCategories": {
+    "fileOperations": "File Operations",
+    "navigation": "Navigation",
+    "selection": "Selection",
+    "search": "Search & Filter",
+    "view": "View & Layout",
+    "application": "Application",
+    "terminal": "Terminal",
+    "extensions": "Extensions"
+  },
+  "bulkRename": {
+    "presets": {
+      "addPrefix": "Add prefix",
+      "addPrefixDesc": "Add text before filename",
+      "addSuffix": "Add suffix",
+      "addSuffixDesc": "Add text before extension",
+      "replace": "Replace text",
+      "replaceDesc": "Find and replace in filename",
+      "numbering": "Sequential numbering",
+      "numberingDesc": "Rename to prefix_001, prefix_002..."
+    },
+    "templates": {
+      "camel": "Convert filename to camelCase",
+      "snake": "Convert filename to snake_case",
+      "kebab": "Convert filename to kebab-case",
+      "upper": "Convert filename to UPPERCASE",
+      "lower": "Convert filename to lowercase",
+      "datePrefix": "Add Date Prefix",
+      "datePrefixDesc": "Prepend YYYY-MM-DD to filename",
+      "removeSpaces": "Remove Spaces",
+      "removeSpacesDesc": "Replace spaces with underscores"
+    },
+    "regex": {
+      "all": "Capture everything",
+      "oneOrMore": "Capture one or more chars",
+      "digits": "One or more digits",
+      "word": "Word characters",
+      "whitespace": "Whitespace character",
+      "start": "Start of string",
+      "end": "End of string",
+      "dot": "Literal dot",
+      "nonDot": "Non-dot characters",
+      "ext": "File extension",
+      "beforeDot": "Name before first dot",
+      "upper": "Uppercase letter"
+    },
+    "form": {
+      "templates": "Pattern Templates",
+      "presets": "Quick Presets",
+      "pattern": "Pattern (Regex)",
+      "patternHint": "Applied to the filename only (not the full path). Uses regex syntax.",
+      "regexRef": "Regex Quick Reference",
+      "regexRefHint": "Click a pattern to insert it into the search field.",
+      "patternPlaceholder": "e.g. ^(.+)\\.txt$ or find_this",
+      "replacementPlaceholder": "e.g. $1_renamed.txt or new_name"
+    },
+    "preview": {
+      "conflict": "Name conflict - multiple files would have the same name",
+      "willRename": "Will be renamed",
+      "noChange": "No change",
+      "changed": "{{count}} changed",
+      "unchanged": "{{count}} unchanged"
+    },
+    "toast": {
+      "previewFailed": "Preview Failed",
+      "patternRequired": "Pattern Required",
+      "patternRequiredDesc": "Please enter a regex pattern or select a template.",
+      "complete": "Bulk Rename Complete",
+      "partial": "Bulk Rename Partially Complete",
+      "failed": "Bulk Rename Failed",
+      "completeDesc_one": "Successfully renamed {{count}} file.",
+      "completeDesc_other": "Successfully renamed {{count}} files.",
+      "partialDesc": "{{ok}} succeeded, {{failed}} failed."
+    }
+  },
+  "extPerm": {
+    "file_write": {
+      "label": "Write Files",
+      "desc": "Create and modify files on your computer"
+    },
+    "file_delete": {
+      "label": "Delete Files",
+      "desc": "Permanently delete files from your computer"
+    },
+    "file_execute": {
+      "label": "Execute Programs",
+      "desc": "Run executable files and scripts on your computer"
+    },
+    "native_invoke": {
+      "label": "Native Code",
+      "desc": "Run native code with full system access"
+    },
+    "system_commands": {
+      "label": "System Commands",
+      "desc": "Execute shell commands on your system"
+    },
+    "system_network": {
+      "label": "Network Access",
+      "desc": "Send and receive data over the internet"
+    },
+    "directory_delete": {
+      "label": "Delete Folders",
+      "desc": "Delete folders and their contents"
+    },
+    "ui_modify": {
+      "label": "Modify UI",
+      "desc": "Change the appearance and layout of the app"
+    },
+    "system_info": {
+      "label": "System Information",
+      "desc": "Read information about your operating system and hardware"
+    },
+    "xplorer_settings": {
+      "label": "App Settings",
+      "desc": "Read and modify Splorer settings"
+    },
+    "xplorer_extensions": {
+      "label": "Manage Extensions",
+      "desc": "Install, disable, or remove other extensions"
+    },
+    "file_read": {
+      "label": "Read Files",
+      "desc": "Read file contents on your computer"
+    },
+    "directory_create": {
+      "label": "Create Folders",
+      "desc": "Create new folders"
+    },
+    "directory_list": {
+      "label": "List Folder Contents",
+      "desc": "View files inside folders"
+    },
+    "ui_panels": {
+      "label": "Add Panels",
+      "desc": "Add custom panels to the sidebar"
+    },
+    "ui_notifications": {
+      "label": "Show Notifications",
+      "desc": "Display toast messages and alerts"
+    },
+    "ui_clipboard": {
+      "label": "Clipboard Access",
+      "desc": "Read and write to the clipboard"
+    },
+    "xplorer_themes": {
+      "label": "Register Themes",
+      "desc": "Add custom color themes"
+    },
+    "xplorer_history": {
+      "label": "Navigation History",
+      "desc": "Read browsing and navigation history"
+    }
+  },
+  "folderColors": {
+    "urgent": "Urgent",
+    "important": "Important",
+    "inProgress": "In Progress",
+    "active": "Active",
+    "archive": "Archive",
+    "personal": "Personal",
+    "review": "Review",
+    "inactive": "Inactive"
+  },
+  "validation": {
+    "nameEmpty": "Name cannot be empty",
+    "nameTrailing": "Name cannot end with a dot or space",
+    "invalidChars": "Name contains invalid characters: {{chars}}",
+    "reserved": "\"{{name}}\" is a reserved system name",
+    "tooLong": "Name is too long ({{length}}/255 characters)",
+    "exists": "\"{{name}}\" already exists in this folder"
+  },
+  "cleanup": {
+    "emptyTrash": "Empty Trash",
+    "showLarge": "Show Large Files",
+    "tagFiles": "Tag Files",
+    "trashTitle": "Trash: {{count}} items",
+    "trashDesc_one": "Recycle bin contains {{count}} item",
+    "trashDesc_other": "Recycle bin contains {{count}} items",
+    "largeTitle": "Large files: {{count}} files",
+    "largeDesc": "Files larger than 100 MB in this folder",
+    "untaggedTitle": "Untagged files: {{n}}",
+    "untaggedDesc": "Files without any tags in this folder"
+  },
+  "advSel": {
+    "updated": "Selection Updated",
+    "noneFound": "No Files Found",
+    "noneInDate": "No files found in the selected date range",
+    "noneInSize": "No files found in the selected size range",
+    "inverted": "Selection Inverted",
+    "title": "Advanced Selection",
+    "byType": "Select by File Type...",
+    "byDate": "Select by Date...",
+    "bySize": "Select by Size...",
+    "invert": "Invert Selection",
+    "allImages": "Select All Images",
+    "allDocuments": "Select All Documents",
+    "allVideos": "Select All Videos",
+    "allAudio": "Select All Audio",
+    "dateTitle": "Select by Date",
+    "oldest": "Oldest file:",
+    "newest": "Newest file:",
+    "quick": "Quick Select",
+    "custom": "Custom Range",
+    "matching": "Files matching:",
+    "sizeTitle": "Select by Size",
+    "total": "Total files:",
+    "smallest": "Smallest:",
+    "largest": "Largest:",
+    "average": "Average:",
+    "min": "Min:",
+    "max": "Max:",
+    "noLimit": "No limit",
+    "noMax": "No maximum limit",
+    "typeTitle": "Select by File Type",
+    "customExt": "Custom Extension",
+    "extPlaceholder": "e.g., txt or .md",
+    "clearAll": "Clear all",
+    "selectFiles": "Select Files",
+    "ranges": {
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "thisMonth": "This month",
+      "lastMonth": "Last month",
+      "thisYear": "This year"
+    },
+    "sizes": {
+      "tiny": "Tiny (< 10 KB)",
+      "small": "Small (10 KB - 100 KB)",
+      "medium": "Medium (100 KB - 1 MB)",
+      "large": "Large (1 MB - 10 MB)",
+      "veryLarge": "Very Large (10 MB - 100 MB)",
+      "huge": "Huge (> 100 MB)"
+    },
+    "byExtDesc_one": "Selected {{count}} file with extension(s): {{exts}}",
+    "byExtDesc_other": "Selected {{count}} files with extension(s): {{exts}}",
+    "noneWithExt": "No files found with the selected extension(s)",
+    "byDateDesc_one": "Selected {{count}} file modified between {{from}} and {{to}}",
+    "byDateDesc_other": "Selected {{count}} files modified between {{from}} and {{to}}",
+    "largerThan": "larger than {{size}}",
+    "between": "between {{min}} and {{max}}",
+    "bySizeDesc_one": "Selected {{count}} file {{range}}",
+    "bySizeDesc_other": "Selected {{count}} files {{range}}",
+    "similarDesc_one": "Selected {{count}} similar file (same type: {{type}})",
+    "similarDesc_other": "Selected {{count}} similar files (same type: {{type}})",
+    "invertedDesc_one": "Now selecting {{count}} file",
+    "invertedDesc_other": "Now selecting {{count}} files",
+    "patternDesc_one": "Selected {{count}} file matching pattern \"{{pattern}}\"",
+    "patternDesc_other": "Selected {{count}} files matching pattern \"{{pattern}}\"",
+    "noPatternMatch": "No files match the pattern \"{{pattern}}\"",
+    "similar": "Select Similar Files",
+    "selectN": "Select {{count}} Files"
+  },
+  "themes": {
+    "light": "Light"
   }
 }

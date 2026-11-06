@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import {
   FileEdit,
   Trash2,
@@ -34,43 +35,67 @@ const PERMISSIONS: Record<string, PermissionInfo> = {
   // ── Danger ────────────────────────────────────────────────────────────────
   'file:write': {
     id: 'file:write',
-    label: 'Write Files',
-    description: 'Create and modify files on your computer',
+    get label() {
+      return i18n.t('extPerm.file_write.label');
+    },
+    get description() {
+      return i18n.t('extPerm.file_write.desc');
+    },
     risk: 'danger',
     icon: FileEdit,
   },
   'file:delete': {
     id: 'file:delete',
-    label: 'Delete Files',
-    description: 'Permanently delete files from your computer',
+    get label() {
+      return i18n.t('extPerm.file_delete.label');
+    },
+    get description() {
+      return i18n.t('extPerm.file_delete.desc');
+    },
     risk: 'danger',
     icon: Trash2,
   },
   'file:execute': {
     id: 'file:execute',
-    label: 'Execute Programs',
-    description: 'Run executable files and scripts on your computer',
+    get label() {
+      return i18n.t('extPerm.file_execute.label');
+    },
+    get description() {
+      return i18n.t('extPerm.file_execute.desc');
+    },
     risk: 'danger',
     icon: Terminal,
   },
   'native:invoke': {
     id: 'native:invoke',
-    label: 'Native Code',
-    description: 'Run native code with full system access',
+    get label() {
+      return i18n.t('extPerm.native_invoke.label');
+    },
+    get description() {
+      return i18n.t('extPerm.native_invoke.desc');
+    },
     risk: 'danger',
     icon: Cpu,
   },
   'system:commands': {
     id: 'system:commands',
-    label: 'System Commands',
-    description: 'Execute shell commands on your system',
+    get label() {
+      return i18n.t('extPerm.system_commands.label');
+    },
+    get description() {
+      return i18n.t('extPerm.system_commands.desc');
+    },
     risk: 'danger',
     icon: Terminal,
   },
   'system:network': {
     id: 'system:network',
-    label: 'Network Access',
-    description: 'Send and receive data over the internet',
+    get label() {
+      return i18n.t('extPerm.system_network.label');
+    },
+    get description() {
+      return i18n.t('extPerm.system_network.desc');
+    },
     risk: 'danger',
     icon: Globe,
   },
@@ -78,36 +103,56 @@ const PERMISSIONS: Record<string, PermissionInfo> = {
   // ── Warning ───────────────────────────────────────────────────────────────
   'directory:delete': {
     id: 'directory:delete',
-    label: 'Delete Folders',
-    description: 'Delete folders and their contents',
+    get label() {
+      return i18n.t('extPerm.directory_delete.label');
+    },
+    get description() {
+      return i18n.t('extPerm.directory_delete.desc');
+    },
     risk: 'warning',
     icon: FolderMinus,
   },
   'ui:modify': {
     id: 'ui:modify',
-    label: 'Modify UI',
-    description: 'Change the appearance and layout of the app',
+    get label() {
+      return i18n.t('extPerm.ui_modify.label');
+    },
+    get description() {
+      return i18n.t('extPerm.ui_modify.desc');
+    },
     risk: 'warning',
     icon: PanelLeft,
   },
   'system:info': {
     id: 'system:info',
-    label: 'System Information',
-    description: 'Read information about your operating system and hardware',
+    get label() {
+      return i18n.t('extPerm.system_info.label');
+    },
+    get description() {
+      return i18n.t('extPerm.system_info.desc');
+    },
     risk: 'warning',
     icon: Info,
   },
   'xplorer:settings': {
     id: 'xplorer:settings',
-    label: 'App Settings',
-    description: 'Read and modify Splorer settings',
+    get label() {
+      return i18n.t('extPerm.xplorer_settings.label');
+    },
+    get description() {
+      return i18n.t('extPerm.xplorer_settings.desc');
+    },
     risk: 'warning',
     icon: Settings,
   },
   'xplorer:extensions': {
     id: 'xplorer:extensions',
-    label: 'Manage Extensions',
-    description: 'Install, disable, or remove other extensions',
+    get label() {
+      return i18n.t('extPerm.xplorer_extensions.label');
+    },
+    get description() {
+      return i18n.t('extPerm.xplorer_extensions.desc');
+    },
     risk: 'warning',
     icon: Puzzle,
   },
@@ -115,57 +160,89 @@ const PERMISSIONS: Record<string, PermissionInfo> = {
   // ── Safe ──────────────────────────────────────────────────────────────────
   'file:read': {
     id: 'file:read',
-    label: 'Read Files',
-    description: 'Read file contents on your computer',
+    get label() {
+      return i18n.t('extPerm.file_read.label');
+    },
+    get description() {
+      return i18n.t('extPerm.file_read.desc');
+    },
     risk: 'safe',
     icon: FileText,
   },
   'directory:create': {
     id: 'directory:create',
-    label: 'Create Folders',
-    description: 'Create new folders',
+    get label() {
+      return i18n.t('extPerm.directory_create.label');
+    },
+    get description() {
+      return i18n.t('extPerm.directory_create.desc');
+    },
     risk: 'safe',
     icon: FolderPlus,
   },
   'directory:list': {
     id: 'directory:list',
-    label: 'List Folder Contents',
-    description: 'View files inside folders',
+    get label() {
+      return i18n.t('extPerm.directory_list.label');
+    },
+    get description() {
+      return i18n.t('extPerm.directory_list.desc');
+    },
     risk: 'safe',
     icon: FolderOpen,
   },
   'ui:panels': {
     id: 'ui:panels',
-    label: 'Add Panels',
-    description: 'Add custom panels to the sidebar',
+    get label() {
+      return i18n.t('extPerm.ui_panels.label');
+    },
+    get description() {
+      return i18n.t('extPerm.ui_panels.desc');
+    },
     risk: 'safe',
     icon: PanelLeft,
   },
   'ui:notifications': {
     id: 'ui:notifications',
-    label: 'Show Notifications',
-    description: 'Display toast messages and alerts',
+    get label() {
+      return i18n.t('extPerm.ui_notifications.label');
+    },
+    get description() {
+      return i18n.t('extPerm.ui_notifications.desc');
+    },
     risk: 'safe',
     icon: Bell,
   },
   'ui:clipboard': {
     id: 'ui:clipboard',
-    label: 'Clipboard Access',
-    description: 'Read and write to the clipboard',
+    get label() {
+      return i18n.t('extPerm.ui_clipboard.label');
+    },
+    get description() {
+      return i18n.t('extPerm.ui_clipboard.desc');
+    },
     risk: 'safe',
     icon: Clipboard,
   },
   'xplorer:themes': {
     id: 'xplorer:themes',
-    label: 'Register Themes',
-    description: 'Add custom color themes',
+    get label() {
+      return i18n.t('extPerm.xplorer_themes.label');
+    },
+    get description() {
+      return i18n.t('extPerm.xplorer_themes.desc');
+    },
     risk: 'safe',
     icon: Palette,
   },
   'xplorer:history': {
     id: 'xplorer:history',
-    label: 'Navigation History',
-    description: 'Read browsing and navigation history',
+    get label() {
+      return i18n.t('extPerm.xplorer_history.label');
+    },
+    get description() {
+      return i18n.t('extPerm.xplorer_history.desc');
+    },
     risk: 'safe',
     icon: History,
   },
@@ -178,7 +255,7 @@ export const getPermissionInfo = (permission: string): PermissionInfo => {
     PERMISSIONS[permission] ?? {
       id: permission,
       label: permission,
-      description: 'Unknown permission',
+      description: i18n.t('permissions.desc.unknown'),
       risk: 'warning' as RiskLevel,
       icon: Eye,
     }

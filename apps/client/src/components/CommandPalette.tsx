@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef, useCallback, useMemo, useDeferredValue } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { TauriAPI, SearchResult, RecentFile } from '@/lib/tauri-api';
@@ -265,7 +266,7 @@ const CommandPaletteInner = ({
           type: 'command',
           command: {
             id: '__go-to-path__',
-            title: `Go to ${trimmedQ}`,
+            title: i18n.t('commandPalette.goTo', { path: trimmedQ }),
             category: 'Navigation',
             action: () => {
               onFileSelect(trimmedQ, true);

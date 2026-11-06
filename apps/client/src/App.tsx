@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Switch, Route } from 'wouter';
@@ -20,7 +21,7 @@ const Router = () => {
     <React.Suspense
       fallback={
         <div className="bg-xp-bg text-xp-text flex h-screen items-center justify-center text-sm">
-          Loading...
+          {i18n.t('common.loading')}
         </div>
       }
     >

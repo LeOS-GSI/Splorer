@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 
 // ─── Shared shimmer style ────────────────────────────────────────────────────
@@ -108,7 +109,7 @@ export const FileGridSkeleton = ({ count = 12, viewMode = 'medium' }: FileGridSk
   return (
     <div
       role="status"
-      aria-label="Loading files"
+      aria-label={i18n.t('ui.loadingFiles')}
       aria-live="polite"
       style={{
         display: 'grid',
@@ -152,7 +153,7 @@ export const FileListSkeleton = ({ count = 10 }: FileListSkeletonProps) => {
   return (
     <div
       role="status"
-      aria-label="Loading files"
+      aria-label={i18n.t('ui.loadingFiles')}
       aria-live="polite"
       style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 4 }}
     >
@@ -186,7 +187,7 @@ export const PreviewSkeleton = () => {
   return (
     <div
       role="status"
-      aria-label="Loading preview"
+      aria-label={i18n.t('ui.loadingPreview')}
       aria-live="polite"
       style={{
         display: 'flex',
@@ -223,7 +224,7 @@ export const SidebarSkeleton = ({ sections = 3, itemsPerSection = 4 }: SidebarSk
   return (
     <div
       role="status"
-      aria-label="Loading sidebar"
+      aria-label={i18n.t('ui.loadingSidebar')}
       aria-live="polite"
       style={{ padding: '12px 8px', display: 'flex', flexDirection: 'column', gap: 16 }}
     >

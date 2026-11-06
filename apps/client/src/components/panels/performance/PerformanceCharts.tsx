@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useCallback, useEffect } from 'react';
 import { TauriAPI, type OrganizationAnalysis, type OrganizationPlan } from '@/lib/tauri-api';
 import { formatFileSize } from '@/lib/utils';
@@ -129,7 +130,7 @@ const OrganizerTabContent = React.memo(
           }}
         >
           <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--xp-text)' }}>
-            File Organizer
+            {i18n.t('panels.performance.fileOrganizer')}
           </span>
           <button
             onClick={analyze}
@@ -191,7 +192,7 @@ const OrganizerTabContent = React.memo(
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
               />
             </svg>
-            Scanning directory...
+            {i18n.t('panels.performance.scanning')}
           </div>
         )}
 
@@ -423,8 +424,7 @@ const ProjectNotice = ({ projectType }: { projectType?: string }) => (
       </span>
     </div>
     <p style={{ fontSize: 11, color: 'var(--xp-text-secondary)', lineHeight: 1.5 }}>
-      This is a project directory. File organization is skipped to avoid breaking the project
-      structure.
+      {i18n.t('panels.performance.projectDirSkipped')}
     </p>
   </div>
 );
@@ -532,8 +532,7 @@ const SuggestionsSection = ({
                     color: '#3b82f6',
                   }}
                 >
-                  Preview: {preview.moves.length} file
-                  {preview.moves.length !== 1 ? 's' : ''} to move
+                  {i18n.t('panels.performance.previewMoves', { count: preview.moves.length })}
                 </div>
                 {preview.creates.length > 0 && (
                   <div
@@ -593,7 +592,7 @@ const SuggestionsSection = ({
                     }}
                     style={{ ...smallBtnStyle, flex: 1, textAlign: 'center' }}
                   >
-                    Cancel
+                    {i18n.t('common.cancel')}
                   </button>
                   <button
                     onClick={handleOrganize}
@@ -633,7 +632,7 @@ const DuplicatesSection = ({
 }) => (
   <>
     <OrganizerSectionHeader
-      title="Duplicate Cleanup"
+      title={i18n.t('panels.performance.duplicateCleanup')}
       collapsed={collapsedSections.has('duplicates')}
       onToggle={() => toggleSection('duplicates')}
     />
@@ -641,7 +640,7 @@ const DuplicatesSection = ({
       <div style={{ marginBottom: 16 }}>
         {!analysis.duplicate_summary ? (
           <div style={{ fontSize: 12, color: 'var(--xp-text-secondary)', padding: '8px 0' }}>
-            No duplicates found in this directory.
+            {i18n.t('panels.performance.noDuplicates')}
           </div>
         ) : (
           <>
@@ -656,12 +655,15 @@ const DuplicatesSection = ({
             >
               <div style={{ fontSize: 12 }}>
                 <span style={{ color: '#ef4444', fontWeight: 500 }}>
-                  {analysis.duplicate_summary.groups.length} group
-                  {analysis.duplicate_summary.groups.length !== 1 ? 's' : ''}
+                  {i18n.t('panels.performance.groups', {
+                    count: analysis.duplicate_summary.groups.length,
+                  })}
                 </span>
                 <span style={{ color: 'var(--xp-text-secondary)' }}> &middot; </span>
                 <span style={{ color: '#eab308', fontWeight: 500 }}>
-                  {formatFileSize(analysis.duplicate_summary.total_wasted_space)} wasted
+                  {i18n.t('panels.performance.wasted', {
+                    size: formatFileSize(analysis.duplicate_summary.total_wasted_space),
+                  })}
                 </span>
               </div>
             </div>
@@ -777,7 +779,7 @@ const InsightsSection = ({
         {analysis.insights.type_distribution.length > 0 && (
           <div style={{ marginBottom: 12 }}>
             <div style={{ fontSize: 11, color: 'var(--xp-text-secondary)', marginBottom: 4 }}>
-              Type distribution
+              {i18n.t('panels.performance.typeDistribution')}
             </div>
             <div
               style={{
@@ -839,7 +841,7 @@ const InsightsSection = ({
         {analysis.insights.largest_files.length > 0 && (
           <div style={{ marginBottom: 12 }}>
             <div style={{ fontSize: 11, color: 'var(--xp-text-secondary)', marginBottom: 4 }}>
-              Largest files
+              {i18n.t('panels.performance.largestFiles')}
             </div>
             {analysis.insights.largest_files.map((file) => (
               <div
@@ -884,7 +886,7 @@ const InsightsSection = ({
         {analysis.insights.oldest_files.length > 0 && (
           <div style={{ marginBottom: 12 }}>
             <div style={{ fontSize: 11, color: 'var(--xp-text-secondary)', marginBottom: 4 }}>
-              Oldest files
+              {i18n.t('panels.performance.oldestFiles')}
             </div>
             {analysis.insights.oldest_files.map((file) => (
               <div

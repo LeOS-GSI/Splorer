@@ -194,7 +194,11 @@ const TopBar = React.memo(
             {/* Spacer — search is in the left sidebar */}
             <div className="flex-1" />
             {!isMac && (
-              <div className="ml-2 flex items-center" role="toolbar" aria-label="Window controls">
+              <div
+                className="ml-2 flex items-center"
+                role="toolbar"
+                aria-label={t('topBar.windowControls')}
+              >
                 <button
                   onClick={() => appWindowRef.current?.minimize()}
                   className="hover:bg-xp-surface-light rounded p-2 transition-colors"

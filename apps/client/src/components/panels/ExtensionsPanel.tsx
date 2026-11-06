@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { extensionHost, resolveIcon } from '@/lib/extension-host';
 import { TauriAPI, type ExtensionManifestInfo } from '@/lib/tauri-api';
@@ -72,8 +73,8 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
         console.error('Failed to uninstall extension:', err);
         toast({
           variant: 'destructive',
-          title: 'Uninstall Failed',
-          description: `Failed to uninstall extension: ${err}`,
+          title: i18n.t('panels.extensions.uninstallFailed'),
+          description: i18n.t('panels.extensions.uninstallFailedDesc', { error: String(err) }),
         });
       }
     },
@@ -92,8 +93,8 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
       console.error('Failed to validate extension:', err);
       toast({
         variant: 'destructive',
-        title: 'Validation Failed',
-        description: `Failed to validate extension: ${err}`,
+        title: i18n.t('panels.extensions.validationFailed'),
+        description: i18n.t('panels.extensions.validationFailedDesc', { error: String(err) }),
       });
     }
   }, [toast]);
@@ -109,8 +110,8 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
       console.error('Failed to install extension:', err);
       toast({
         variant: 'destructive',
-        title: 'Install Failed',
-        description: `Failed to install extension: ${err}`,
+        title: i18n.t('panels.extensions.installFailed'),
+        description: i18n.t('panels.extensions.installFailedDesc', { error: String(err) }),
       });
     } finally {
       setInstalling(false);
@@ -127,7 +128,7 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
       {/* Theme Manager */}
       <div className="bg-xp-bg border-xp-border mb-4 rounded-lg border p-3">
         <div className="mb-2 flex items-center justify-between">
-          <h4 className="text-sm font-medium">Theme Manager</h4>
+          <h4 className="text-sm font-medium">{i18n.t('panels.extensions.themeManager')}</h4>
           <div className="bg-xp-green h-2 w-2 rounded-full" />
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -227,7 +228,7 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
         <button
           onClick={handleInstallFromFolder}
           disabled={installing}
-          aria-label="Install extension from folder"
+          aria-label={i18n.t('panels.extensions.installFromFolder')}
           className="bg-xp-blue flex w-full items-center justify-center space-x-2 rounded px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-opacity-90 disabled:opacity-50"
         >
           {installing ? (

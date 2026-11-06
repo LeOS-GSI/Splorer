@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FolderClosed, File, Clock, ChevronDown, ChevronRight, GripHorizontal } from 'lucide-react';
 import { TauriAPI, RecentFile } from '@/lib/tauri-api';
 import { useWindowEvent } from '@/hooks/use-window-event';
+import { useTranslation } from 'react-i18next';
 
 interface SidebarRecentProps {
   navigateToPath: (path: string) => void;
@@ -18,6 +19,7 @@ const SidebarRecent = ({
   sectionHeight,
   onResizeStart,
 }: SidebarRecentProps) => {
+  const { t } = useTranslation();
   const [recentFiles, setRecentFiles] = useState<RecentFile[]>([]);
 
   const loadRecent = () => {
@@ -36,14 +38,14 @@ const SidebarRecent = ({
     <div
       className="border-xp-border border-b"
       role="region"
-      aria-label="Recent files"
+      aria-label={t('sidebar.recentFilesAria')}
       data-sidebar-section="recent"
     >
       <button
         className="text-xp-text-muted hover:bg-xp-surface-light/50 flex w-full items-center px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest transition-colors"
         onClick={onToggleCollapsed}
         aria-expanded={!collapsed}
-        aria-label="Toggle recent files"
+        aria-label={t('sidebar.toggleRecent')}
       >
         {collapsed ? (
           <ChevronRight className="mr-1 h-3 w-3 flex-shrink-0" />
@@ -51,7 +53,7 @@ const SidebarRecent = ({
           <ChevronDown className="mr-1 h-3 w-3 flex-shrink-0" />
         )}
         <Clock size={12} className="mr-1 flex-shrink-0" />
-        RECENT
+        {t('sidebar.recent')}
       </button>
       {!collapsed && (
         <div
@@ -59,7 +61,7 @@ const SidebarRecent = ({
           style={sectionHeight ? { maxHeight: sectionHeight } : undefined}
         >
           {recentFiles.length === 0 ? (
-            <p className="text-xp-text-secondary py-1 text-xs">No recent files</p>
+            <p className="text-xp-text-secondary py-1 text-xs">{t('sidebar.noRecentFiles')}</p>
           ) : (
             recentFiles.map((rf) => (
               <div

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useMemo, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -151,7 +152,11 @@ const BottomPanel = ({
       style={{ height: height ?? 192 }}
     >
       {/* Bottom Panel Tabs */}
-      <div className="border-xp-border flex border-b" role="tablist" aria-label="Bottom panel tabs">
+      <div
+        className="border-xp-border flex border-b"
+        role="tablist"
+        aria-label={i18n.t('panels.bottom.tabsAria')}
+      >
         {/* Core tabs */}
         {CORE_TABS.map((tab) => (
           <button
@@ -204,8 +209,8 @@ const BottomPanel = ({
         <button
           onClick={() => setBottomPanelCollapsed(true)}
           className="hover:bg-xp-surface-light ml-auto px-2"
-          title="Close (Ctrl+J)"
-          aria-label="Close bottom panel"
+          title={i18n.t('panels.bottom.closeShortcut')}
+          aria-label={i18n.t('panels.bottom.close')}
         >
           <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
             <path
@@ -229,7 +234,7 @@ const BottomPanel = ({
             <React.Suspense
               fallback={
                 <div className="text-xp-text-muted flex h-full items-center justify-center text-xs">
-                  Loading...
+                  {i18n.t('common.loading')}
                 </div>
               }
             >
@@ -279,7 +284,7 @@ const BottomPanel = ({
                         clipRule="evenodd"
                       />
                     </svg>
-                    No external file changes detected
+                    {i18n.t('panels.bottom.noExternalChanges')}
                   </div>
                 ))}
 
@@ -323,7 +328,7 @@ interface ActivityLogContentProps {
 
 const ACTIVITY_LOG_FILTERS: { value: ActivityLogFilter; label: string }[] = [
   { value: 'all', label: 'All' },
-  { value: 'output', label: 'Output' },
+  { value: 'output', label: i18n.t('panels.bottom.output') },
   { value: 'activity', label: 'Activity' },
   { value: 'history', label: 'History' },
 ];
@@ -367,7 +372,7 @@ const ActivityLogContent = ({
           <div>
             {activityLogFilter === 'all' && (
               <div className="text-xp-text-muted bg-xp-surface-light/20 border-xp-border/50 sticky top-0 z-[1] border-b px-3 py-1 text-[10px] font-semibold uppercase tracking-wider">
-                Output
+                {i18n.t('panels.bottom.output')}
               </div>
             )}
             <div className="space-y-1 p-3 text-xs">
@@ -405,7 +410,7 @@ const ActivityLogContent = ({
             <React.Suspense
               fallback={
                 <div className="text-xp-text-muted flex h-16 items-center justify-center text-xs">
-                  Loading...
+                  {i18n.t('common.loading')}
                 </div>
               }
             >
@@ -425,7 +430,7 @@ const ActivityLogContent = ({
             <React.Suspense
               fallback={
                 <div className="text-xp-text-muted flex h-16 items-center justify-center text-xs">
-                  Loading...
+                  {i18n.t('common.loading')}
                 </div>
               }
             >

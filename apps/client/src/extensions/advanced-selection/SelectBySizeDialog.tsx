@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useMemo } from 'react';
 import { FileEntry } from '@/lib/tauri-api';
 import { SIZE_RANGE_PRESETS } from './types';
@@ -119,7 +120,7 @@ export const SelectBySizeDialog = ({
       <div className="bg-xp-surface border-xp-border flex max-h-[80vh] w-[450px] flex-col rounded-lg border shadow-xl">
         {/* Header */}
         <div className="border-xp-border flex items-center justify-between border-b p-4">
-          <h2 className="text-xp-text text-lg font-semibold">Select by Size</h2>
+          <h2 className="text-xp-text text-lg font-semibold">{i18n.t('advSel.sizeTitle')}</h2>
           <button onClick={onClose} className="hover:bg-xp-surface-light rounded p-1">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -137,26 +138,28 @@ export const SelectBySizeDialog = ({
           {/* File Size Info */}
           <div className="bg-xp-bg space-y-1 rounded-md p-3 text-sm">
             <div className="text-xp-text-muted flex justify-between">
-              <span>Total files:</span>
+              <span>{i18n.t('advSel.total')}</span>
               <span>{totalFileCount}</span>
             </div>
             <div className="text-xp-text-muted flex justify-between">
-              <span>Smallest:</span>
+              <span>{i18n.t('advSel.smallest')}</span>
               <span>{formatSize(sizeStats.min)}</span>
             </div>
             <div className="text-xp-text-muted flex justify-between">
-              <span>Largest:</span>
+              <span>{i18n.t('advSel.largest')}</span>
               <span>{formatSize(sizeStats.max)}</span>
             </div>
             <div className="text-xp-text-muted flex justify-between">
-              <span>Average:</span>
+              <span>{i18n.t('advSel.average')}</span>
               <span>{formatSize(sizeStats.avg)}</span>
             </div>
           </div>
 
           {/* Presets */}
           <div>
-            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">Quick Select</h3>
+            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">
+              {i18n.t('advSel.quick')}
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               {SIZE_RANGE_PRESETS.map((preset) => (
                 <button
@@ -176,11 +179,13 @@ export const SelectBySizeDialog = ({
 
           {/* Custom Size Range */}
           <div>
-            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">Custom Range</h3>
+            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">
+              {i18n.t('advSel.custom')}
+            </h3>
             <div className="space-y-3">
               {/* Min Size */}
               <div className="flex items-center gap-2">
-                <span className="text-xp-text-muted w-12 text-sm">Min:</span>
+                <span className="text-xp-text-muted w-12 text-sm">{i18n.t('advSel.min')}</span>
                 <input
                   type="number"
                   value={minValue}
@@ -206,7 +211,7 @@ export const SelectBySizeDialog = ({
 
               {/* Max Size */}
               <div className="flex items-center gap-2">
-                <span className="text-xp-text-muted w-12 text-sm">Max:</span>
+                <span className="text-xp-text-muted w-12 text-sm">{i18n.t('advSel.max')}</span>
                 <input
                   type="number"
                   value={maxValue}
@@ -216,7 +221,7 @@ export const SelectBySizeDialog = ({
                     setIncludeUnlimited(false);
                   }}
                   min="0"
-                  placeholder="No limit"
+                  placeholder={i18n.t('advSel.noLimit')}
                   disabled={includeUnlimited}
                   className="bg-xp-bg border-xp-border flex-1 rounded-md border px-3 py-2 text-sm disabled:opacity-50"
                 />
@@ -246,14 +251,14 @@ export const SelectBySizeDialog = ({
                   }}
                   className="border-xp-border rounded"
                 />
-                <span className="text-xp-text-muted text-sm">No maximum limit</span>
+                <span className="text-xp-text-muted text-sm">{i18n.t('advSel.noMax')}</span>
               </label>
             </div>
           </div>
 
           {/* Preview Count */}
           <div className="bg-xp-primary/10 border-xp-primary/30 flex items-center justify-between rounded-md border p-3">
-            <span className="text-xp-text text-sm">Files matching:</span>
+            <span className="text-xp-text text-sm">{i18n.t('advSel.matching')}</span>
             <span className="text-xp-primary text-lg font-semibold">{matchCount}</span>
           </div>
         </div>
@@ -268,14 +273,14 @@ export const SelectBySizeDialog = ({
               onClick={onClose}
               className="text-xp-text-muted hover:text-xp-text px-4 py-2 text-sm"
             >
-              Cancel
+              {i18n.t('common.cancel')}
             </button>
             <button
               onClick={handleSelect}
               disabled={matchCount === 0}
               className="bg-xp-primary rounded-md px-4 py-2 text-sm text-white disabled:opacity-50"
             >
-              Select {matchCount} Files
+              {i18n.t('advSel.selectN', { count: matchCount })}
             </button>
           </div>
         </div>

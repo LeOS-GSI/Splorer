@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, Monitor, Eye } from 'lucide-react';
 import { Toggle, SettingRow, SectionTitle, Divider, type AppSettings } from './shared';
@@ -15,12 +16,12 @@ const AccessibilitySettings = ({ settings, updateSetting }: AccessibilitySetting
       <SectionTitle title="Motion" />
       <SettingRow
         icon={Sparkles}
-        label="Reduce Motion"
-        description="Disable animations and transitions for comfort"
+        label={i18n.t('settings.accessibility.reduceMotion')}
+        description={i18n.t('settings.accessibility.reduceMotionDesc')}
       >
         <Toggle
           id="reducedMotion"
-          label="Reduce Motion"
+          label={i18n.t('settings.accessibility.reduceMotion')}
           checked={settings.reducedMotion}
           onChange={(v) => {
             updateSetting('reducedMotion', v);
@@ -33,12 +34,12 @@ const AccessibilitySettings = ({ settings, updateSetting }: AccessibilitySetting
       <SectionTitle title="Focus" />
       <SettingRow
         icon={Monitor}
-        label="Enhanced Focus Indicators"
-        description="Show strong outlines for keyboard navigation"
+        label={i18n.t('settings.accessibility.enhancedFocus')}
+        description={i18n.t('settings.accessibility.enhancedFocusDesc')}
       >
         <Toggle
           id="enhancedFocus"
-          label="Enhanced Focus Indicators"
+          label={i18n.t('settings.accessibility.enhancedFocus')}
           checked={settings.enhancedFocus}
           onChange={(v) => {
             updateSetting('enhancedFocus', v);

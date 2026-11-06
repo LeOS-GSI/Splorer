@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useTranslation } from 'react-i18next';
@@ -598,7 +599,7 @@ const FileGrid = ({
         {isCrossTabSelected && (
           <>
             <div style={crossTabOutlineStyle} />
-            <div style={crossTabBadgeStyle} title="Selected for cross-tab operation" />
+            <div style={crossTabBadgeStyle} title={i18n.t('explorer.crossTabSelected')} />
           </>
         )}
         <FileGridItem
@@ -644,7 +645,7 @@ const FileGrid = ({
         <div
           ref={bgDropRef}
           role="listbox"
-          aria-label="File list"
+          aria-label={i18n.t('explorer.fileListAria')}
           aria-multiselectable={true}
           className="relative"
           onContextMenu={handleBackgroundRightClick || undefined}
@@ -669,7 +670,7 @@ const FileGrid = ({
       <div
         ref={bgDropRef}
         role="listbox"
-        aria-label="File list"
+        aria-label={i18n.t('explorer.fileListAria')}
         aria-multiselectable={true}
         className={`${getGridLayout()} relative p-2`}
         onContextMenu={handleBackgroundRightClick || undefined}
@@ -690,7 +691,7 @@ const FileGrid = ({
         }
       }}
       role="listbox"
-      aria-label="File list"
+      aria-label={i18n.t('explorer.fileListAria')}
       aria-multiselectable={true}
       className="relative h-full overflow-auto"
       style={{ padding: '8px' }}

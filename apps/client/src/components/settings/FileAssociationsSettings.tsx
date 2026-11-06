@@ -1,10 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FileCode, Trash2 } from 'lucide-react';
-import {
-  useOpenWithPrefs,
-  getAppDisplayName,
-  type OpenHandler,
-} from '@/hooks/use-open-with-prefs';
+import { useOpenWithPrefs, getAppDisplayName, type OpenHandler } from '@/hooks/use-open-with-prefs';
 import { SectionTitle, Divider } from './shared';
 
 const HANDLER_LABELS: Record<string, string> = {

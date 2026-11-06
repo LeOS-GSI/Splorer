@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect, useCallback } from 'react';
 import { TauriAPI, ShortcutBinding } from '@/lib/tauri-api';
 import {
@@ -29,14 +30,54 @@ interface CategoryDef {
 }
 
 const CATEGORIES: Record<string, CategoryDef> = {
-  'file-operations': { label: 'File Operations', icon: FileText },
-  navigation: { label: 'Navigation', icon: Navigation },
-  selection: { label: 'Selection', icon: CheckSquare },
-  search: { label: 'Search & Filter', icon: Search },
-  view: { label: 'View & Layout', icon: LayoutGrid },
-  application: { label: 'Application', icon: Settings2 },
-  terminal: { label: 'Terminal', icon: Terminal },
-  extensions: { label: 'Extensions', icon: Puzzle },
+  'file-operations': {
+    get label() {
+      return i18n.t('shortcutCategories.fileOperations');
+    },
+    icon: FileText,
+  },
+  navigation: {
+    get label() {
+      return i18n.t('shortcutCategories.navigation');
+    },
+    icon: Navigation,
+  },
+  selection: {
+    get label() {
+      return i18n.t('shortcutCategories.selection');
+    },
+    icon: CheckSquare,
+  },
+  search: {
+    get label() {
+      return i18n.t('shortcutCategories.search');
+    },
+    icon: Search,
+  },
+  view: {
+    get label() {
+      return i18n.t('shortcutCategories.view');
+    },
+    icon: LayoutGrid,
+  },
+  application: {
+    get label() {
+      return i18n.t('shortcutCategories.application');
+    },
+    icon: Settings2,
+  },
+  terminal: {
+    get label() {
+      return i18n.t('shortcutCategories.terminal');
+    },
+    icon: Terminal,
+  },
+  extensions: {
+    get label() {
+      return i18n.t('shortcutCategories.extensions');
+    },
+    icon: Puzzle,
+  },
 };
 
 const KeyboardShortcutsSettings = () => {
@@ -205,7 +246,7 @@ const KeyboardShortcutsSettings = () => {
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search shortcuts..."
+          placeholder={i18n.t('dialogs.shortcuts.searchPlaceholder')}
           className="border-xp-border bg-xp-bg text-xp-text placeholder:text-xp-text-secondary/50 focus:border-xp-accent focus:ring-xp-accent h-9 w-full rounded-md border pl-9 pr-3 text-sm transition-colors focus:outline-none focus:ring-1"
         />
         {searchQuery && (
@@ -313,7 +354,7 @@ const KeyboardShortcutsSettings = () => {
                               onClick={handleConfirmEdit}
                               className="bg-xp-accent hover:bg-xp-accent/80 shrink-0 rounded px-2 py-1 text-xs font-medium text-white transition-colors"
                             >
-                              Save
+                              {i18n.t('common.save')}
                             </button>
                             <button
                               onClick={() => {
@@ -323,7 +364,7 @@ const KeyboardShortcutsSettings = () => {
                               }}
                               className="text-xp-text-secondary hover:text-xp-text hover:bg-xp-surface-light shrink-0 rounded px-2 py-1 text-xs transition-colors"
                             >
-                              Cancel
+                              {i18n.t('common.cancel')}
                             </button>
                           </div>
                         ) : (
@@ -331,7 +372,7 @@ const KeyboardShortcutsSettings = () => {
                           !isExtension && (
                             <button
                               onClick={() => handleResetSingle(shortcut.id)}
-                              title="Reset to default"
+                              title={i18n.t('settings.shortcuts.resetOne')}
                               className="text-xp-text-secondary/40 hover:text-xp-text-secondary shrink-0 rounded p-1 transition-colors"
                             >
                               <RotateCcw size={13} />
@@ -373,7 +414,7 @@ const KeyboardShortcutsSettings = () => {
           className="text-xp-text-secondary hover:text-xp-red hover:bg-xp-red/5 flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors"
         >
           <RotateCcw size={14} />
-          Reset all shortcuts to defaults
+          {i18n.t('settings.shortcuts.resetAll')}
         </button>
       </div>
     </div>

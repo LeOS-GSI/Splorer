@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
 import { detectSep } from '@/lib/constants';
@@ -148,7 +149,7 @@ const PasteRenameDialog = React.memo(
           errs.push({
             index: i,
             type: 'invalid-chars',
-            message: `Contains invalid characters (${INVALID_CHARS_DISPLAY})`,
+            message: i18n.t('dialogs.pasteRename.invalidChars', { chars: INVALID_CHARS_DISPLAY }),
           });
         }
 
@@ -157,7 +158,7 @@ const PasteRenameDialog = React.memo(
           errs.push({
             index: i,
             type: 'invalid-chars',
-            message: 'Name cannot be empty',
+            message: i18n.t('dialogs.pasteRename.emptyName'),
           });
         }
 
@@ -167,7 +168,9 @@ const PasteRenameDialog = React.memo(
           errs.push({
             index: i,
             type: 'duplicate',
-            message: `Duplicate of line ${seenNames.get(lower)! + 1}`,
+            message: i18n.t('dialogs.pasteRename.duplicateLine', {
+              line: seenNames.get(lower)! + 1,
+            }),
           });
         }
         seenNames.set(lower, i);
@@ -177,7 +180,7 @@ const PasteRenameDialog = React.memo(
           errs.push({
             index: i,
             type: 'exists-in-dir',
-            message: 'A file with this name already exists in the directory',
+            message: i18n.t('dialogs.pasteRename.exists'),
           });
         }
 
@@ -188,7 +191,10 @@ const PasteRenameDialog = React.memo(
           errs.push({
             index: i,
             type: 'extension-change',
-            message: `Extension changes from "${oldExt}" to "${newExt || '(none)'}"`,
+            message: i18n.t('dialogs.pasteRename.extChange', {
+              from: oldExt,
+              to: newExt || i18n.t('dialogs.pasteRename.none'),
+            }),
           });
         }
       }
@@ -380,7 +386,7 @@ const PasteRenameDialog = React.memo(
             }}
           >
             <span style={{ color: 'var(--xp-text-secondary)', fontSize: '12px', fontWeight: 500 }}>
-              Order:
+              {i18n.t('dialogs.pasteRename.order')}
             </span>
             {(
               [
@@ -436,13 +442,15 @@ const PasteRenameDialog = React.memo(
                   marginBottom: '6px',
                 }}
               >
-                Paste new names (one per line):
+                {i18n.t('dialogs.pasteRename.pasteNames')}
               </label>
               <textarea
                 ref={textareaRef}
                 value={rawText}
                 onChange={(e) => setRawText(e.target.value)}
-                placeholder={`Enter ${orderedFiles.length} names, one per line...\n\ne.g.\nphoto-001.jpg\nphoto-002.jpg\nphoto-003.jpg`}
+                placeholder={i18n.t('dialogs.pasteRename.placeholder', {
+                  count: orderedFiles.length,
+                })}
                 spellCheck={false}
                 style={{
                   width: '100%',
@@ -495,8 +503,10 @@ const PasteRenameDialog = React.memo(
                   <line x1="12" y1="17" x2="12.01" y2="17" />
                 </svg>
                 <span>
-                  Count mismatch: {parsedNames.length} name{parsedNames.length !== 1 ? 's' : ''}{' '}
-                  pasted for {orderedFiles.length} file{orderedFiles.length !== 1 ? 's' : ''}.
+                  {i18n.t('dialogs.pasteRename.countMismatch', {
+                    names: i18n.t('dialogs.pasteRename.nameCount', { count: parsedNames.length }),
+                    files: i18n.t('search.fileCount', { count: orderedFiles.length }),
+                  })}
                   {parsedNames.length > orderedFiles.length
                     ? ` Extra ${parsedNames.length - orderedFiles.length} name(s) will be ignored.`
                     : ` Last ${orderedFiles.length - parsedNames.length} file(s) will keep their current names.`}
@@ -516,7 +526,9 @@ const PasteRenameDialog = React.memo(
                   color: 'var(--xp-red)',
                 }}
               >
-                <div style={{ fontWeight: 600, marginBottom: '4px' }}>Rename errors:</div>
+                <div style={{ fontWeight: 600, marginBottom: '4px' }}>
+                  {i18n.t('dialogs.pasteRename.errors')}
+                </div>
                 {errors.map((err, i) => (
                   // eslint-disable-next-line react/no-array-index-key
                   <div key={i}>{err}</div>
@@ -560,9 +572,9 @@ const PasteRenameDialog = React.memo(
                     }}
                   >
                     <span>#</span>
-                    <span>Current Name</span>
+                    <span>{i18n.t('dialogs.rename.currentName')}</span>
                     <span />
-                    <span>New Name</span>
+                    <span>{i18n.t('dialogs.rename.newName')}</span>
                   </div>
 
                   {/* Table Body */}
@@ -796,7 +808,7 @@ const PasteRenameDialog = React.memo(
                   e.currentTarget.style.color = 'var(--xp-text-secondary)';
                 }}
               >
-                Cancel
+                {i18n.t('common.cancel')}
               </button>
               <button
                 onClick={handleApply}

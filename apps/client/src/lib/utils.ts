@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { FileEntry, FolderSizeInfo } from '@/lib/tauri-api';
 import React from 'react';
 import { STORAGE_KEYS } from '@/lib/storage-keys';
+import i18n from '@/i18n';
 import {
   FolderClosed,
   FolderOpen,
@@ -535,7 +536,9 @@ export const themes: Record<string, ThemeDef> = {
     text: 'rgba(255,255,255,0.92)',
   },
   light: {
-    name: 'Light',
+    get name() {
+      return i18n.t('themes.light');
+    },
     primary: '#3b82f6',
     bg: '#ffffff',
     surface: '#f8fafc',
@@ -552,26 +555,122 @@ export const sortOptions: Record<
   SortField,
   { id: SortField; name: string; icon: React.ReactNode }
 > = {
-  name: { id: 'name', name: 'Name', icon: cfgIcon(ArrowDownAZ) },
-  dateModified: { id: 'dateModified', name: 'Date Modified', icon: cfgIcon(Calendar) },
-  dateCreated: { id: 'dateCreated', name: 'Date Created', icon: cfgIcon(Calendar) },
-  size: { id: 'size', name: 'Size', icon: cfgIcon(HardDrive) },
-  type: { id: 'type', name: 'Type', icon: cfgIcon(Tag) },
-  extension: { id: 'extension', name: 'Extension', icon: cfgIcon(FileText) },
+  name: {
+    id: 'name',
+    get name() {
+      return i18n.t('sortOptions.name');
+    },
+    icon: cfgIcon(ArrowDownAZ),
+  },
+  dateModified: {
+    id: 'dateModified',
+    get name() {
+      return i18n.t('sortOptions.dateModified');
+    },
+    icon: cfgIcon(Calendar),
+  },
+  dateCreated: {
+    id: 'dateCreated',
+    get name() {
+      return i18n.t('sortOptions.dateCreated');
+    },
+    icon: cfgIcon(Calendar),
+  },
+  size: {
+    id: 'size',
+    get name() {
+      return i18n.t('sortOptions.size');
+    },
+    icon: cfgIcon(HardDrive),
+  },
+  type: {
+    id: 'type',
+    get name() {
+      return i18n.t('sortOptions.type');
+    },
+    icon: cfgIcon(Tag),
+  },
+  extension: {
+    id: 'extension',
+    get name() {
+      return i18n.t('sortOptions.extension');
+    },
+    icon: cfgIcon(FileText),
+  },
 };
 
 // View modes configuration
 export const viewModes = {
-  large: { id: 'large', name: 'Large Icons', icon: cfgIcon(LayoutGrid) },
-  medium: { id: 'medium', name: 'Medium Icons', icon: cfgIcon(Grid3X3) },
-  small: { id: 'small', name: 'Small Icons', icon: cfgIcon(Grid2X2) },
-  tiles: { id: 'tiles', name: 'Tiles', icon: cfgIcon(LayoutPanelTop) },
-  content: { id: 'content', name: 'Content View', icon: cfgIcon(FileText) },
-  list: { id: 'list', name: 'List View', icon: cfgIcon(List) },
-  details: { id: 'details', name: 'Details View', icon: cfgIcon(Table) },
-  tree: { id: 'tree', name: 'Tree View', icon: cfgIcon(FolderTree) },
-  gallery: { id: 'gallery', name: 'Gallery', icon: cfgIcon(GalleryHorizontal) },
-  column: { id: 'column', name: 'Column View', icon: cfgIcon(Columns) },
+  large: {
+    id: 'large',
+    get name() {
+      return i18n.t('viewModes.large');
+    },
+    icon: cfgIcon(LayoutGrid),
+  },
+  medium: {
+    id: 'medium',
+    get name() {
+      return i18n.t('viewModes.medium');
+    },
+    icon: cfgIcon(Grid3X3),
+  },
+  small: {
+    id: 'small',
+    get name() {
+      return i18n.t('viewModes.small');
+    },
+    icon: cfgIcon(Grid2X2),
+  },
+  tiles: {
+    id: 'tiles',
+    get name() {
+      return i18n.t('viewModes.tiles');
+    },
+    icon: cfgIcon(LayoutPanelTop),
+  },
+  content: {
+    id: 'content',
+    get name() {
+      return i18n.t('viewModes.content');
+    },
+    icon: cfgIcon(FileText),
+  },
+  list: {
+    id: 'list',
+    get name() {
+      return i18n.t('viewModes.list');
+    },
+    icon: cfgIcon(List),
+  },
+  details: {
+    id: 'details',
+    get name() {
+      return i18n.t('viewModes.details');
+    },
+    icon: cfgIcon(Table),
+  },
+  tree: {
+    id: 'tree',
+    get name() {
+      return i18n.t('viewModes.tree');
+    },
+    icon: cfgIcon(FolderTree),
+  },
+  gallery: {
+    id: 'gallery',
+    get name() {
+      return i18n.t('viewModes.gallery');
+    },
+    icon: cfgIcon(GalleryHorizontal),
+  },
+  column: {
+    id: 'column',
+    get name() {
+      return i18n.t('viewModes.column');
+    },
+    icon: cfgIcon(Columns),
+  },
 };
 
 // Font size utility functions

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect } from 'react';
 import { Monitor, FolderOpen, AlertTriangle } from 'lucide-react';
 import {
@@ -173,18 +174,19 @@ export const SystemIntegrationSettings = () => {
   }, [isWindows]);
 
   if (!isWindows) return null;
-  if (loading) return <div className="text-xp-text-muted px-4 py-2 text-sm">Loading...</div>;
+  if (loading)
+    return <div className="text-xp-text-muted px-4 py-2 text-sm">{i18n.t('common.loading')}</div>;
 
   return (
     <>
       <SettingRow
         icon={Monitor}
-        label="Default File Explorer"
-        description="Double-clicking folders opens Splorer instead of Windows Explorer"
+        label={i18n.t('settings.general.defaultExplorer')}
+        description={i18n.t('settings.general.defaultExplorerDesc')}
       >
         <Toggle
           id="defaultExplorer"
-          label="Default Explorer"
+          label={i18n.t('settings.general.defaultExplorerToggle')}
           checked={isDefaultHandler}
           onChange={async (v) => {
             try {
@@ -201,12 +203,12 @@ export const SystemIntegrationSettings = () => {
       </SettingRow>
       <SettingRow
         icon={FolderOpen}
-        label="Folder Context Menu"
-        description="Add 'Open with Splorer' to folder right-click menu"
+        label={i18n.t('settings.general.folderContextMenu')}
+        description={i18n.t('settings.general.folderContextMenuDesc')}
       >
         <Toggle
           id="contextMenu"
-          label="Context Menu"
+          label={i18n.t('settings.general.contextMenuToggle')}
           checked={contextMenuInstalled}
           onChange={async (v) => {
             try {
@@ -229,7 +231,7 @@ export const SystemIntegrationSettings = () => {
       {isDefaultHandler && (
         <div className="flex items-center gap-2 px-4 py-2 text-xs text-amber-400">
           <AlertTriangle size={12} />
-          Folders will open in Splorer. Disable to restore Windows Explorer.
+          {i18n.t('settings.general.explorerWarning')}
         </div>
       )}
     </>

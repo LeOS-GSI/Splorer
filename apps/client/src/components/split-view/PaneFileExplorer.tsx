@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { FileEntry } from '@/lib/tauri-api';
 import {
@@ -273,7 +274,7 @@ const PaneFileExplorer = React.memo(
               <span>
                 {displayFiles.length} items{colorFilter ? ` (filtered)` : ''}
               </span>
-              <span>{selectedFiles.size} selected</span>
+              <span>{i18n.t('splitView.selectedCount', { count: selectedFiles.size })}</span>
               {showSizeBadges && <SizeDistributionChart files={displayFiles} />}
               <FolderColorLegend
                 files={sortedFiles}

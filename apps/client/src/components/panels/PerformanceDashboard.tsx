@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useCallback } from 'react';
 import { TauriAPI } from '@/lib/tauri-api';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -94,7 +95,7 @@ const PerformanceDashboard = React.memo(
                 ) : (
                   <ChevronRight size={14} style={{ flexShrink: 0 }} />
                 )}
-                Performance Metrics
+                {i18n.t('panels.performance.title')}
               </button>
               <button
                 onClick={handleCollapseAll}
@@ -110,7 +111,7 @@ const PerformanceDashboard = React.memo(
                   opacity: 0.7,
                   transition: 'opacity 0.15s',
                 }}
-                title="Collapse all sections"
+                title={i18n.t('panels.common.collapseAll')}
               >
                 collapse all
               </button>
@@ -143,7 +144,7 @@ const PerformanceDashboard = React.memo(
               ) : (
                 <ChevronRight size={14} style={{ flexShrink: 0 }} />
               )}
-              File Organizer
+              {i18n.t('panels.performance.fileOrganizer')}
             </button>
 
             {organizerExpanded && (

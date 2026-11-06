@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useRef, useState, useMemo, useLayoutEffect, useEffect, useCallback } from 'react';
 import ExtensionPanelHost from './ExtensionPanelHost';
 import PreviewNavigationBar from './PreviewNavigationBar';
@@ -301,7 +302,7 @@ const RightSidebar = ({
           <button
             onClick={() => setRightSidebarCollapsed(true)}
             className="hover:bg-xp-surface-light ml-2 flex-shrink-0 rounded p-1"
-            aria-label="Close panel"
+            aria-label={i18n.t('panels.common.closePanel')}
           >
             <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -344,7 +345,7 @@ const RightSidebar = ({
           <React.Suspense
             fallback={
               <div className="text-xp-text-secondary flex flex-1 items-center justify-center text-xs">
-                Loading...
+                {i18n.t('common.loading')}
               </div>
             }
           >
