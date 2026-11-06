@@ -1246,7 +1246,8 @@
       "loadingDest": "Loading destination contents...",
       "noData": "No data available",
       "subtitle": "Preview the resulting directory structure",
-      "sizeSummary": "{{incoming}} into {{existing}} folder"
+      "sizeSummary": "{{incoming}} into {{existing}} folder",
+      "sourceCount": "Source ({{count}} items)"
     },
     "metadata": {
       "empty": "No metadata fields — click Add Field below.",
@@ -2053,7 +2054,9 @@
     "restorePane": "Restore pane",
     "closePane": "Close pane",
     "loadingEditor": "Loading editor...",
-    "selectedCount": "{{count}} selected"
+    "selectedCount": "{{count}} selected",
+    "itemCount": "{{count}} items",
+    "filteredSuffix": " (filtered)"
   },
   "comparison": {
     "sideBySide": "Side by Side",

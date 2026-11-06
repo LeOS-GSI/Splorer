@@ -640,7 +640,9 @@ const MoveTreePreviewDialog = ({
         <div style={S.body}>
           {/* Left panel: Source tree */}
           <div style={S.panel}>
-            <div style={S.panelHeader}>Source ({data.sourceFiles.length} items)</div>
+            <div style={S.panelHeader}>
+              {i18n.t('dialogs.moveTree.sourceCount', { count: data.sourceFiles.length })}
+            </div>
             <div style={S.panelContent}>
               {data.sourceFiles.map((file) => (
                 <SourceTreeNode key={file.path} file={file} />

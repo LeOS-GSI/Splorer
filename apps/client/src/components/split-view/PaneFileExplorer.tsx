@@ -272,7 +272,8 @@ const PaneFileExplorer = React.memo(
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span>
-                {displayFiles.length} items{colorFilter ? ` (filtered)` : ''}
+                {i18n.t('splitView.itemCount', { count: displayFiles.length })}
+                {colorFilter ? i18n.t('splitView.filteredSuffix') : ''}
               </span>
               <span>{i18n.t('splitView.selectedCount', { count: selectedFiles.size })}</span>
               {showSizeBadges && <SizeDistributionChart files={displayFiles} />}

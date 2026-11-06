@@ -1246,7 +1246,8 @@
       "loadingDest": "Inhalt des Ziels wird geladen …",
       "noData": "Keine Daten verfügbar",
       "subtitle": "Vorschau der entstehenden Ordnerstruktur",
-      "sizeSummary": "{{incoming}} in Ordner mit {{existing}}"
+      "sizeSummary": "{{incoming}} in Ordner mit {{existing}}",
+      "sourceCount": "Quelle ({{count}} Elemente)"
     },
     "metadata": {
       "empty": "Keine Metadatenfelder – klicken Sie unten auf „Feld hinzufügen“.",
@@ -2053,7 +2054,9 @@
     "restorePane": "Bereich wiederherstellen",
     "closePane": "Bereich schließen",
     "loadingEditor": "Editor wird geladen …",
-    "selectedCount": "{{count}} ausgewählt"
+    "selectedCount": "{{count}} ausgewählt",
+    "itemCount": "{{count}} Elemente",
+    "filteredSuffix": " (gefiltert)"
   },
   "comparison": {
     "sideBySide": "Nebeneinander",
@@ -2350,11 +2353,11 @@
   },
   "collections": {
     "builtin": {
-      "builtin-large-files": "Große Dateien",
-      "builtin-recent-files": "Kürzlich geändert",
-      "builtin-images": "Bilder",
-      "builtin-documents": "Dokumente",
-      "builtin-code-files": "Quellcode"
+      "builtin-large-files": "Nur große Dateien",
+      "builtin-recent-files": "Nur kürzlich geänderte",
+      "builtin-images": "Nur Bilddateien",
+      "builtin-documents": "Nur Dokumente",
+      "builtin-code-files": "Nur Quellcode"
     }
   },
   "ui": {

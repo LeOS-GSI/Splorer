@@ -180,7 +180,7 @@ const SidebarFileTree = ({
           aria-selected={currentPath === file.path}
           aria-expanded={file.is_dir ? isExpanded : undefined}
           aria-label={`${file.name}${file.is_dir ? ', folder' : ', file'}`}
-          className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs transition-colors ${currentPath === file.path ? 'bg-xp-blue text-xp-blue border-xp-blue border-l-2 bg-opacity-25' : 'text-xp-text'} `}
+          className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs transition-colors ${currentPath === file.path ? 'bg-xp-blue/20 text-xp-blue border-xp-blue border-l-2' : 'text-xp-text'} `}
           style={{ paddingLeft: `${depth * 16 + 8}px` }}
           onClick={() => handleItemClick(file)}
           onContextMenu={(e) => handleItemRightClick(file, e)}
@@ -295,7 +295,7 @@ const SidebarFileTree = ({
                 aria-selected={currentPath === rootPath}
                 aria-expanded={expandedFolders.has(rootPath)}
                 aria-label={t('sidebar.rootDrive', { path: rootPath })}
-                className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs font-medium transition-colors ${currentPath === rootPath ? 'bg-xp-blue text-xp-blue border-xp-blue border-l-2 bg-opacity-25' : 'text-xp-text'} `}
+                className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs font-medium transition-colors ${currentPath === rootPath ? 'bg-xp-blue/20 text-xp-blue border-xp-blue border-l-2' : 'text-xp-text'} `}
                 onClick={() => navigateToPath(rootPath)}
               >
                 <button
