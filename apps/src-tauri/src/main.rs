@@ -389,6 +389,8 @@ fn main() {
             operations::open_file_with_application,
             operations::get_system_applications,
             operations::set_default_application,
+            operations::list_open_with_apps,
+            operations::launch_desktop_app,
             // Compression operations
             operations::compress_files,
             operations::get_compression_info,

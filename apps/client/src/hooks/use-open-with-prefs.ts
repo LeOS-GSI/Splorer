@@ -6,8 +6,49 @@ import { STORAGE_KEYS } from '@/lib/storage-keys';
  * - `xplorer-editor`: open in the built-in code editor tab
  * - `vscode`: launch VS Code via `code` CLI
  * - `system`: open with the OS-default application
+ * - `app:<desktop-id>`: launch a specific installed application (Linux .desktop entry)
  */
-export type OpenHandler = 'xplorer-editor' | 'vscode' | 'system';
+export type OpenHandler = 'xplorer-editor' | 'vscode' | 'system' | `app:${string}`;
+
+const APP_PREFIX = 'app:';
+
+/** Build a handler id for a desktop application, e.g. `app:org.kde.gwenview.desktop`. */
+export const makeAppHandler = (desktopId: string): OpenHandler => `app:${desktopId}`;
+
+/** Desktop file id of an `app:` handler, or `null` for built-in handlers. */
+export const getAppHandlerId = (handler: OpenHandler): string | null =>
+  handler.startsWith(APP_PREFIX) ? handler.slice(APP_PREFIX.length) : null;
+
+// ── Display names of remembered applications ────────────────────────────────
+
+const APP_NAMES_KEY = `${STORAGE_KEYS.FILE_OPEN_PREFS}:app-names`;
+
+const loadAppNames = (): Record<string, string> => {
+  try {
+    const raw = localStorage.getItem(APP_NAMES_KEY);
+    if (raw) return JSON.parse(raw) as Record<string, string>;
+  } catch {
+    /* ignore */
+  }
+  return {};
+};
+
+export const rememberAppName = (desktopId: string, name: string): void => {
+  try {
+    const names = loadAppNames();
+    names[desktopId] = name;
+    localStorage.setItem(APP_NAMES_KEY, JSON.stringify(names));
+  } catch {
+    /* ignore */
+  }
+};
+
+/** Human readable name for an `app:` handler. */
+export const getAppDisplayName = (handler: OpenHandler): string | null => {
+  const id = getAppHandlerId(handler);
+  if (!id) return null;
+  return loadAppNames()[id] ?? id.replace(/\.desktop$/, '');
+};
 
 /** Map of file extension (without dot) -> chosen handler. */
 export type FileOpenPrefs = Record<string, OpenHandler>;

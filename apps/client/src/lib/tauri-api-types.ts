@@ -93,6 +93,24 @@ export interface Application {
   is_default: boolean;
 }
 
+/** A freedesktop application entry for the "Open With" dialog (Linux). */
+export interface DesktopApp {
+  /** Desktop file ID, e.g. `org.kde.gwenview.desktop` */
+  id: string;
+  name: string;
+  comment?: string | null;
+  /** Icon as data URL */
+  icon?: string | null;
+  isDefault: boolean;
+  /** App declares support for the file's MIME type */
+  recommended: boolean;
+}
+
+export interface OpenWithApps {
+  mimeType: string;
+  apps: DesktopApp[];
+}
+
 export interface FileAssociation {
   extension: string;
   mime_type?: string;

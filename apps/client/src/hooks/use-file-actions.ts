@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
 import { formatError } from '@/lib/file-operation-helpers';
+import { runExternalOpenHandler } from '@/lib/open-with';
 import { showConfirmationToast } from '@/components/ui/Toast';
 import type { TabItem, EditorGroup } from '@/types/split-view';
 import type { SplitLayoutHook } from '@/hooks/use-split-layout';
@@ -82,25 +83,16 @@ export const useFileActions = (deps: FileActionsDeps) => {
   const executeOpenHandler = useCallback(
     async (file: FileEntry, handler: OpenHandler) => {
       try {
-        switch (handler) {
-          case 'xplorer-editor': {
-            const editorTab: TabItem = {
-              id: `editor-${file.path}-${Date.now()}`,
-              name: file.name,
-              path: file.path,
-              type: 'editor',
-            };
-            splitLayoutRef.current.addTab(activeGroupRef.current.id, editorTab, true);
-            break;
-          }
-          case 'vscode': {
-            const dir = file.path.replace(/[/\\][^/\\]*$/, '');
-            await TauriAPI.executeCommand(`code "${file.path}"`, dir);
-            break;
-          }
-          case 'system':
-            await TauriAPI.openFile(file.path);
-            break;
+        if (handler === 'xplorer-editor') {
+          const editorTab: TabItem = {
+            id: `editor-${file.path}-${Date.now()}`,
+            name: file.name,
+            path: file.path,
+            type: 'editor',
+          };
+          splitLayoutRef.current.addTab(activeGroupRef.current.id, editorTab, true);
+        } else {
+          await runExternalOpenHandler(file.path, handler);
         }
       } catch (error) {
         console.error('Failed to open file:', error);
@@ -124,17 +116,16 @@ export const useFileActions = (deps: FileActionsDeps) => {
         return;
       }
 
-      // For code/text files, check saved preference or show the Open With prompt
+      // A remembered "Open With" choice applies to every file type
+      const ext = getFileExtension(file.path);
+      const savedPref = ext ? getOpenPreference(ext) : null;
+      if (savedPref) {
+        await executeOpenHandler(file, savedPref);
+        return;
+      }
+
+      // For code/text files without a saved preference, show the Open With prompt
       if (isCodeFile(file.path)) {
-        const ext = getFileExtension(file.path);
-        const savedPref = getOpenPreference(ext);
-
-        if (savedPref) {
-          await executeOpenHandler(file, savedPref);
-          return;
-        }
-
-        // No saved preference — show the dialog
         if (openOpenWithDialog) {
           openOpenWithDialog(file.path, (handler: OpenHandler) => {
             executeOpenHandler(file, handler);

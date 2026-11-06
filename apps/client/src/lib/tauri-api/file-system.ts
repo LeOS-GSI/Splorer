@@ -5,6 +5,7 @@ import type {
   DetailedFileProperties,
   FileAssociation,
   Application,
+  OpenWithApps,
   CompressionOptions,
   CompressionInfo,
   ExtractionOptions,
@@ -56,6 +57,12 @@ export const getFileAssociations = async (filePath: string): Promise<FileAssocia
 
 export const openFileWithApplication = async (filePath: string, appPath: string): Promise<void> =>
   await transport('open_file_with_application', { filePath, appPath });
+
+export const listOpenWithApps = async (filePath: string): Promise<OpenWithApps> =>
+  await transport('list_open_with_apps', { filePath });
+
+export const launchDesktopApp = async (desktopId: string, filePaths: string[]): Promise<void> =>
+  await transport('launch_desktop_app', { desktopId, filePaths });
 
 export const getSystemApplications = async (): Promise<Application[]> =>
   await transport('get_system_applications');

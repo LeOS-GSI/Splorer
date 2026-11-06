@@ -40,6 +40,8 @@ export class TauriAPI {
   static getFileAssociations = fileSystem.getFileAssociations;
   static openFileWithApplication = fileSystem.openFileWithApplication;
   static getSystemApplications = fileSystem.getSystemApplications;
+  static listOpenWithApps = fileSystem.listOpenWithApps;
+  static launchDesktopApp = fileSystem.launchDesktopApp;
   static setDefaultApplication = fileSystem.setDefaultApplication;
   static compressFiles = fileSystem.compressFiles;
   static getCompressionInfo = fileSystem.getCompressionInfo;

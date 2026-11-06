@@ -1114,6 +1114,13 @@
     "vscodeDesc": "Open in Visual Studio Code",
     "systemDefault": "System Default",
     "systemDefaultDesc": "Open with your OS default application",
+    "systemDefaultCurrent": "Currently: {{app}}",
+    "defaultBadge": "Default",
+    "loadingApps": "Looking for applications…",
+    "showOtherApps": "Show other applications",
+    "hideOtherApps": "Hide other applications",
+    "searchApps": "Search applications…",
+    "noAppsFound": "No applications found",
     "alwaysUse": "Always use this for .{{ext}} files",
     "open": "Open",
     "cancel": "Cancel"

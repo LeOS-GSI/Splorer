@@ -4,6 +4,9 @@ use std::path::Path;
 use std::process::Command;
 use tauri::command;
 
+pub mod desktop_apps;
+pub use desktop_apps::*;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Application {
     pub name: String,

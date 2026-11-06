@@ -17,6 +17,7 @@ import {
   type ClipboardState,
 } from '@/lib/file-operation-helpers';
 import { executePaste, showPasteResultToast } from '@/lib/paste-helpers';
+import { runExternalOpenHandler } from '@/lib/open-with';
 import type { BottomPanelTabId } from '@/hooks/use-layout-state';
 import type { SortField } from '@/lib/utils';
 
@@ -505,7 +506,26 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
         }
       },
       openWith: (file: FileEntry) => {
-        dialogsRef.current.openOpenWithDialog(file.path);
+        dialogsRef.current.openOpenWithDialog(file.path, (handler) => {
+          if (handler === 'xplorer-editor') {
+            const editorTab: TabItem = {
+              id: `editor-${file.path}-${Date.now()}`,
+              name: file.name,
+              path: file.path,
+              type: 'editor',
+            };
+            splitLayoutRef.current.addTab(activeGroupIdRef.current, editorTab, true);
+            return;
+          }
+          runExternalOpenHandler(file.path, handler).catch((error) => {
+            console.error('Failed to open file:', error);
+            toastRef.current({
+              variant: 'destructive',
+              title: 'Open File Failed',
+              description: `Failed to open "${file.name}": ${formatError(error)}`,
+            });
+          });
+        });
       },
       compressTo: (filesToCompress: FileEntry[]) => {
         dialogsRef.current.openCompressDialog(filesToCompress);
