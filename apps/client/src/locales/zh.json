@@ -274,10 +274,7 @@
       "help": "帮助",
       "onboardingTour": "引导教程",
       "onboardingTourDesc": "重新播放应用交互式引导教程",
-      "replayTour": "重新播放",
-      "betaWarning": "Beta 警告",
-      "betaWarningDesc": "再次显示早期 Beta 警告对话框",
-      "showWarning": "显示警告"
+      "replayTour": "重新播放"
     },
     "explorer": {
       "display": "显示",
@@ -797,7 +794,6 @@
     "createSymlink": "创建符号链接",
     "movePreview": "移动预览",
     "openWith": "打开方式",
-    "betaWarning": "Beta 警告",
     "extensionInstall": "安装扩展",
     "advancedSelection": "高级选择",
     "fileOp": {
@@ -879,21 +875,6 @@
       "unresolve": "Unresolve",
       "resolved": "Resolved ({{count}})",
       "inputPlaceholder": "Add an annotation..."
-    },
-    "beta": {
-      "title": "Early Beta",
-      "subtitle": "v0.1.0 — Preview Release",
-      "intro": "Welcome to Splorer! This is an early beta release.",
-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
-      "bullet2": "Features may change or break between updates",
-      "bullet3": "Back up your files — use this app at your own risk",
-      "bugReport": "Found a bug? Report it on",
-      "githubIssues": "GitHub Issues",
-      "supportTitle": "Support Development",
-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
-      "becomeSponsor": "Become a Sponsor",
-      "showAgainHint": "You can show this again in Settings",
-      "iUnderstand": "I Understand"
     },
     "crossTab": {
       "title": "Batch Operations",

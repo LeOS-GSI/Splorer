@@ -274,10 +274,7 @@
       "help": "Help",
       "onboardingTour": "Onboarding Tour",
       "onboardingTourDesc": "Replay the interactive guided tour of the app",
-      "replayTour": "Replay Tour",
-      "betaWarning": "Beta Warning",
-      "betaWarningDesc": "Show the early beta warning dialog again",
-      "showWarning": "Show Warning"
+      "replayTour": "Replay Tour"
     },
     "explorer": {
       "display": "Display",
@@ -735,7 +732,6 @@
     "createSymlink": "Create Symbolic Link",
     "movePreview": "Move Preview",
     "openWith": "Open With",
-    "betaWarning": "Beta Warning",
     "extensionInstall": "Install Extension",
     "advancedSelection": "Advanced Selection",
     "fileOp": {
@@ -879,21 +875,6 @@
       "unresolve": "Unresolve",
       "resolved": "Resolved ({{count}})",
       "inputPlaceholder": "Add an annotation..."
-    },
-    "beta": {
-      "title": "Early Beta",
-      "subtitle": "v0.1.0 — Preview Release",
-      "intro": "Welcome to Splorer! This is an early beta release.",
-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
-      "bullet2": "Features may change or break between updates",
-      "bullet3": "Back up your files — use this app at your own risk",
-      "bugReport": "Found a bug? Report it on",
-      "githubIssues": "GitHub Issues",
-      "supportTitle": "Support Development",
-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
-      "becomeSponsor": "Become a Sponsor",
-      "showAgainHint": "You can show this again in Settings",
-      "iUnderstand": "I Understand"
     },
     "crossTab": {
       "title": "Batch Operations",

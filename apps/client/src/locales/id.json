@@ -274,10 +274,7 @@
       "help": "Bantuan",
       "onboardingTour": "Tur Pengenalan",
       "onboardingTourDesc": "Putar ulang tur panduan interaktif aplikasi",
-      "replayTour": "Putar Ulang Tur",
-      "betaWarning": "Peringatan Beta",
-      "betaWarningDesc": "Tampilkan dialog peringatan beta awal lagi",
-      "showWarning": "Tampilkan Peringatan"
+      "replayTour": "Putar Ulang Tur"
     },
     "explorer": {
       "display": "Tampilan",
@@ -797,7 +794,6 @@
     "createSymlink": "Buat Tautan Simbolik",
     "movePreview": "Pratinjau Pindah",
     "openWith": "Buka Dengan",
-    "betaWarning": "Peringatan Beta",
     "extensionInstall": "Pasang Ekstensi",
     "advancedSelection": "Pilihan Lanjutan",
     "fileOp": {
@@ -879,21 +875,6 @@
       "unresolve": "Unresolve",
       "resolved": "Resolved ({{count}})",
       "inputPlaceholder": "Add an annotation..."
-    },
-    "beta": {
-      "title": "Early Beta",
-      "subtitle": "v0.1.0 — Preview Release",
-      "intro": "Welcome to Splorer! This is an early beta release.",
-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
-      "bullet2": "Features may change or break between updates",
-      "bullet3": "Back up your files — use this app at your own risk",
-      "bugReport": "Found a bug? Report it on",
-      "githubIssues": "GitHub Issues",
-      "supportTitle": "Support Development",
-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
-      "becomeSponsor": "Become a Sponsor",
-      "showAgainHint": "You can show this again in Settings",
-      "iUnderstand": "I Understand"
     },
     "crossTab": {
       "title": "Batch Operations",

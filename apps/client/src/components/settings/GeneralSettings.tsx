@@ -8,11 +8,9 @@ import {
   PanelLeft,
   Bell,
   HelpCircle,
-  AlertTriangle,
   RotateCcw,
 } from 'lucide-react';
 import { startTour, resetTourCompleted } from '@/hooks/use-tour';
-import { resetBetaWarning } from '@/components/dialogs/BetaWarningDialog';
 import { applyFontSize } from '@/lib/utils';
 import { useAllThemes } from '@/lib/theme-registry';
 import {
@@ -170,21 +168,6 @@ const GeneralSettings = ({ settings, updateSetting, setSettings }: GeneralSettin
           className="bg-xp-blue flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
           {t('settings.general.replayTour')}
-        </button>
-      </SettingRow>
-      <SettingRow
-        icon={AlertTriangle}
-        label={t('settings.general.betaWarning')}
-        description={t('settings.general.betaWarningDesc')}
-      >
-        <button
-          onClick={() => {
-            resetBetaWarning();
-            setLocation('/');
-          }}
-          className="flex items-center gap-2 rounded-md bg-amber-500 px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-        >
-          {t('settings.general.showWarning')}
         </button>
       </SettingRow>
 

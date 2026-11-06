@@ -274,10 +274,7 @@
       "help": "ヘルプ",
       "onboardingTour": "ガイドツアー",
       "onboardingTourDesc": "アプリのインタラクティブガイドツアーを再生",
-      "replayTour": "ツアーを再生",
-      "betaWarning": "ベータ警告",
-      "betaWarningDesc": "早期ベータ警告ダイアログを再表示",
-      "showWarning": "警告を表示"
+      "replayTour": "ツアーを再生"
     },
     "explorer": {
       "display": "表示",
@@ -797,7 +794,6 @@
     "createSymlink": "シンボリックリンクを作成",
     "movePreview": "移動プレビュー",
     "openWith": "プログラムから開く",
-    "betaWarning": "ベータ警告",
     "extensionInstall": "拡張機能をインストール",
     "advancedSelection": "高度な選択",
     "fileOp": {
@@ -879,21 +875,6 @@
       "unresolve": "Unresolve",
       "resolved": "Resolved ({{count}})",
       "inputPlaceholder": "Add an annotation..."
-    },
-    "beta": {
-      "title": "Early Beta",
-      "subtitle": "v0.1.0 — Preview Release",
-      "intro": "Welcome to Splorer! This is an early beta release.",
-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
-      "bullet2": "Features may change or break between updates",
-      "bullet3": "Back up your files — use this app at your own risk",
-      "bugReport": "Found a bug? Report it on",
-      "githubIssues": "GitHub Issues",
-      "supportTitle": "Support Development",
-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
-      "becomeSponsor": "Become a Sponsor",
-      "showAgainHint": "You can show this again in Settings",
-      "iUnderstand": "I Understand"
     },
     "crossTab": {
       "title": "Batch Operations",

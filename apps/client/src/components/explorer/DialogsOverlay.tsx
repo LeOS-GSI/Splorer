@@ -29,7 +29,6 @@ const ExtensionPermissionDialog = React.lazy(
 const WorkspaceLayoutDialog = React.lazy(
   () => import('@/components/dialogs/WorkspaceLayoutDialog'),
 );
-const BetaWarningDialog = React.lazy(() => import('@/components/dialogs/BetaWarningDialog'));
 const CommandPalette = React.lazy(() => import('@/components/CommandPalette'));
 const TourOverlay = React.lazy(() => import('@/components/tour/TourOverlay'));
 const FileOperationProgressDialog = React.lazy(
@@ -363,9 +362,6 @@ const DialogsOverlay = ({
 
         {/* Quick Look Overlay (pulls in react-syntax-highlighter) */}
         {quickLookFile && <QuickLookOverlay file={quickLookFile} onClose={onCloseQuickLook} />}
-
-        {/* Beta Warning (first launch) */}
-        <BetaWarningDialog />
 
         {/* Extension Permission Consent Dialog */}
         <ExtensionPermissionDialog />

@@ -32,7 +32,6 @@ export const STORAGE_KEYS = {
 
   // Onboarding / tour
   TOUR_COMPLETED: 'xplorer:tour-completed',
-  BETA_WARNING_DISMISSED: 'xplorer:beta-warning-dismissed',
   AUTO_WHITELIST_VISITED: 'xplorer:auto-whitelist-visited',
 
   // Pane sync
