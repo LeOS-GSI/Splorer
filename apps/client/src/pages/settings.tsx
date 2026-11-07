@@ -16,7 +16,6 @@ import {
   Settings2,
   ChevronRight,
   FileCode,
-  Heart,
   Github,
   ExternalLink,
   Info,
@@ -212,27 +211,6 @@ const Settings = () => {
                   <span className="text-sm">{i18n.t('settings.about.basedOn')}</span>
                   <ExternalLink size={14} className="text-xp-text-muted ml-auto" />
                 </button>
-              </div>
-            </div>
-
-            <div className="border-xp-blue/30 bg-xp-blue/5 rounded-lg border p-5">
-              <div className="flex items-start gap-3">
-                <Heart size={20} className="text-xp-blue mt-0.5 flex-shrink-0" />
-                <div>
-                  <h3 className="text-xp-text text-sm font-semibold">
-                    {t('settings.about.sponsorTitle')}
-                  </h3>
-                  <p className="text-xp-text-secondary mt-1 text-sm leading-relaxed">
-                    {t('settings.about.sponsorDescription')}
-                  </p>
-                  <button
-                    onClick={() => TauriAPI.openUrl('https://github.com/sponsors/kimlimjustin')}
-                    className="bg-xp-blue hover:bg-xp-blue/80 mt-3 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
-                  >
-                    <Heart size={14} />
-                    {t('settings.about.sponsorButton')}
-                  </button>
-                </div>
               </div>
             </div>
 
