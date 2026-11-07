@@ -2,6 +2,7 @@ import i18n from '@/i18n';
 import { useState, useEffect } from 'react';
 import { TauriAPI } from '@/lib/tauri-api';
 import { useLocation } from 'wouter';
+import { getVersion } from '@tauri-apps/api/app';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -123,6 +124,13 @@ const Settings = () => {
   const { t } = useTranslation();
   const tabs = buildTabs(t);
   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
+  const [appVersion, setAppVersion] = useState<string>('');
+
+  useEffect(() => {
+    getVersion()
+      .then(setAppVersion)
+      .catch(() => setAppVersion(''));
+  }, []);
 
   const [settings, setSettings] = useState<AppSettings>(() => {
     try {
@@ -184,7 +192,7 @@ const Settings = () => {
           <div className="space-y-6 px-4 py-2">
             <div className="border-xp-border rounded-lg border p-6 text-center">
               <h2 className="text-xp-text mb-1 text-2xl font-bold">Splorer</h2>
-              <p className="text-xp-text-muted text-sm">v1.0.0-alpha.1</p>
+              {appVersion && <p className="text-xp-text-muted text-sm">v{appVersion}</p>}
               <p className="text-xp-text-secondary mt-3 text-sm">
                 {t('settings.about.description')}
               </p>

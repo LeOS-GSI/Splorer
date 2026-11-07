@@ -1,6 +1,6 @@
 {
   "name": "splorer",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "Splorer - A modern, privacy-focused file explorer built with Tauri and React",
   "type": "module",
   "license": "AGPL-3.0",

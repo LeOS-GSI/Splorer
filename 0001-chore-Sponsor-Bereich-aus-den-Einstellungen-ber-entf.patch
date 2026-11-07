@@ -1,0 +1,58 @@
+From 1db9f563b17bc2ce470baac6388eb2a5b21d3b2c Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Sat, 7 Nov 2026 08:46:10 +0100
+Subject: [PATCH] =?UTF-8?q?chore:=20Sponsor-Bereich=20aus=20den=20Einstell?=
+ =?UTF-8?q?ungen=20(=C3=9Cber)=20entfernt?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpEUX1W65k9BrLDCn2Ma
+---
+ apps/client/src/pages/settings.tsx | 22 ----------------------
+ 1 file changed, 22 deletions(-)
+
+diff --git a/apps/client/src/pages/settings.tsx b/apps/client/src/pages/settings.tsx
+index b07994b..e5f6d94 100644
+--- a/apps/client/src/pages/settings.tsx
++++ b/apps/client/src/pages/settings.tsx
+@@ -15,7 +15,6 @@ import {
+   Settings2,
+   ChevronRight,
+   FileCode,
+-  Heart,
+   Github,
+   ExternalLink,
+   Info,
+@@ -214,27 +213,6 @@ const Settings = () => {
+               </div>
+             </div>
+ 
+-            <div className="border-xp-blue/30 bg-xp-blue/5 rounded-lg border p-5">
+-              <div className="flex items-start gap-3">
+-                <Heart size={20} className="text-xp-blue mt-0.5 flex-shrink-0" />
+-                <div>
+-                  <h3 className="text-xp-text text-sm font-semibold">
+-                    {t('settings.about.sponsorTitle')}
+-                  </h3>
+-                  <p className="text-xp-text-secondary mt-1 text-sm leading-relaxed">
+-                    {t('settings.about.sponsorDescription')}
+-                  </p>
+-                  <button
+-                    onClick={() => TauriAPI.openUrl('https://github.com/sponsors/kimlimjustin')}
+-                    className="bg-xp-blue hover:bg-xp-blue/80 mt-3 inline-flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-white transition-colors"
+-                  >
+-                    <Heart size={14} />
+-                    {t('settings.about.sponsorButton')}
+-                  </button>
+-                </div>
+-              </div>
+-            </div>
+-
+             <p className="text-xp-text-muted text-center text-xs">{t('settings.about.license')}</p>
+           </div>
+         );
+-- 
+2.43.0
+

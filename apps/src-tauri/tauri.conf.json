@@ -1,6 +1,6 @@
 {
   "productName": "Splorer",
-  "version": "0.99.1",
+  "version": "../../package.json",
   "identifier": "org.snakeos.splorer",
   "build": {
     "beforeBuildCommand": "pnpm -w frontend:build",

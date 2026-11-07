@@ -1,6 +1,6 @@
 [package]
 name = "splorer"
-version = "0.99.1"
+version = "1.0.0-alpha.1"
 description = "Splorer — privacy-focused file explorer built with Tauri"
 authors = ["Justin Maximillian Kimlim", "harvey186"]
 license = "AGPL-3.0"

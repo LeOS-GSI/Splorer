@@ -1,0 +1,171 @@
+From 4473db9b5b578a869bb9fcfdfa8c9bba3f82ff6e Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Sat, 7 Nov 2026 08:12:37 +0100
+Subject: [PATCH] fix: Kopieren (Strg+C) legt Dateien auch ins System-Clipboard
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Bisher lebte die Zwischenablage nur im React-State, andere Programme
+(Telegram, Browser, Dolphin) konnten nichts einfügen. Jetzt werden die
+Pfade zusätzlich per arboard als text/uri-list angeboten (X11 + Wayland).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpEUX1W65k9BrLDCn2Ma
+---
+ apps/client/src/lib/file-operation-helpers.ts |  4 ++
+ apps/client/src/lib/tauri-api/file-system.ts  |  4 ++
+ apps/client/src/lib/tauri-api/index.ts        |  1 +
+ apps/src-tauri/Cargo.toml                     |  1 +
+ apps/src-tauri/src/main.rs                    |  2 +
+ .../src-tauri/src/operations/clipboard_ops.rs | 52 +++++++++++++++++++
+ apps/src-tauri/src/operations/mod.rs          |  2 +
+ 7 files changed, 66 insertions(+)
+ create mode 100644 apps/src-tauri/src/operations/clipboard_ops.rs
+
+diff --git a/apps/client/src/lib/file-operation-helpers.ts b/apps/client/src/lib/file-operation-helpers.ts
+index 370526c..09a1562 100644
+--- a/apps/client/src/lib/file-operation-helpers.ts
++++ b/apps/client/src/lib/file-operation-helpers.ts
+@@ -65,6 +65,10 @@ export const setClipboardEntries = (
+ ): void => {
+   setClipboard({ files, operation });
+   updateFactory(files, operation);
++  // Auch ins System-Clipboard, damit andere Programme einfügen können
++  TauriAPI.setSystemClipboardFiles?.(files.map((f) => f.path))?.catch((err) =>
++    console.warn('System-Clipboard konnte nicht gesetzt werden:', err),
++  );
+   addClipboardHistoryEntry(
+     files.map((f) => ({ path: f.path, name: f.name, isDir: f.is_dir })),
+     operation,
+diff --git a/apps/client/src/lib/tauri-api/file-system.ts b/apps/client/src/lib/tauri-api/file-system.ts
+index 2ad7dfa..9f36e8c 100644
+--- a/apps/client/src/lib/tauri-api/file-system.ts
++++ b/apps/client/src/lib/tauri-api/file-system.ts
+@@ -61,6 +61,10 @@ export const openFileWithApplication = async (filePath: string, appPath: string)
+ export const listOpenWithApps = async (filePath: string): Promise<OpenWithApps> =>
+   await transport('list_open_with_apps', { filePath });
+ 
++/** Dateien ins System-Clipboard legen (für Einfügen in anderen Programmen). */
++export const setSystemClipboardFiles = async (paths: string[]): Promise<void> =>
++  await transport('set_system_clipboard_files', { paths });
++
+ export const launchDesktopApp = async (desktopId: string, filePaths: string[]): Promise<void> =>
+   await transport('launch_desktop_app', { desktopId, filePaths });
+ 
+diff --git a/apps/client/src/lib/tauri-api/index.ts b/apps/client/src/lib/tauri-api/index.ts
+index 01e2051..fa0593f 100644
+--- a/apps/client/src/lib/tauri-api/index.ts
++++ b/apps/client/src/lib/tauri-api/index.ts
+@@ -38,6 +38,7 @@ export class TauriAPI {
+   static getDirectoryItemCount = fileSystem.getDirectoryItemCount;
+   static setFilePermissions = fileSystem.setFilePermissions;
+   static getFileAssociations = fileSystem.getFileAssociations;
++  static setSystemClipboardFiles = fileSystem.setSystemClipboardFiles;
+   static openFileWithApplication = fileSystem.openFileWithApplication;
+   static getSystemApplications = fileSystem.getSystemApplications;
+   static listOpenWithApps = fileSystem.listOpenWithApps;
+diff --git a/apps/src-tauri/Cargo.toml b/apps/src-tauri/Cargo.toml
+index f78ca36..16c689f 100644
+--- a/apps/src-tauri/Cargo.toml
++++ b/apps/src-tauri/Cargo.toml
+@@ -69,6 +69,7 @@ wasmi = "0.40"
+ ed25519-dalek = { version = "2.2.0", features = ["rand_core"] }
+ portable-pty = "0.8"
+ moka = { version = "0.12", features = ["sync"] }
++arboard = { version = "3.7", default-features = false, features = ["wayland-data-control"] }
+ 
+ [dev-dependencies]
+ tokio-test = "0.4"
+diff --git a/apps/src-tauri/src/main.rs b/apps/src-tauri/src/main.rs
+index 46a7b78..0927c1d 100644
+--- a/apps/src-tauri/src/main.rs
++++ b/apps/src-tauri/src/main.rs
+@@ -391,6 +391,8 @@ fn main() {
+             operations::set_default_application,
+             operations::list_open_with_apps,
+             operations::launch_desktop_app,
++            // System clipboard
++            operations::set_system_clipboard_files,
+             // Compression operations
+             operations::compress_files,
+             operations::get_compression_info,
+diff --git a/apps/src-tauri/src/operations/clipboard_ops.rs b/apps/src-tauri/src/operations/clipboard_ops.rs
+new file mode 100644
+index 0000000..3154fa7
+--- /dev/null
++++ b/apps/src-tauri/src/operations/clipboard_ops.rs
+@@ -0,0 +1,52 @@
++//! System-Clipboard: kopierte/ausgeschnittene Dateien auch für andere
++//! Programme (Telegram, Browser, Dolphin, …) bereitstellen.
++//!
++//! Unter Linux werden die Pfade als `text/uri-list` angeboten (X11 und
++//! Wayland/data-control). Die `Clipboard`-Instanz wird global gehalten,
++//! damit der Besitz der Auswahl nicht sofort wieder verloren geht – unter
++//! X11 muss der Prozess die Anfragen anderer Programme selbst bedienen.
++
++use std::path::PathBuf;
++use std::sync::Mutex;
++
++static SYSTEM_CLIPBOARD: Mutex<Option<arboard::Clipboard>> = Mutex::new(None);
++
++fn write_file_list(paths: &[PathBuf]) -> Result<(), String> {
++    let mut guard = SYSTEM_CLIPBOARD
++        .lock()
++        .map_err(|_| "Clipboard-Lock vergiftet".to_string())?;
++
++    if guard.is_none() {
++        *guard = Some(arboard::Clipboard::new().map_err(|e| e.to_string())?);
++    }
++
++    let result = guard
++        .as_mut()
++        .expect("clipboard initialised above")
++        .set()
++        .file_list(paths)
++        .map_err(|e| e.to_string());
++
++    // Bei Fehler Instanz verwerfen, damit der nächste Versuch neu verbindet
++    if result.is_err() {
++        *guard = None;
++    }
++    result
++}
++
++/// Legt die angegebenen Dateien ins System-Clipboard.
++#[tauri::command]
++pub async fn set_system_clipboard_files(paths: Vec<String>) -> Result<(), String> {
++    let paths: Vec<PathBuf> = paths
++        .into_iter()
++        .map(PathBuf::from)
++        .filter(|p| p.exists())
++        .collect();
++    if paths.is_empty() {
++        return Ok(());
++    }
++
++    tokio::task::spawn_blocking(move || write_file_list(&paths))
++        .await
++        .map_err(|e| e.to_string())?
++}
+diff --git a/apps/src-tauri/src/operations/mod.rs b/apps/src-tauri/src/operations/mod.rs
+index 50e4480..2fa264f 100644
+--- a/apps/src-tauri/src/operations/mod.rs
++++ b/apps/src-tauri/src/operations/mod.rs
+@@ -1,4 +1,5 @@
+ pub mod accelerated_ops;
++pub mod clipboard_ops;
+ pub mod analytics_ops;
+ pub mod comparison_ops;
+ pub mod compression;
+@@ -21,6 +22,7 @@ pub mod types;
+ pub mod undo_redo;
+ 
+ pub use accelerated_ops::*;
++pub use clipboard_ops::*;
+ pub use analytics_ops::*;
+ pub use comparison_ops::*;
+ pub use compression::*;
+-- 
+2.43.0
+

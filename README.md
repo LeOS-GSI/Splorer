@@ -9,9 +9,9 @@
 Cross-platform. Local-first. Extensible. One app for all your files.
 
 [![LICENSE](https://img.shields.io/github/license/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/blob/next/LICENSE) [![Downloads](https://img.shields.io/github/downloads/LeOS-GSI/Splorer/total.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/releases) [![Stars](https://img.shields.io/github/stars/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/stargazers)
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/LeOS-GSI/Splorer/releases)[![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white)](https://github.com/LeOS-GSI/Splorer/releases)[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/LeOS-GSI/Splorer/releases)
+(https://github.com/LeOS-GSI/Splorer/releases)[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/LeOS-GSI/Splorer/releases)
 
-[Releases](https://github.com/LeOS-GSI/Splorer/releases) | [Discussions](https://github.com/LeOS-GSI/Splorer/discussions)
+[Releases](https://github.com/LeOS-GSI/Splorer/releases) | [Discussions](https://t.me/+ccodgiVNqYZkOGQy)
 
 Splorer is a privacy-hardened fork of [Xplorer](https://github.com/kimlimjustin/xplorer) by Justin Maximillian Kimlim, maintained for SnakeOS. No AI, no cloud services, no marketplace, no automatic update checks, no phone-home.
 
@@ -19,15 +19,9 @@ Splorer is a privacy-hardened fork of [Xplorer](https://github.com/kimlimjustin/
 
 ---
 
-<div align="center">
-<img src="images/xplorer.png" alt="Splorer — File Manager" width="100%" />
-</div>
-
 ## Why Splorer?
 
 Most file managers haven't changed in decades. Splorer is a ground-up rethink: a Tauri 2 desktop app with a Rust backend for speed and a React frontend for flexibility. It ships with Git integration, a fast local search index, local extensions, and a themeable UI out of the box. Everything runs on your machine.
-
-> **Note:** This is the `next` branch -- a full rewrite using Tauri 2, React 18, and a new extension system. Not yet production-ready, but actively developed. Feedback welcome!
 
 ## Features
 
@@ -36,7 +30,6 @@ Most file managers haven't changed in decades. Splorer is a ground-up rethink: a
 <td width="50%">
 
 **File Management**
-- Cross-platform: Windows, macOS, Linux
 - 6 view modes: Grid, List, Details, Column, Gallery, Tree
 - Hardware-accelerated file operations (memory-mapped I/O, parallel chunked transfers)
 - Archive support: ZIP, TAR, GZ, BZ2, XZ with password protection
@@ -107,9 +100,7 @@ Download the latest release for your platform from the [Releases page](https://g
 
 | Platform | Format |
 |---|---|
-| Windows | `.msi` / `.exe` |
-| macOS | `.dmg` |
-| Linux | `.deb` / `.AppImage` |
+| Linux | `.deb` / `.AppImage` / '.rpm' |
 
 ## Getting Started (Development)
 
@@ -122,7 +113,7 @@ Download the latest release for your platform from the [Releases page](https://g
 ### Setup
 
 ```bash
-git clone https://github.com/LeOS-GSI/Splorer.git -b next
+git clone https://github.com/LeOS-GSI/Splorer.git
 cd Splorer
 pnpm install
 pnpm dev
