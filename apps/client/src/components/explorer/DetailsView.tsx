@@ -164,7 +164,7 @@ const FileRow = React.memo(
         tabIndex={0}
         data-file-path={file.path}
         data-drop-target={file.is_dir ? file.path : undefined}
-        className={`hover:bg-xp-surface-light grid cursor-pointer grid-cols-12 items-center gap-3 px-3 py-2.5 transition-colors ${
+        className={`hover:bg-xp-surface-light grid cursor-pointer select-none grid-cols-12 items-center gap-3 px-3 py-2.5 transition-colors ${
           selectedFiles.has(file.path)
             ? 'bg-xp-purple/20 border-xp-purple/40 border'
             : 'text-xp-text border border-transparent'
