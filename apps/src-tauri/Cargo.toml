@@ -69,6 +69,7 @@ wasmi = "0.40"
 ed25519-dalek = { version = "2.2.0", features = ["rand_core"] }
 portable-pty = "0.8"
 moka = { version = "0.12", features = ["sync"] }
+arboard = { version = "3.7", default-features = false, features = ["wayland-data-control"] }
 
 [dev-dependencies]
 tokio-test = "0.4"

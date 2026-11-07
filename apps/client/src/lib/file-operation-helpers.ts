@@ -66,6 +66,10 @@ export const setClipboardEntries = (
 ): void => {
   setClipboard({ files, operation });
   updateFactory(files, operation);
+  // Auch ins System-Clipboard, damit andere Programme einfügen können
+  TauriAPI.setSystemClipboardFiles?.(files.map((f) => f.path))?.catch((err) =>
+    console.warn('System-Clipboard konnte nicht gesetzt werden:', err),
+  );
   addClipboardHistoryEntry(
     files.map((f) => ({ path: f.path, name: f.name, isDir: f.is_dir })),
     operation,

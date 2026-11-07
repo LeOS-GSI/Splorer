@@ -391,6 +391,8 @@ fn main() {
             operations::set_default_application,
             operations::list_open_with_apps,
             operations::launch_desktop_app,
+            // System clipboard
+            operations::set_system_clipboard_files,
             // Compression operations
             operations::compress_files,
             operations::get_compression_info,

@@ -38,6 +38,7 @@ export class TauriAPI {
   static getDirectoryItemCount = fileSystem.getDirectoryItemCount;
   static setFilePermissions = fileSystem.setFilePermissions;
   static getFileAssociations = fileSystem.getFileAssociations;
+  static setSystemClipboardFiles = fileSystem.setSystemClipboardFiles;
   static openFileWithApplication = fileSystem.openFileWithApplication;
   static getSystemApplications = fileSystem.getSystemApplications;
   static listOpenWithApps = fileSystem.listOpenWithApps;

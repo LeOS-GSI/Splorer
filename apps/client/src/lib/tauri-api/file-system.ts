@@ -61,6 +61,10 @@ export const openFileWithApplication = async (filePath: string, appPath: string)
 export const listOpenWithApps = async (filePath: string): Promise<OpenWithApps> =>
   await transport('list_open_with_apps', { filePath });
 
+/** Dateien ins System-Clipboard legen (für Einfügen in anderen Programmen). */
+export const setSystemClipboardFiles = async (paths: string[]): Promise<void> =>
+  await transport('set_system_clipboard_files', { paths });
+
 export const launchDesktopApp = async (desktopId: string, filePaths: string[]): Promise<void> =>
   await transport('launch_desktop_app', { desktopId, filePaths });
 

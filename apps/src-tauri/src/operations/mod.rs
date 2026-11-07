@@ -1,4 +1,5 @@
 pub mod accelerated_ops;
+pub mod clipboard_ops;
 pub mod analytics_ops;
 pub mod comparison_ops;
 pub mod compression;
@@ -21,6 +22,7 @@ pub mod types;
 pub mod undo_redo;
 
 pub use accelerated_ops::*;
+pub use clipboard_ops::*;
 pub use analytics_ops::*;
 pub use comparison_ops::*;
 pub use compression::*;
