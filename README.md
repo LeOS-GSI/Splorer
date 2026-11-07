@@ -8,8 +8,7 @@
 
 Cross-platform. Local-first. Extensible. One app for all your files.
 
-[![LICENSE](https://img.shields.io/github/license/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/blob/next/LICENSE) [![Downloads](https://img.shields.io/github/downloads/LeOS-GSI/Splorer/total.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/releases) [![Stars](https://img.shields.io/github/stars/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/stargazers)
-(https://github.com/LeOS-GSI/Splorer/releases)[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/LeOS-GSI/Splorer/releases)
+[![LICENSE](https://img.shields.io/github/license/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/blob/next/LICENSE) [![Downloads](https://img.shields.io/github/downloads/LeOS-GSI/Splorer/total.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/releases) [![Stars]
 
 [Releases](https://github.com/LeOS-GSI/Splorer/releases) | [Discussions](https://t.me/+ccodgiVNqYZkOGQy)
 
