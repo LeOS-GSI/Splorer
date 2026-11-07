@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { TauriAPI, ShortcutBinding } from '@/lib/tauri-api';
 import {
@@ -14,14 +15,54 @@ interface CategoryDef {
 }
 
 const CATEGORIES: Record<string, CategoryDef> = {
-  'file-operations': { label: 'File Operations', color: 'var(--xp-blue)' },
-  navigation: { label: 'Navigation', color: 'var(--xp-green)' },
-  selection: { label: 'Selection', color: 'var(--xp-purple)' },
-  search: { label: 'Search & Filter', color: 'var(--xp-yellow)' },
-  view: { label: 'View & Layout', color: 'var(--xp-cyan, var(--xp-blue))' },
-  application: { label: 'Application', color: 'var(--xp-orange, var(--xp-yellow))' },
-  terminal: { label: 'Terminal', color: 'var(--xp-green)' },
-  extensions: { label: 'Extensions', color: 'var(--xp-purple)' },
+  'file-operations': {
+    get label() {
+      return i18n.t('shortcutCategories.fileOperations');
+    },
+    color: 'var(--xp-blue)',
+  },
+  navigation: {
+    get label() {
+      return i18n.t('shortcutCategories.navigation');
+    },
+    color: 'var(--xp-green)',
+  },
+  selection: {
+    get label() {
+      return i18n.t('shortcutCategories.selection');
+    },
+    color: 'var(--xp-purple)',
+  },
+  search: {
+    get label() {
+      return i18n.t('shortcutCategories.search');
+    },
+    color: 'var(--xp-yellow)',
+  },
+  view: {
+    get label() {
+      return i18n.t('shortcutCategories.view');
+    },
+    color: 'var(--xp-cyan, var(--xp-blue))',
+  },
+  application: {
+    get label() {
+      return i18n.t('shortcutCategories.application');
+    },
+    color: 'var(--xp-orange, var(--xp-yellow))',
+  },
+  terminal: {
+    get label() {
+      return i18n.t('shortcutCategories.terminal');
+    },
+    color: 'var(--xp-green)',
+  },
+  extensions: {
+    get label() {
+      return i18n.t('shortcutCategories.extensions');
+    },
+    color: 'var(--xp-purple)',
+  },
 };
 
 const CATEGORY_ORDER = Object.keys(CATEGORIES);
@@ -222,7 +263,10 @@ const styles = {
 
 const KeyBadge = ({ combo }: { combo: string }) => {
   const display = formatKeyComboForDisplay(combo);
-  if (!display) return <span style={{ ...styles.kbd, opacity: 0.4 }}>Unbound</span>;
+  if (!display)
+    return (
+      <span style={{ ...styles.kbd, opacity: 0.4 }}>{i18n.t('dialogs.shortcuts.unbound')}</span>
+    );
 
   const parts = display.split(' + ');
   return (
@@ -366,7 +410,7 @@ const KeyboardShortcutsDialog = ({
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
-      aria-label="Keyboard Shortcuts"
+      aria-label={i18n.t('dialogs.keyboardShortcuts')}
     >
       <div style={styles.dialog}>
         {/* Header */}
@@ -393,8 +437,10 @@ const KeyboardShortcutsDialog = ({
               <path d="M16 12h.001" />
               <path d="M7 16h10" />
             </svg>
-            <h2 style={styles.title}>Keyboard Shortcuts</h2>
-            <span style={styles.badge}>{filtered.length} shortcuts</span>
+            <h2 style={styles.title}>{i18n.t('dialogs.keyboardShortcuts')}</h2>
+            <span style={styles.badge}>
+              {i18n.t('dialogs.shortcuts.count', { count: filtered.length })}
+            </span>
           </div>
           <button
             onClick={onClose}
@@ -446,7 +492,7 @@ const KeyboardShortcutsDialog = ({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search shortcuts..."
+            placeholder={i18n.t('dialogs.shortcuts.searchPlaceholder')}
             style={styles.searchInput}
             onFocus={(e) => {
               e.currentTarget.style.borderColor = 'var(--xp-blue)';
@@ -461,7 +507,7 @@ const KeyboardShortcutsDialog = ({
         <div style={styles.body}>
           {/* eslint-disable-next-line no-nested-ternary */}
           {isLoading ? (
-            <div style={styles.emptyState}>Loading shortcuts...</div>
+            <div style={styles.emptyState}>{i18n.t('dialogs.shortcuts.loading')}</div>
           ) : filtered.length === 0 ? (
             <div style={styles.emptyState}>
               {searchQuery ? `No shortcuts matching "${searchQuery}"` : 'No shortcuts configured'}
@@ -536,7 +582,7 @@ const KeyboardShortcutsDialog = ({
                 e.currentTarget.style.opacity = '1';
               }}
             >
-              Customize in Settings
+              {i18n.t('dialogs.shortcuts.customize')}
             </button>
           )}
         </div>

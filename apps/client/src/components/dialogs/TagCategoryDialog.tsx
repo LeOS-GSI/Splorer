@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef } from 'react';
 import { TauriAPI, type TagCategory } from '@/lib/tauri-api';
 import { Tags, X, Plus, Check, Pencil, Trash2, ChevronRight } from 'lucide-react';
@@ -195,12 +196,14 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
         <div className="border-xp-border flex flex-shrink-0 items-center justify-between border-b px-4 py-3">
           <div className="flex items-center space-x-2">
             <Tags className="text-xp-text-muted h-4 w-4" />
-            <h2 className="text-xp-text text-sm font-semibold">Tag Categories</h2>
+            <h2 className="text-xp-text text-sm font-semibold">
+              {i18n.t('dialogs.tagCategories.title')}
+            </h2>
           </div>
           <button
             onClick={onClose}
             className="hover:bg-xp-surface-light text-xp-text-muted hover:text-xp-text rounded p-1 transition-colors"
-            aria-label="Close tag categories dialog"
+            aria-label={i18n.t('dialogs.tagCategories.close')}
           >
             <X className="h-4 w-4" />
           </button>
@@ -210,10 +213,10 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
         <div className="flex-1 space-y-2 overflow-y-auto px-4 py-3">
           {/* eslint-disable-next-line no-nested-ternary */}
           {loading ? (
-            <p className="text-xp-text-muted text-sm">Loading...</p>
+            <p className="text-xp-text-muted text-sm">{i18n.t('common.loading')}</p>
           ) : flatNodes.length === 0 && !showAddForm ? (
             <p className="text-xp-text-muted text-sm italic">
-              No tag categories yet — add one below.
+              {i18n.t('dialogs.tagCategories.empty')}
             </p>
           ) : (
             <ul className="space-y-1">
@@ -232,8 +235,8 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
                           const idx = PRESET_COLORS.findIndex((c) => c.value === editColor);
                           setEditColor(PRESET_COLORS[(idx + 1) % PRESET_COLORS.length].value);
                         }}
-                        title="Click to cycle color"
-                        aria-label="Cycle through color options"
+                        title={i18n.t('dialogs.tagCategories.cycleColor')}
+                        aria-label={i18n.t('dialogs.tagCategories.cycleColorAria')}
                       />
                       <input
                         type="text"
@@ -276,7 +279,9 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
                           onClick={() => startEditing(node.category)}
                           className="hover:bg-xp-surface-light text-xp-text-muted hover:text-xp-blue rounded p-1 transition-colors"
                           title="Edit"
-                          aria-label={`Edit category ${node.category.name}`}
+                          aria-label={i18n.t('dialogs.tagCategories.editNamed', {
+                            name: node.category.name,
+                          })}
                         >
                           <Pencil className="h-3 w-3" />
                         </button>
@@ -284,7 +289,9 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
                           onClick={() => handleDelete(node.category.id)}
                           className="hover:bg-xp-surface-light text-xp-text-muted rounded p-1 transition-colors hover:text-red-400"
                           title="Delete"
-                          aria-label={`Delete category ${node.category.name}`}
+                          aria-label={i18n.t('dialogs.tagCategories.deleteNamed', {
+                            name: node.category.name,
+                          })}
                         >
                           <Trash2 className="h-3 w-3" />
                         </button>
@@ -312,7 +319,7 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
                   if (e.key === 'Escape') setShowAddForm(false);
                 }}
                 className="bg-xp-bg border-xp-border text-xp-text placeholder-xp-text-muted focus:ring-xp-blue focus:border-xp-blue w-full rounded border px-3 py-1.5 text-sm transition-colors focus:outline-none focus:ring-2"
-                placeholder="Category name..."
+                placeholder={i18n.t('dialogs.tagCategories.namePlaceholder')}
                 maxLength={50}
               />
 
@@ -344,10 +351,12 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
                 onValueChange={(v) => setNewParentId(v === '__none__' ? '' : v)}
               >
                 <SelectTrigger className="h-8 w-full">
-                  <SelectValue placeholder="No parent (root category)" />
+                  <SelectValue placeholder={i18n.t('dialogs.tagCategories.noParent')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="__none__">No parent (root category)</SelectItem>
+                  <SelectItem value="__none__">
+                    {i18n.t('dialogs.tagCategories.noParent')}
+                  </SelectItem>
                   {categories.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.name}
@@ -361,7 +370,7 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
                   onClick={() => setShowAddForm(false)}
                   className="text-xp-text-muted hover:text-xp-text rounded px-2.5 py-1 text-xs transition-colors"
                 >
-                  Cancel
+                  {i18n.t('common.cancel')}
                 </button>
                 <button
                   onClick={handleAdd}
@@ -399,7 +408,7 @@ const TagCategoryDialog = ({ isOpen, onClose }: TagCategoryDialogProps) => {
                 className="bg-xp-blue flex items-center space-x-1.5 rounded px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-opacity-90"
               >
                 <Plus className="h-3.5 w-3.5" />
-                <span>Add Category</span>
+                <span>{i18n.t('dialogs.tagCategories.add')}</span>
               </button>
             )}
             <button

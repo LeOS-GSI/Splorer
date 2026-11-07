@@ -65,11 +65,7 @@ const FileEditorView = ({ filePath }: FileEditorViewProps) => {
     if (!isDirty) return;
     setSaving(true);
     try {
-      await transport('agent_write_file_with_permission', {
-        filePath,
-        content,
-        permissionGranted: true,
-      });
+      await transport('write_text_file', { path: filePath, content });
       setOriginalContent(content);
     } catch (err) {
       setError(`Failed to save: ${err}`);

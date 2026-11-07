@@ -57,16 +57,6 @@ pub struct FileSystemNode {
     pub error: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct AgentProgress {
-    pub current_path: String,
-    pub processed_files: u32,
-    pub processed_dirs: u32,
-    pub total_size: u64,
-    pub recursion_depth: u32,
-    pub status: String,
-}
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct OperationProgress {
     pub operation_id: String,

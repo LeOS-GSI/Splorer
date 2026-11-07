@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   FOLDER_COLORS,
@@ -84,7 +85,7 @@ const FolderColorLegend = React.memo(
           gap: 8,
           padding: '0 4px',
         }}
-        aria-label="Folder color legend"
+        aria-label={i18n.t('explorer.folderColorLegend')}
       >
         {entries.map(({ def, count }) => {
           const isActive = activeColorFilter === def.id;
@@ -92,7 +93,7 @@ const FolderColorLegend = React.memo(
             <button
               key={def.id}
               onClick={() => handleClick(def.id)}
-              title={`${def.label}: ${count} folder${count !== 1 ? 's' : ''}${isActive ? ' (click to clear filter)' : ''}`}
+              title={`${i18n.t('explorer.colorLegendItem', { label: def.label, count })}${isActive ? i18n.t('explorer.clickToClearFilter') : ''}`}
               aria-label={`${def.label}: ${count} folder${count !== 1 ? 's' : ''}`}
               aria-pressed={isActive}
               style={{

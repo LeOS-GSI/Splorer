@@ -6,8 +6,6 @@ import type {
   FileToken,
   StructuredQuery,
   EnhancedSearchResult,
-  AISearchResult,
-  SmartSearchResult,
 } from '../types';
 
 export const findFiles = async (pattern: string, searchPath: string): Promise<string[]> => {
@@ -38,51 +36,6 @@ export const enhancedSearch = async (
     language: language || null,
     limit: limit || null,
   });
-};
-
-export const aiSearch = async (
-  query: string,
-  provider: string,
-  apiKey?: string,
-  model?: string,
-  limit?: number,
-): Promise<AISearchResult> => {
-  return await transport('ai_search', {
-    query,
-    provider,
-    apiKey: apiKey || null,
-    model: model || null,
-    limit: limit || null,
-  });
-};
-
-export const smartSearch = async (
-  query: string,
-  currentDirectory: string,
-  limit?: number,
-  provider?: string,
-  apiKey?: string,
-  model?: string,
-): Promise<SmartSearchResult> => {
-  return await transport('smart_search', {
-    query,
-    currentDirectory,
-    limit: limit || null,
-    provider: provider || null,
-    apiKey: apiKey || null,
-    model: model || null,
-  });
-};
-
-export const semanticSearch = async (query: string, limit?: number): Promise<SearchResult[]> => {
-  return await transport('semantic_search', { query, limit: limit || null });
-};
-
-export const findSimilarFiles = async (
-  filePath: string,
-  limit?: number,
-): Promise<SearchResult[]> => {
-  return await transport('find_similar_files', { filePath, limit: limit || null });
 };
 
 export const setTokenizerSettings = async (settings: TokenizerSettings): Promise<void> => {

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -217,7 +218,10 @@ export const groupHistoryEntries = (
         id: groupId,
         entries: groupEntries,
         type: current.operation_type,
-        description: `Bulk ${current.operation_type} (${groupEntries.length} files)`,
+        description: i18n.t('panels.undo.bulkDesc', {
+          operation: current.operation_type,
+          count: groupEntries.length,
+        }),
         fileCount: groupEntries.length,
         timestamp: groupEntries[groupEntries.length - 1].timestamp_ms,
         isExpanded: expandedGroups.has(groupId),

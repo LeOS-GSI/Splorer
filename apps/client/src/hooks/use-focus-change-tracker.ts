@@ -39,12 +39,7 @@ export const useFocusChangeTracker = (currentPath: string) => {
 
   // Take a snapshot of the current directory listing
   const takeSnapshot = useCallback(async (path: string) => {
-    if (
-      !path ||
-      path.startsWith('splorer://') ||
-      path.startsWith('gdrive://') ||
-      path.startsWith('comparison://')
-    ) {
+    if (!path || path.startsWith('splorer://') || path.startsWith('comparison://')) {
       snapshotRef.current = null;
       snapshotPathRef.current = '';
       return;

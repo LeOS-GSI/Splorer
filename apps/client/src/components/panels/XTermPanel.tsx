@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
@@ -148,7 +149,7 @@ const createTab = (): TermTab => {
   const fitAddon = new FitAddon();
   terminal.loadAddon(fitAddon);
 
-  return { id, label: `Terminal ${tabCounter}`, terminal, fitAddon };
+  return { id, label: i18n.t('panels.terminal.tabLabel', { n: tabCounter }), terminal, fitAddon };
 };
 
 const XTermPanel = ({ cwd, collapsed }: XTermPanelProps) => {
@@ -342,7 +343,7 @@ const XTermPanel = ({ cwd, collapsed }: XTermPanelProps) => {
           onMouseLeave={(e) => {
             e.currentTarget.style.backgroundColor = 'transparent';
           }}
-          title="New Terminal"
+          title={i18n.t('panels.terminal.newTerminal')}
         >
           <Plus size={14} />
         </button>

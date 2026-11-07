@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { PreviewProps } from '@/lib/preview-factory';
@@ -40,7 +41,8 @@ const DocumentPreview = ({ file, onError, onLoad }: PreviewProps) => {
 
         onLoad?.();
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load document';
+        const errorMessage =
+          err instanceof Error ? err.message : i18n.t('previews.document.failedToLoad');
         setError(errorMessage);
         onError?.(err instanceof Error ? err : new Error(errorMessage));
       } finally {
@@ -59,13 +61,15 @@ const DocumentPreview = ({ file, onError, onLoad }: PreviewProps) => {
 
   return (
     <div className="mt-4">
-      <h4 className="text-xp-text-muted mb-2 text-xs font-medium">Document Preview</h4>
+      <h4 className="text-xp-text-muted mb-2 text-xs font-medium">
+        {i18n.t('previews.document.title')}
+      </h4>
 
       {loading && (
         <div className="bg-xp-surface border-xp-border text-xp-text-muted rounded border p-4 text-center">
           <div className="animate-pulse">
             <div className="bg-xp-bg mb-2 h-48 w-full rounded" />
-            <p className="text-xs">Loading document...</p>
+            <p className="text-xs">{i18n.t('previews.document.loading')}</p>
           </div>
         </div>
       )}
@@ -79,7 +83,7 @@ const DocumentPreview = ({ file, onError, onLoad }: PreviewProps) => {
               clipRule="evenodd"
             />
           </svg>
-          <p className="text-xs">Cannot preview document</p>
+          <p className="text-xs">{i18n.t('previews.document.cannotPreview')}</p>
           <p className="mt-1 text-xs opacity-70">{error}</p>
         </div>
       ) : null}

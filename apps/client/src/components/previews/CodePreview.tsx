@@ -1,9 +1,9 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { PreviewProps } from '@/lib/preview-factory';
 import { TauriAPI } from '@/lib/tauri-api';
 import { PreviewSkeleton } from '@/components/ui/Skeleton';
-import CodeAIActions from './CodeAIActions';
 
 const SyntaxHighlighter = lazy(() =>
   import('react-syntax-highlighter/dist/esm/prism-light').then(async (m) => {
@@ -143,7 +143,8 @@ const CodePreview = ({ file, onError, onLoad }: PreviewProps) => {
         setContent(truncatedContent);
         onLoad?.();
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load code file';
+        const errorMessage =
+          err instanceof Error ? err.message : i18n.t('previews.code.failedToLoad');
         setError(errorMessage);
         onError?.(err instanceof Error ? err : new Error(errorMessage));
       } finally {
@@ -169,20 +170,13 @@ const CodePreview = ({ file, onError, onLoad }: PreviewProps) => {
                 clipRule="evenodd"
               />
             </svg>
-            <p className="text-sm">Cannot preview code</p>
+            <p className="text-sm">{i18n.t('previews.code.cannotPreview')}</p>
             <p className="mt-1 text-xs opacity-70">{error}</p>
           </div>
         </div>
       ) : null}
       {!error && content && (
         <div className="flex flex-1 flex-col">
-          {/* AI-powered code actions */}
-          <CodeAIActions
-            filePath={file.path}
-            language={language}
-            content={content}
-            fileName={file.name}
-          />
           <div className="mb-2 flex items-center justify-between px-2">
             <span className="text-xp-text-muted bg-xp-bg rounded px-2 py-1 text-xs">
               {language}

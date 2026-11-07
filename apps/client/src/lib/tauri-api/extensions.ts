@@ -44,17 +44,6 @@ export const validateExtensionPath = async (
   extensionPath: string,
 ): Promise<ExtensionManifestInfo> => await transport('validate_extension_path', { extensionPath });
 
-export const downloadAndInstallExtension = async (
-  downloadUrl: string,
-  extensionId: string,
-  expectedChecksum?: string,
-): Promise<ExtensionPackageInfo> =>
-  await transport('download_and_install_extension', {
-    downloadUrl,
-    extensionId,
-    expectedChecksum: expectedChecksum || null,
-  });
-
 // ── .xtension file operations ───────────────────────────────────────────────
 
 export const packExtension = async (extensionDir: string, outputPath?: string): Promise<string> =>
@@ -87,33 +76,6 @@ export const extensionBackendCall = async (
 
 export const extensionBackendStatus = async (extensionId: string): Promise<{ loaded: boolean }> =>
   await transport('extension_backend_status', { extensionId });
-
-export const checkForExtensionUpdates = async (
-  marketplaceUrl: string,
-  installedExtensions: Array<{ id: string; version: string }>,
-): Promise<
-  Array<{
-    id: string;
-    current_version: string;
-    latest_version: string;
-    download_url: string;
-    checksum: string | null;
-    changelog: string | null;
-  }>
-> =>
-  await transport('check_for_extension_updates', {
-    marketplaceUrl,
-    installedExtensions,
-  });
-
-export const downloadExtensionUpdate = async (
-  url: string,
-  expectedChecksum?: string,
-): Promise<string> =>
-  await transport('download_extension', {
-    url,
-    expectedChecksum: expectedChecksum ?? null,
-  });
 
 // ── SSH file browsing (via native plugin) ──────────────────────────────────
 

@@ -1,9 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { FileCode, Trash2 } from 'lucide-react';
-import { useOpenWithPrefs, type OpenHandler } from '@/hooks/use-open-with-prefs';
+import { useOpenWithPrefs, getAppDisplayName, type OpenHandler } from '@/hooks/use-open-with-prefs';
 import { SectionTitle, Divider } from './shared';
 
-const HANDLER_LABELS: Record<OpenHandler, string> = {
+const HANDLER_LABELS: Record<string, string> = {
   'xplorer-editor': 'openWith.xplorerEditor',
   vscode: 'openWith.vscode',
   system: 'openWith.systemDefault',
@@ -39,7 +39,7 @@ const FileAssociationsSettings = () => {
                   <div>
                     <span className="text-xp-text text-sm font-medium">.{ext}</span>
                     <span className="text-xp-text-secondary ml-2 text-xs">
-                      → {t(HANDLER_LABELS[handler])}
+                      → {getAppDisplayName(handler as OpenHandler) ?? t(HANDLER_LABELS[handler])}
                     </span>
                   </div>
                 </div>

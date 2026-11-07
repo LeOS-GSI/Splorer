@@ -76,7 +76,7 @@ const SidebarQuickAccess = ({
     <div
       className="border-xp-border border-b"
       role="region"
-      aria-label="Quick access"
+      aria-label={t('sidebar.quickAccessAria')}
       data-sidebar-section="quickAccess"
     >
       <button

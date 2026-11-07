@@ -1,0 +1,230 @@
+From a5ffb42695e65b523b764cea5cc9b9fd4f123414 Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Sat, 7 Nov 2026 08:40:50 +0100
+Subject: [PATCH] feat: Detailansicht per Klick auf Spaltenkopf sortieren
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Name, Größe, Typ und Geändert sind jetzt klickbar. Erster Klick sortiert
+nach der Spalte, erneuter Klick dreht die Richtung um; die aktive Spalte
+wird blau mit Pfeil angezeigt. Nutzt die vorhandene Sortierung pro Ordner
+(gleicher Zustand wie das Sortier-Dropdown).
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpEUX1W65k9BrLDCn2Ma
+---
+ .../src/components/explorer/DetailsView.tsx   | 110 +++++++++++++++---
+ .../src/components/explorer/FileGrid.tsx      |  19 ++-
+ .../split-view/PaneFileExplorer.tsx           |   3 +
+ 3 files changed, 117 insertions(+), 15 deletions(-)
+
+diff --git a/apps/client/src/components/explorer/DetailsView.tsx b/apps/client/src/components/explorer/DetailsView.tsx
+index 099ce7c..7a5a08c 100644
+--- a/apps/client/src/components/explorer/DetailsView.tsx
++++ b/apps/client/src/components/explorer/DetailsView.tsx
+@@ -4,12 +4,76 @@ import { useTranslation } from 'react-i18next';
+ import { useVirtualizer } from '@tanstack/react-virtual';
+ import { FileEntry, FolderSizeInfo } from '@/lib/tauri-api';
+ import { ViewComponentProps } from './FileGridTypes';
+-import type { FileGroup } from '@/lib/utils';
++import type { FileGroup, SortField } from '@/lib/utils';
++import { ArrowUp, ArrowDown } from 'lucide-react';
+ 
+ interface DetailsViewProps extends ViewComponentProps {
+   fileGroups?: FileGroup[] | null;
++  sortBy?: SortField;
++  sortOrder?: 'asc' | 'desc';
++  onSortColumn?: (field: SortField) => void;
+ }
+ 
++interface SortHeaderProps {
++  field: SortField;
++  label: string;
++  className: string;
++  justify: 'start' | 'center' | 'end';
++  sortBy?: SortField;
++  sortOrder?: 'asc' | 'desc';
++  onSortColumn?: (field: SortField) => void;
++}
++
++/** Klickbarer Spaltenkopf: Klick sortiert, erneuter Klick dreht die Richtung um. */
++const SortHeader = ({
++  field,
++  label,
++  className,
++  justify,
++  sortBy,
++  sortOrder,
++  onSortColumn,
++}: SortHeaderProps) => {
++  const active = sortBy === field;
++  const justifyClass =
++    justify === 'end' ? 'justify-end' : justify === 'center' ? 'justify-center' : 'justify-start';
++  const arrow = active ? (
++    sortOrder === 'asc' ? (
++      <ArrowUp size={11} />
++    ) : (
++      <ArrowDown size={11} />
++    )
++  ) : null;
++
++  if (!onSortColumn) {
++    return (
++      <div className={className} role="columnheader">
++        {label}
++      </div>
++    );
++  }
++
++  return (
++    <div
++      className={className}
++      role="columnheader"
++      aria-sort={active ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
++    >
++      <button
++        type="button"
++        onClick={() => onSortColumn(field)}
++        className={`hover:text-xp-text flex w-full items-center gap-1 transition-colors ${justifyClass} ${
++          active ? 'text-xp-blue' : ''
++        }`}
++      >
++        {justify === 'end' && arrow}
++        <span>{label}</span>
++        {justify !== 'end' && arrow}
++      </button>
++    </div>
++  );
++};
++
+ const DETAILS_ROW_HEIGHT = 40;
+ const GROUP_HEADER_HEIGHT = 36;
+ const DETAILS_VIRTUALIZATION_THRESHOLD = 200;
+@@ -172,7 +236,11 @@ const DetailsView = (props: DetailsViewProps) => {
+     isCalculatingSize,
+     calculateFolderSize,
+     fileGroups,
++    sortBy,
++    sortOrder,
++    onSortColumn,
+   } = props;
++  const sortProps = { sortBy, sortOrder, onSortColumn };
+ 
+   const scrollRef = useRef<HTMLDivElement>(null);
+ 
+@@ -255,18 +323,34 @@ const DetailsView = (props: DetailsViewProps) => {
+           role="columnheader"
+           aria-label={t('explorer.details.iconCol')}
+         />
+-        <div className="col-span-5" role="columnheader">
+-          {t('explorer.details.nameCol')}
+-        </div>
+-        <div className="col-span-2 text-right" role="columnheader">
+-          {t('explorer.details.sizeCol')}
+-        </div>
+-        <div className="col-span-2 text-center" role="columnheader">
+-          {t('explorer.details.typeCol')}
+-        </div>
+-        <div className="col-span-2 text-right" role="columnheader">
+-          {t('explorer.details.modifiedCol')}
+-        </div>
++        <SortHeader
++          field="name"
++          label={t('explorer.details.nameCol')}
++          className="col-span-5"
++          justify="start"
++          {...sortProps}
++        />
++        <SortHeader
++          field="size"
++          label={t('explorer.details.sizeCol')}
++          className="col-span-2 text-right"
++          justify="end"
++          {...sortProps}
++        />
++        <SortHeader
++          field="type"
++          label={t('explorer.details.typeCol')}
++          className="col-span-2 text-center"
++          justify="center"
++          {...sortProps}
++        />
++        <SortHeader
++          field="dateModified"
++          label={t('explorer.details.modifiedCol')}
++          className="col-span-2 text-right"
++          justify="end"
++          {...sortProps}
++        />
+       </div>
+     </div>
+   );
+diff --git a/apps/client/src/components/explorer/FileGrid.tsx b/apps/client/src/components/explorer/FileGrid.tsx
+index fe8275c..082eb54 100644
+--- a/apps/client/src/components/explorer/FileGrid.tsx
++++ b/apps/client/src/components/explorer/FileGrid.tsx
+@@ -15,7 +15,7 @@ import TreeView from './TreeView';
+ import GalleryView from './GalleryView';
+ import DetailsView from './DetailsView';
+ import ColumnView from './ColumnView';
+-import type { FileGroup } from '@/lib/utils';
++import type { FileGroup, SortField } from '@/lib/utils';
+ import { FileGridSkeleton } from '@/components/ui/Skeleton';
+ import {
+   CROSS_TAB_SELECTION_EVENT,
+@@ -52,6 +52,10 @@ interface FileGridProps {
+   renamingPath?: string | null;
+   /** Setter to clear/set the renaming path from parent */
+   setRenamingPath?: (path: string | null) => void;
++  /** Aktuelle Sortierung (für klickbare Spaltenköpfe in der Detailansicht) */
++  sortBy?: SortField;
++  sortOrder?: 'asc' | 'desc';
++  onSortColumn?: (field: SortField) => void;
+ }
+ 
+ const FileGrid = ({
+@@ -79,6 +83,9 @@ const FileGrid = ({
+   onRenameFile,
+   renamingPath: externalRenamingPath,
+   setRenamingPath: externalSetRenamingPath,
++  sortBy,
++  sortOrder,
++  onSortColumn,
+ }: FileGridProps) => {
+   const { t } = useTranslation();
+ 
+@@ -556,7 +563,15 @@ const FileGrid = ({
+   }
+ 
+   if (viewMode === 'details') {
+-    return <DetailsView {...viewComponentProps} fileGroups={fileGroups} />;
++    return (
++      <DetailsView
++        {...viewComponentProps}
++        fileGroups={fileGroups}
++        sortBy={sortBy}
++        sortOrder={sortOrder}
++        onSortColumn={onSortColumn}
++      />
++    );
+   }
+ 
+   if (viewMode === 'column') {
+diff --git a/apps/client/src/components/split-view/PaneFileExplorer.tsx b/apps/client/src/components/split-view/PaneFileExplorer.tsx
+index a82fcf4..6c6d136 100644
+--- a/apps/client/src/components/split-view/PaneFileExplorer.tsx
++++ b/apps/client/src/components/split-view/PaneFileExplorer.tsx
+@@ -264,6 +264,9 @@ const PaneFileExplorer = React.memo(
+             onQuickLook={onQuickLook}
+             showSizeBadges={showSizeBadges}
+             onRenameFile={onRenameFile}
++            sortBy={sortBy}
++            sortOrder={sortOrder}
++            onSortColumn={(field) => (field === sortBy ? toggleSortOrder() : setSortBy(field))}
+           />
+         </div>
+ 
+-- 
+2.43.0
+

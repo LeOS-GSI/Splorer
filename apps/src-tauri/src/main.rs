@@ -5,26 +5,20 @@ use tauri::{Emitter, Listener, Manager, WindowEvent};
 
 // All modules are declared in lib.rs (the `xplorer` library crate).
 // Import them here so the binary can register Tauri commands.
-use splorer::agent;
-use splorer::agent_sessions;
-use splorer::ai;
 use splorer::duplicate_finder;
 use splorer::extensions;
 use splorer::file_organizer;
 use splorer::file_watcher;
 use splorer::git;
-use splorer::google_drive;
-use splorer::mcp_host;
-use splorer::mcp_server;
 use splorer::operations;
 use splorer::pty;
 use splorer::shortcuts;
 use splorer::storage;
+use splorer::user_dirs;
 // git_integration is consolidated into git module
 use splorer::audit_log;
 use splorer::backup;
 use splorer::file_versions;
-use splorer::sync;
 
 use tracing::warn;
 
@@ -40,14 +34,6 @@ fn main() {
         )
         .with_target(true)
         .init();
-
-    // ── MCP Server mode ──────────────────────────────────────────────
-    // When launched with `--mcp-server`, run a headless MCP JSON-RPC
-    // server over stdio instead of the full Tauri GUI.
-    if std::env::args().any(|a| a == "--mcp-server") {
-        mcp_server::run_mcp_server();
-        return;
-    }
 
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
@@ -268,10 +254,6 @@ fn main() {
             operations::get_directory_size,
             operations::get_directory_item_count,
             operations::set_file_permissions,
-            // AI Agent operations
-            operations::agent_read_file_tree,
-            operations::agent_request_write_permission,
-            operations::agent_write_file_with_permission,
             operations::is_dir,
             operations::get_files_in_directory,
             operations::open_url,
@@ -280,6 +262,7 @@ fn main() {
             operations::create_dir_recursive,
             operations::create_file,
             operations::create_file_with_content,
+            operations::write_text_file,
             operations::bulk_rename,
             operations::open_in_terminal,
             operations::execute_command,
@@ -294,22 +277,13 @@ fn main() {
             operations::list_drives,
             operations::eject_volume,
             operations::get_dir_size,
-            // AI operations
-            ai::get_ai_models,
-            ai::check_ollama_status,
-            ai::chat_with_ai,
-            ai::analyze_file_with_ai,
-            ai::get_file_help,
             operations::folder_ops::calculate_folder_size,
             operations::folder_ops::get_cached_folder_sizes,
             operations::folder_ops::clear_folder_size_cache,
-            ai::get_user_directories,
-            ai::get_recent_folders,
-            ai::add_to_recent_folders,
-            ai::get_system_info,
-            // AI-powered rename & auto-tag
-            ai::suggest_filename,
-            ai::auto_tag_files,
+            user_dirs::get_user_directories,
+            user_dirs::get_recent_folders,
+            user_dirs::add_to_recent_folders,
+            user_dirs::get_system_info,
             // Undo/Redo
             operations::undo_redo::undo_operation,
             operations::undo_redo::redo_operation,
@@ -344,16 +318,6 @@ fn main() {
             splorer::search::compat_commands::index_directory,
             splorer::search::compat_commands::set_search_context,
             splorer::search::compat_commands::add_whitelisted_path,
-            splorer::search::compat_commands::ai_search,
-            splorer::search::compat_commands::smart_search,
-            // AI indexing (new search engine v2 pipeline)
-            splorer::search::compat_commands::get_ai_index_status,
-            splorer::search::compat_commands::trigger_ai_indexing,
-            splorer::search::compat_commands::get_ai_index_entry,
-            // Semantic / hybrid search (new search engine v2 pipeline)
-            splorer::search::compat_commands::semantic_search,
-            splorer::search::compat_commands::find_similar_files,
-            splorer::search::compat_commands::hybrid_search,
             // Shortcut operations
             shortcuts::get_shortcuts,
             shortcuts::get_shortcuts_by_category,
@@ -386,12 +350,7 @@ fn main() {
             extensions::get_extension_permissions,
             extensions::get_active_extension_ids,
             extensions::validate_extension_path,
-            extensions::download_and_install_extension,
-            extensions::check_for_extension_updates,
-            extensions::download_extension,
-            extensions::check_extension_updates,
             extensions::pack_extension,
-            extensions::marketplace_proxy,
             extensions::install_xtension_file,
             extensions::inspect_xtension_file,
             // WASM backend operations
@@ -430,6 +389,10 @@ fn main() {
             operations::open_file_with_application,
             operations::get_system_applications,
             operations::set_default_application,
+            operations::list_open_with_apps,
+            operations::launch_desktop_app,
+            // System clipboard
+            operations::set_system_clipboard_files,
             // Compression operations
             operations::compress_files,
             operations::get_compression_info,
@@ -442,29 +405,6 @@ fn main() {
             file_organizer::analyze_directory,
             file_organizer::preview_organization,
             file_organizer::execute_organization,
-            // Claude Agent operations
-            agent::agent_chat,
-            agent::agent_respond_approval,
-            agent::agent_cancel_session,
-            agent::get_agent_settings,
-            agent::update_agent_settings,
-            agent::update_agent_api_keys,
-            agent::agent_approve_plan,
-            agent::agent_get_plan,
-            agent::get_agent_memory,
-            agent::clear_agent_memory,
-            agent::delete_agent_memory,
-            agent::get_agent_permissions,
-            agent::update_agent_permissions,
-            // MCP Host — tool provider for external AI clients
-            mcp_host::mcp_list_tools,
-            mcp_host::mcp_call_tool,
-            // Agent session management
-            agent_sessions::create_agent_session,
-            agent_sessions::list_agent_sessions,
-            agent_sessions::get_agent_session,
-            agent_sessions::stop_agent_session,
-            agent_sessions::remove_agent_session,
             // Recent files operations
             storage::add_recent_file,
             storage::get_recent_files,
@@ -509,22 +449,10 @@ fn main() {
             storage::get_file_metadata,
             storage::set_file_metadata,
             storage::get_all_metadata_keys,
-            // Chat history operations
-            storage::get_chat_sessions,
-            storage::get_chat_session,
-            storage::save_chat_session,
-            storage::delete_chat_session,
-            storage::clear_chat_history,
             // Extension-scoped storage operations
             storage::get_extension_storage,
             storage::set_extension_storage,
             storage::delete_extension_storage,
-            // Chat-as-Files operations
-            storage::chat_files::get_chats_directory,
-            storage::chat_files::create_chat_file,
-            storage::chat_files::read_chat_file,
-            storage::chat_files::save_chat_file,
-            storage::chat_files::get_chat_file_summary,
             // Storage analytics operations
             operations::analyze_storage,
             // Directory diagnostics
@@ -546,20 +474,6 @@ fn main() {
             operations::adjust_brightness,
             operations::adjust_contrast,
             operations::grayscale_image,
-            // Google Drive operations
-            google_drive::gdrive_authenticate,
-            google_drive::gdrive_disconnect,
-            google_drive::gdrive_list_accounts,
-            google_drive::gdrive_list_files,
-            google_drive::gdrive_download_file,
-            google_drive::gdrive_upload_file,
-            google_drive::gdrive_delete_file,
-            google_drive::gdrive_rename_file,
-            google_drive::gdrive_move_file,
-            google_drive::gdrive_create_folder,
-            google_drive::gdrive_get_file_content,
-            google_drive::get_gdrive_settings,
-            google_drive::update_gdrive_settings,
             // File watcher operations (primary + multi-watcher)
             file_watcher::start_watching,
             file_watcher::stop_watching,
@@ -616,18 +530,6 @@ fn main() {
             pty::pty_resize,
             pty::pty_kill,
             pty::pty_kill_all,
-            // Cloud sync operations
-            sync::sync_bookmarks_to_cloud,
-            sync::sync_tags_to_cloud,
-            sync::fetch_cloud_bookmarks,
-            sync::fetch_cloud_tags,
-            sync::set_last_sync_time,
-            sync::get_last_sync_time,
-            sync::sync_all,
-            sync::auto_sync_on_startup,
-            sync::start_auto_sync,
-            sync::stop_auto_sync,
-            sync::get_auto_sync_status,
         ])
         .on_window_event(|_window, event| {
             if let WindowEvent::CloseRequested { .. } = event {
@@ -635,7 +537,6 @@ fn main() {
                 file_watcher::stop_primary_watcher();
                 file_watcher::stop_all_watchers();
                 extensions::dev_watcher::stop_all_dev_watchers();
-                sync::stop_auto_sync_blocking();
                 let _ = pty::pty_kill_all();
             }
         })

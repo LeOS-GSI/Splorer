@@ -1,0 +1,1608 @@
+From 133fab10243cb9eaafe2e12368e77ce06e16d753 Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Fri, 6 Nov 2026 13:11:33 +0100
+Subject: [PATCH] Open With: echte Programmauswahl unter Linux
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Neue Rust-Commands list_open_with_apps / launch_desktop_app:
+  scannt .desktop-Dateien (System, ~/.local, Flatpak, Snap),
+  MIME-Typ über shared-mime-info (globs2), Standard-App via xdg-mime/mimeapps.list,
+  Exec-Zeile nach Desktop-Entry-Spec expandiert, Icons als Data-URL
+- Dialog zeigt passende Programme, Standard-App markiert,
+  'Andere Anwendungen anzeigen' mit Suche, Doppelklick öffnet sofort
+- Kontextmenü 'Öffnen mit' führt die Auswahl jetzt tatsächlich aus
+- 'Immer verwenden für .ext' gilt für alle Dateitypen
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpETV5tW91aWLpJjWdJZ
+---
+ .../src/components/dialogs/OpenWithDialog.tsx | 310 +++++--
+ .../settings/FileAssociationsSettings.tsx     |  10 +-
+ apps/client/src/hooks/use-file-actions.ts     |  49 +-
+ apps/client/src/hooks/use-file-operations.ts  |  22 +-
+ apps/client/src/hooks/use-open-with-prefs.ts  |  43 +-
+ apps/client/src/lib/open-with.ts              |  30 +
+ apps/client/src/lib/tauri-api-types.ts        |  18 +
+ apps/client/src/lib/tauri-api/file-system.ts  |   7 +
+ apps/client/src/lib/tauri-api/index.ts        |   2 +
+ apps/client/src/locales/en.json               |   7 +
+ apps/src-tauri/src/main.rs                    |   2 +
+ .../src/operations/file_associations_ops.rs   |   3 +
+ .../file_associations_ops/desktop_apps.rs     | 840 ++++++++++++++++++
+ 13 files changed, 1224 insertions(+), 119 deletions(-)
+ create mode 100644 apps/client/src/lib/open-with.ts
+ create mode 100644 apps/src-tauri/src/operations/file_associations_ops/desktop_apps.rs
+
+diff --git a/apps/client/src/components/dialogs/OpenWithDialog.tsx b/apps/client/src/components/dialogs/OpenWithDialog.tsx
+index aefa795..cfb74ae 100644
+--- a/apps/client/src/components/dialogs/OpenWithDialog.tsx
++++ b/apps/client/src/components/dialogs/OpenWithDialog.tsx
+@@ -1,10 +1,13 @@
+-import { useState, useCallback } from 'react';
++import { useState, useCallback, useEffect, useMemo } from 'react';
+ import { useTranslation } from 'react-i18next';
+-import { FileCode, Monitor, ExternalLink, X } from 'lucide-react';
++import { AppWindow, ChevronDown, ChevronUp, FileCode, Loader2, Monitor, Search, X } from 'lucide-react';
++import { TauriAPI, type DesktopApp } from '@/lib/tauri-api';
+ import {
+   type OpenHandler,
+   getFileExtension,
+   isCodeFile,
++  makeAppHandler,
++  rememberAppName,
+   setOpenPreference,
+ } from '@/hooks/use-open-with-prefs';
+ 
+@@ -15,62 +18,155 @@ interface OpenWithDialogProps {
+   onChoose: (handler: OpenHandler) => void;
+ }
+ 
+-interface HandlerOption {
+-  id: OpenHandler;
+-  labelKey: string;
+-  descriptionKey: string;
+-  Icon: React.ElementType;
++interface OptionRowProps {
++  selected: boolean;
++  label: string;
++  description?: string | null;
++  icon: React.ReactNode;
++  badge?: string;
++  onSelect: () => void;
++  onActivate: () => void;
+ }
+ 
+-const HANDLER_OPTIONS: HandlerOption[] = [
+-  {
+-    id: 'xplorer-editor',
+-    labelKey: 'openWith.xplorerEditor',
+-    descriptionKey: 'openWith.xplorerEditorDesc',
+-    Icon: FileCode,
+-  },
+-  {
+-    id: 'vscode',
+-    labelKey: 'openWith.vscode',
+-    descriptionKey: 'openWith.vscodeDesc',
+-    Icon: ExternalLink,
+-  },
+-  {
+-    id: 'system',
+-    labelKey: 'openWith.systemDefault',
+-    descriptionKey: 'openWith.systemDefaultDesc',
+-    Icon: Monitor,
+-  },
+-];
++const OptionRow = ({
++  selected,
++  label,
++  description,
++  icon,
++  badge,
++  onSelect,
++  onActivate,
++}: OptionRowProps) => (
++  <button
++    type="button"
++    onClick={onSelect}
++    onDoubleClick={onActivate}
++    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-all ${
++      selected ? 'bg-xp-accent/15 ring-xp-accent/40 ring-1' : 'hover:bg-xp-surface-light'
++    }`}
++  >
++    <div
++      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
++        selected ? 'bg-xp-accent/20 text-xp-accent' : 'bg-xp-bg text-xp-text-secondary'
++      }`}
++    >
++      {icon}
++    </div>
++    <div className="min-w-0 flex-1">
++      <div className="flex items-center gap-2">
++        <span
++          className={`truncate text-sm font-medium ${selected ? 'text-xp-accent' : 'text-xp-text'}`}
++        >
++          {label}
++        </span>
++        {badge && (
++          <span className="bg-xp-accent/20 text-xp-accent shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium">
++            {badge}
++          </span>
++        )}
++      </div>
++      {description && (
++        <div className="text-xp-text-secondary truncate text-xs">{description}</div>
++      )}
++    </div>
++    <div
++      className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
++        selected ? 'border-xp-accent bg-xp-accent' : 'border-xp-border'
++      }`}
++    >
++      {selected && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
++    </div>
++  </button>
++);
++
++const AppIcon = ({ app }: { app: DesktopApp }) =>
++  app.icon ? (
++    <img src={app.icon} alt="" className="h-6 w-6 object-contain" draggable={false} />
++  ) : (
++    <AppWindow size={18} />
++  );
+ 
+ const OpenWithDialog = ({ isOpen, onClose, filePath, onChoose }: OpenWithDialogProps) => {
+   const { t } = useTranslation();
+-  const [selected, setSelected] = useState<OpenHandler>('xplorer-editor');
++  const isCode = isCodeFile(filePath);
++  const defaultSelection: OpenHandler = isCode ? 'xplorer-editor' : 'system';
++
++  const [selected, setSelected] = useState<OpenHandler>(defaultSelection);
+   const [rememberChoice, setRememberChoice] = useState(false);
++  const [apps, setApps] = useState<DesktopApp[]>([]);
++  const [loading, setLoading] = useState(false);
++  const [showAll, setShowAll] = useState(false);
++  const [filter, setFilter] = useState('');
+ 
+   const ext = getFileExtension(filePath);
+   const fileName = filePath.split(/[/\\]/).pop() ?? '';
+-  const isCode = isCodeFile(filePath);
+ 
+-  const handleOpen = useCallback(() => {
+-    if (rememberChoice && ext) {
+-      setOpenPreference(ext, selected);
+-    }
+-    onChoose(selected);
+-    onClose();
+-  }, [rememberChoice, ext, selected, onChoose, onClose]);
++  // Load installed applications whenever the dialog opens for a file
++  useEffect(() => {
++    if (!isOpen || !filePath) return;
++    let cancelled = false;
++    setSelected(isCodeFile(filePath) ? 'xplorer-editor' : 'system');
++    setRememberChoice(false);
++    setShowAll(false);
++    setFilter('');
++    setApps([]);
++    setLoading(true);
++    TauriAPI.listOpenWithApps(filePath)
++      .then((res) => {
++        if (cancelled) return;
++        setApps(res.apps);
++        // Preselect the best match for non-code files
++        if (!isCodeFile(filePath)) {
++          const first = res.apps.find((a) => a.recommended);
++          if (first) setSelected(makeAppHandler(first.id));
++        }
++      })
++      .catch((err) => console.error('Failed to list applications:', err))
++      .finally(() => {
++        if (!cancelled) setLoading(false);
++      });
++    return () => {
++      cancelled = true;
++    };
++  }, [isOpen, filePath]);
++
++  const recommended = useMemo(() => apps.filter((a) => a.recommended), [apps]);
++  const others = useMemo(() => {
++    const q = filter.trim().toLowerCase();
++    return apps.filter(
++      (a) =>
++        !a.recommended &&
++        (!q || a.name.toLowerCase().includes(q) || a.comment?.toLowerCase().includes(q)),
++    );
++  }, [apps, filter]);
++  const defaultApp = useMemo(() => apps.find((a) => a.isDefault), [apps]);
++
++  const choose = useCallback(
++    (handler: OpenHandler) => {
++      const app = apps.find((a) => makeAppHandler(a.id) === handler);
++      if (app) rememberAppName(app.id, app.name);
++      if (rememberChoice && ext) {
++        setOpenPreference(ext, handler);
++      }
++      onChoose(handler);
++      onClose();
++    },
++    [apps, rememberChoice, ext, onChoose, onClose],
++  );
++
++  const handleOpen = useCallback(() => choose(selected), [choose, selected]);
+ 
+   const handleClose = useCallback(() => {
+-    setSelected('xplorer-editor');
++    setSelected(defaultSelection);
+     setRememberChoice(false);
+     onClose();
+-  }, [onClose]);
++  }, [onClose, defaultSelection]);
+ 
+   const handleKeyDown = useCallback(
+     (e: React.KeyboardEvent) => {
+       if (e.key === 'Escape') {
+         handleClose();
+-      } else if (e.key === 'Enter') {
++      } else if (e.key === 'Enter' && !(e.target instanceof HTMLInputElement)) {
+         handleOpen();
+       }
+     },
+@@ -79,11 +175,21 @@ const OpenWithDialog = ({ isOpen, onClose, filePath, onChoose }: OpenWithDialogP
+ 
+   if (!isOpen) return null;
+ 
+-  // For non-code files, fall through — this dialog is code-file specific.
+-  // The caller should not open this for non-code files, but guard just in case.
+-  const options = isCode
+-    ? HANDLER_OPTIONS
+-    : HANDLER_OPTIONS.filter((o) => o.id !== 'xplorer-editor');
++  const renderApp = (app: DesktopApp) => {
++    const handler = makeAppHandler(app.id);
++    return (
++      <OptionRow
++        key={app.id}
++        selected={selected === handler}
++        label={app.name}
++        description={app.comment}
++        icon={<AppIcon app={app} />}
++        badge={app.isDefault ? t('openWith.defaultBadge', 'Default') : undefined}
++        onSelect={() => setSelected(handler)}
++        onActivate={() => choose(handler)}
++      />
++    );
++  };
+ 
+   return (
+     <div
+@@ -93,12 +199,12 @@ const OpenWithDialog = ({ isOpen, onClose, filePath, onChoose }: OpenWithDialogP
+       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+       onKeyDown={handleKeyDown}
+     >
+-      <div className="bg-xp-surface border-xp-border w-[420px] max-w-[90vw] overflow-hidden rounded-xl border shadow-2xl">
++      <div className="bg-xp-surface border-xp-border flex max-h-[85vh] w-[460px] max-w-[90vw] flex-col overflow-hidden rounded-xl border shadow-2xl">
+         {/* Header */}
+         <div className="border-xp-border flex items-center justify-between border-b px-5 py-4">
+           <div>
+             <h2 className="text-xp-text text-base font-semibold">{t('openWith.title')}</h2>
+-            <p className="text-xp-text-secondary mt-0.5 max-w-[300px] truncate text-xs">
++            <p className="text-xp-text-secondary mt-0.5 max-w-[340px] truncate text-xs">
+               {fileName}
+             </p>
+           </div>
+@@ -112,46 +218,80 @@ const OpenWithDialog = ({ isOpen, onClose, filePath, onChoose }: OpenWithDialogP
+         </div>
+ 
+         {/* Options */}
+-        <div className="space-y-1.5 p-4">
+-          {options.map(({ id, labelKey, descriptionKey, Icon }) => {
+-            const isSelected = selected === id;
+-            return (
+-              <button
+-                key={id}
+-                onClick={() => setSelected(id)}
+-                className={`flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-all ${
+-                  isSelected
+-                    ? 'bg-xp-accent/15 ring-xp-accent/40 ring-1'
+-                    : 'hover:bg-xp-surface-light'
+-                }`}
+-              >
+-                <div
+-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+-                    isSelected
+-                      ? 'bg-xp-accent/20 text-xp-accent'
+-                      : 'bg-xp-bg text-xp-text-secondary'
+-                  }`}
+-                >
+-                  <Icon size={18} />
+-                </div>
+-                <div className="min-w-0 flex-1">
+-                  <div
+-                    className={`text-sm font-medium ${isSelected ? 'text-xp-accent' : 'text-xp-text'}`}
+-                  >
+-                    {t(labelKey)}
+-                  </div>
+-                  <div className="text-xp-text-secondary text-xs">{t(descriptionKey)}</div>
+-                </div>
+-                <div
+-                  className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+-                    isSelected ? 'border-xp-accent bg-xp-accent' : 'border-xp-border'
+-                  }`}
+-                >
+-                  {isSelected && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
++        <div className="min-h-0 flex-1 space-y-1 overflow-y-auto p-4">
++          {isCode && (
++            <OptionRow
++              selected={selected === 'xplorer-editor'}
++              label={t('openWith.xplorerEditor')}
++              description={t('openWith.xplorerEditorDesc')}
++              icon={<FileCode size={18} />}
++              onSelect={() => setSelected('xplorer-editor')}
++              onActivate={() => choose('xplorer-editor')}
++            />
++          )}
++
++          {recommended.map(renderApp)}
++
++          <OptionRow
++            selected={selected === 'system'}
++            label={t('openWith.systemDefault')}
++            description={
++              defaultApp
++                ? t('openWith.systemDefaultCurrent', {
++                    app: defaultApp.name,
++                    defaultValue: 'Currently: {{app}}',
++                  })
++                : t('openWith.systemDefaultDesc')
++            }
++            icon={<Monitor size={18} />}
++            onSelect={() => setSelected('system')}
++            onActivate={() => choose('system')}
++          />
++
++          {loading && (
++            <div className="text-xp-text-secondary flex items-center gap-2 px-3 py-2 text-xs">
++              <Loader2 size={14} className="animate-spin" />
++              {t('openWith.loadingApps', 'Looking for applications…')}
++            </div>
++          )}
++
++          {!loading && apps.length > recommended.length && (
++            <button
++              type="button"
++              onClick={() => setShowAll((v) => !v)}
++              className="text-xp-text-secondary hover:text-xp-text flex w-full items-center gap-1.5 px-3 pt-2 pb-1 text-xs font-medium transition-colors"
++            >
++              {showAll ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
++              {showAll
++                ? t('openWith.hideOtherApps', 'Hide other applications')
++                : t('openWith.showOtherApps', 'Show other applications')}
++            </button>
++          )}
++
++          {showAll && (
++            <>
++              <div className="relative px-1 pb-1">
++                <Search
++                  size={14}
++                  className="text-xp-text-secondary pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2"
++                />
++                <input
++                  type="text"
++                  autoFocus
++                  value={filter}
++                  onChange={(e) => setFilter(e.target.value)}
++                  placeholder={t('openWith.searchApps', 'Search applications…')}
++                  className="bg-xp-bg border-xp-border text-xp-text focus:ring-xp-accent w-full rounded-md border py-1.5 pr-2 pl-8 text-sm outline-none focus:ring-1"
++                />
++              </div>
++              {others.map(renderApp)}
++              {others.length === 0 && (
++                <div className="text-xp-text-secondary px-3 py-2 text-xs">
++                  {t('openWith.noAppsFound', 'No applications found')}
+                 </div>
+-              </button>
+-            );
+-          })}
++              )}
++            </>
++          )}
+         </div>
+ 
+         {/* Remember checkbox */}
+diff --git a/apps/client/src/components/settings/FileAssociationsSettings.tsx b/apps/client/src/components/settings/FileAssociationsSettings.tsx
+index 6a00599..2d8d37e 100644
+--- a/apps/client/src/components/settings/FileAssociationsSettings.tsx
++++ b/apps/client/src/components/settings/FileAssociationsSettings.tsx
+@@ -1,9 +1,13 @@
+ import { useTranslation } from 'react-i18next';
+ import { FileCode, Trash2 } from 'lucide-react';
+-import { useOpenWithPrefs, type OpenHandler } from '@/hooks/use-open-with-prefs';
++import {
++  useOpenWithPrefs,
++  getAppDisplayName,
++  type OpenHandler,
++} from '@/hooks/use-open-with-prefs';
+ import { SectionTitle, Divider } from './shared';
+ 
+-const HANDLER_LABELS: Record<OpenHandler, string> = {
++const HANDLER_LABELS: Record<string, string> = {
+   'xplorer-editor': 'openWith.xplorerEditor',
+   vscode: 'openWith.vscode',
+   system: 'openWith.systemDefault',
+@@ -39,7 +43,7 @@ const FileAssociationsSettings = () => {
+                   <div>
+                     <span className="text-xp-text text-sm font-medium">.{ext}</span>
+                     <span className="text-xp-text-secondary ml-2 text-xs">
+-                      → {t(HANDLER_LABELS[handler])}
++                      → {getAppDisplayName(handler as OpenHandler) ?? t(HANDLER_LABELS[handler])}
+                     </span>
+                   </div>
+                 </div>
+diff --git a/apps/client/src/hooks/use-file-actions.ts b/apps/client/src/hooks/use-file-actions.ts
+index b997b36..99ac068 100644
+--- a/apps/client/src/hooks/use-file-actions.ts
++++ b/apps/client/src/hooks/use-file-actions.ts
+@@ -1,6 +1,7 @@
+ import { useCallback } from 'react';
+ import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
+ import { formatError } from '@/lib/file-operation-helpers';
++import { runExternalOpenHandler } from '@/lib/open-with';
+ import { showConfirmationToast } from '@/components/ui/Toast';
+ import type { TabItem, EditorGroup } from '@/types/split-view';
+ import type { SplitLayoutHook } from '@/hooks/use-split-layout';
+@@ -82,25 +83,16 @@ export const useFileActions = (deps: FileActionsDeps) => {
+   const executeOpenHandler = useCallback(
+     async (file: FileEntry, handler: OpenHandler) => {
+       try {
+-        switch (handler) {
+-          case 'xplorer-editor': {
+-            const editorTab: TabItem = {
+-              id: `editor-${file.path}-${Date.now()}`,
+-              name: file.name,
+-              path: file.path,
+-              type: 'editor',
+-            };
+-            splitLayoutRef.current.addTab(activeGroupRef.current.id, editorTab, true);
+-            break;
+-          }
+-          case 'vscode': {
+-            const dir = file.path.replace(/[/\\][^/\\]*$/, '');
+-            await TauriAPI.executeCommand(`code "${file.path}"`, dir);
+-            break;
+-          }
+-          case 'system':
+-            await TauriAPI.openFile(file.path);
+-            break;
++        if (handler === 'xplorer-editor') {
++          const editorTab: TabItem = {
++            id: `editor-${file.path}-${Date.now()}`,
++            name: file.name,
++            path: file.path,
++            type: 'editor',
++          };
++          splitLayoutRef.current.addTab(activeGroupRef.current.id, editorTab, true);
++        } else {
++          await runExternalOpenHandler(file.path, handler);
+         }
+       } catch (error) {
+         console.error('Failed to open file:', error);
+@@ -124,17 +116,16 @@ export const useFileActions = (deps: FileActionsDeps) => {
+         return;
+       }
+ 
+-      // For code/text files, check saved preference or show the Open With prompt
+-      if (isCodeFile(file.path)) {
+-        const ext = getFileExtension(file.path);
+-        const savedPref = getOpenPreference(ext);
+-
+-        if (savedPref) {
+-          await executeOpenHandler(file, savedPref);
+-          return;
+-        }
++      // A remembered "Open With" choice applies to every file type
++      const ext = getFileExtension(file.path);
++      const savedPref = ext ? getOpenPreference(ext) : null;
++      if (savedPref) {
++        await executeOpenHandler(file, savedPref);
++        return;
++      }
+ 
+-        // No saved preference — show the dialog
++      // For code/text files without a saved preference, show the Open With prompt
++      if (isCodeFile(file.path)) {
+         if (openOpenWithDialog) {
+           openOpenWithDialog(file.path, (handler: OpenHandler) => {
+             executeOpenHandler(file, handler);
+diff --git a/apps/client/src/hooks/use-file-operations.ts b/apps/client/src/hooks/use-file-operations.ts
+index 51d2d21..5338d91 100644
+--- a/apps/client/src/hooks/use-file-operations.ts
++++ b/apps/client/src/hooks/use-file-operations.ts
+@@ -17,6 +17,7 @@ import {
+   type ClipboardState,
+ } from '@/lib/file-operation-helpers';
+ import { executePaste, showPasteResultToast } from '@/lib/paste-helpers';
++import { runExternalOpenHandler } from '@/lib/open-with';
+ import type { BottomPanelTabId } from '@/hooks/use-layout-state';
+ import type { SortField } from '@/lib/utils';
+ 
+@@ -505,7 +506,26 @@ export const useFileOperations = (deps: UseFileOperationsDeps) => {
+         }
+       },
+       openWith: (file: FileEntry) => {
+-        dialogsRef.current.openOpenWithDialog(file.path);
++        dialogsRef.current.openOpenWithDialog(file.path, (handler) => {
++          if (handler === 'xplorer-editor') {
++            const editorTab: TabItem = {
++              id: `editor-${file.path}-${Date.now()}`,
++              name: file.name,
++              path: file.path,
++              type: 'editor',
++            };
++            splitLayoutRef.current.addTab(activeGroupIdRef.current, editorTab, true);
++            return;
++          }
++          runExternalOpenHandler(file.path, handler).catch((error) => {
++            console.error('Failed to open file:', error);
++            toastRef.current({
++              variant: 'destructive',
++              title: 'Open File Failed',
++              description: `Failed to open "${file.name}": ${formatError(error)}`,
++            });
++          });
++        });
+       },
+       compressTo: (filesToCompress: FileEntry[]) => {
+         dialogsRef.current.openCompressDialog(filesToCompress);
+diff --git a/apps/client/src/hooks/use-open-with-prefs.ts b/apps/client/src/hooks/use-open-with-prefs.ts
+index 00efebf..601a7bd 100644
+--- a/apps/client/src/hooks/use-open-with-prefs.ts
++++ b/apps/client/src/hooks/use-open-with-prefs.ts
+@@ -6,8 +6,49 @@ import { STORAGE_KEYS } from '@/lib/storage-keys';
+  * - `xplorer-editor`: open in the built-in code editor tab
+  * - `vscode`: launch VS Code via `code` CLI
+  * - `system`: open with the OS-default application
++ * - `app:<desktop-id>`: launch a specific installed application (Linux .desktop entry)
+  */
+-export type OpenHandler = 'xplorer-editor' | 'vscode' | 'system';
++export type OpenHandler = 'xplorer-editor' | 'vscode' | 'system' | `app:${string}`;
++
++const APP_PREFIX = 'app:';
++
++/** Build a handler id for a desktop application, e.g. `app:org.kde.gwenview.desktop`. */
++export const makeAppHandler = (desktopId: string): OpenHandler => `app:${desktopId}`;
++
++/** Desktop file id of an `app:` handler, or `null` for built-in handlers. */
++export const getAppHandlerId = (handler: OpenHandler): string | null =>
++  handler.startsWith(APP_PREFIX) ? handler.slice(APP_PREFIX.length) : null;
++
++// ── Display names of remembered applications ────────────────────────────────
++
++const APP_NAMES_KEY = `${STORAGE_KEYS.FILE_OPEN_PREFS}:app-names`;
++
++const loadAppNames = (): Record<string, string> => {
++  try {
++    const raw = localStorage.getItem(APP_NAMES_KEY);
++    if (raw) return JSON.parse(raw) as Record<string, string>;
++  } catch {
++    /* ignore */
++  }
++  return {};
++};
++
++export const rememberAppName = (desktopId: string, name: string): void => {
++  try {
++    const names = loadAppNames();
++    names[desktopId] = name;
++    localStorage.setItem(APP_NAMES_KEY, JSON.stringify(names));
++  } catch {
++    /* ignore */
++  }
++};
++
++/** Human readable name for an `app:` handler. */
++export const getAppDisplayName = (handler: OpenHandler): string | null => {
++  const id = getAppHandlerId(handler);
++  if (!id) return null;
++  return loadAppNames()[id] ?? id.replace(/\.desktop$/, '');
++};
+ 
+ /** Map of file extension (without dot) -> chosen handler. */
+ export type FileOpenPrefs = Record<string, OpenHandler>;
+diff --git a/apps/client/src/lib/open-with.ts b/apps/client/src/lib/open-with.ts
+new file mode 100644
+index 0000000..d63715a
+--- /dev/null
++++ b/apps/client/src/lib/open-with.ts
+@@ -0,0 +1,30 @@
++import { TauriAPI } from '@/lib/tauri-api';
++import { type OpenHandler, getAppHandlerId } from '@/hooks/use-open-with-prefs';
++
++/**
++ * Run an "external" open handler (VS Code, system default or a specific
++ * desktop application). Returns `false` for handlers that have to be handled
++ * by the caller (the built-in editor).
++ */
++export const runExternalOpenHandler = async (
++  filePath: string,
++  handler: OpenHandler,
++): Promise<boolean> => {
++  const appId = getAppHandlerId(handler);
++  if (appId) {
++    await TauriAPI.launchDesktopApp(appId, [filePath]);
++    return true;
++  }
++  switch (handler) {
++    case 'vscode': {
++      const dir = filePath.replace(/[/\\][^/\\]*$/, '');
++      await TauriAPI.executeCommand(`code "${filePath}"`, dir);
++      return true;
++    }
++    case 'system':
++      await TauriAPI.openFile(filePath);
++      return true;
++    default:
++      return false;
++  }
++};
+diff --git a/apps/client/src/lib/tauri-api-types.ts b/apps/client/src/lib/tauri-api-types.ts
+index 4cbf3a3..f0ea5a9 100644
+--- a/apps/client/src/lib/tauri-api-types.ts
++++ b/apps/client/src/lib/tauri-api-types.ts
+@@ -93,6 +93,24 @@ export interface Application {
+   is_default: boolean;
+ }
+ 
++/** A freedesktop application entry for the "Open With" dialog (Linux). */
++export interface DesktopApp {
++  /** Desktop file ID, e.g. `org.kde.gwenview.desktop` */
++  id: string;
++  name: string;
++  comment?: string | null;
++  /** Icon as data URL */
++  icon?: string | null;
++  isDefault: boolean;
++  /** App declares support for the file's MIME type */
++  recommended: boolean;
++}
++
++export interface OpenWithApps {
++  mimeType: string;
++  apps: DesktopApp[];
++}
++
+ export interface FileAssociation {
+   extension: string;
+   mime_type?: string;
+diff --git a/apps/client/src/lib/tauri-api/file-system.ts b/apps/client/src/lib/tauri-api/file-system.ts
+index 5af123b..028af4a 100644
+--- a/apps/client/src/lib/tauri-api/file-system.ts
++++ b/apps/client/src/lib/tauri-api/file-system.ts
+@@ -5,6 +5,7 @@ import type {
+   DetailedFileProperties,
+   FileAssociation,
+   Application,
++  OpenWithApps,
+   CompressionOptions,
+   CompressionInfo,
+   ExtractionOptions,
+@@ -57,6 +58,12 @@ export const getFileAssociations = async (filePath: string): Promise<FileAssocia
+ export const openFileWithApplication = async (filePath: string, appPath: string): Promise<void> =>
+   await transport('open_file_with_application', { filePath, appPath });
+ 
++export const listOpenWithApps = async (filePath: string): Promise<OpenWithApps> =>
++  await transport('list_open_with_apps', { filePath });
++
++export const launchDesktopApp = async (desktopId: string, filePaths: string[]): Promise<void> =>
++  await transport('launch_desktop_app', { desktopId, filePaths });
++
+ export const getSystemApplications = async (): Promise<Application[]> =>
+   await transport('get_system_applications');
+ 
+diff --git a/apps/client/src/lib/tauri-api/index.ts b/apps/client/src/lib/tauri-api/index.ts
+index d1d66a7..fa20732 100644
+--- a/apps/client/src/lib/tauri-api/index.ts
++++ b/apps/client/src/lib/tauri-api/index.ts
+@@ -44,6 +44,8 @@ export class TauriAPI {
+   static getFileAssociations = fileSystem.getFileAssociations;
+   static openFileWithApplication = fileSystem.openFileWithApplication;
+   static getSystemApplications = fileSystem.getSystemApplications;
++  static listOpenWithApps = fileSystem.listOpenWithApps;
++  static launchDesktopApp = fileSystem.launchDesktopApp;
+   static setDefaultApplication = fileSystem.setDefaultApplication;
+   static compressFiles = fileSystem.compressFiles;
+   static getCompressionInfo = fileSystem.getCompressionInfo;
+diff --git a/apps/client/src/locales/en.json b/apps/client/src/locales/en.json
+index b32f653..9ee1a5b 100644
+--- a/apps/client/src/locales/en.json
++++ b/apps/client/src/locales/en.json
+@@ -1261,6 +1261,13 @@
+     "vscodeDesc": "Open in Visual Studio Code",
+     "systemDefault": "System Default",
+     "systemDefaultDesc": "Open with your OS default application",
++    "systemDefaultCurrent": "Currently: {{app}}",
++    "defaultBadge": "Default",
++    "loadingApps": "Looking for applications…",
++    "showOtherApps": "Show other applications",
++    "hideOtherApps": "Hide other applications",
++    "searchApps": "Search applications…",
++    "noAppsFound": "No applications found",
+     "alwaysUse": "Always use this for .{{ext}} files",
+     "open": "Open",
+     "cancel": "Cancel"
+diff --git a/apps/src-tauri/src/main.rs b/apps/src-tauri/src/main.rs
+index 1f94b8f..583ba3d 100644
+--- a/apps/src-tauri/src/main.rs
++++ b/apps/src-tauri/src/main.rs
+@@ -430,6 +430,8 @@ fn main() {
+             operations::open_file_with_application,
+             operations::get_system_applications,
+             operations::set_default_application,
++            operations::list_open_with_apps,
++            operations::launch_desktop_app,
+             // Compression operations
+             operations::compress_files,
+             operations::get_compression_info,
+diff --git a/apps/src-tauri/src/operations/file_associations_ops.rs b/apps/src-tauri/src/operations/file_associations_ops.rs
+index de08622..bcc1730 100644
+--- a/apps/src-tauri/src/operations/file_associations_ops.rs
++++ b/apps/src-tauri/src/operations/file_associations_ops.rs
+@@ -4,6 +4,9 @@ use std::path::Path;
+ use std::process::Command;
+ use tauri::command;
+ 
++pub mod desktop_apps;
++pub use desktop_apps::*;
++
+ #[derive(Debug, Clone, Serialize, Deserialize)]
+ pub struct Application {
+     pub name: String,
+diff --git a/apps/src-tauri/src/operations/file_associations_ops/desktop_apps.rs b/apps/src-tauri/src/operations/file_associations_ops/desktop_apps.rs
+new file mode 100644
+index 0000000..fa77437
+--- /dev/null
++++ b/apps/src-tauri/src/operations/file_associations_ops/desktop_apps.rs
+@@ -0,0 +1,840 @@
++//! Real "Open With" support for Linux.
++//!
++//! Scans freedesktop `.desktop` entries (system, user, Flatpak, Snap),
++//! matches them against the MIME type of a file and launches the chosen
++//! application by expanding its `Exec=` line according to the Desktop Entry
++//! specification. On other platforms the commands return empty results.
++
++use serde::Serialize;
++use tauri::command;
++
++#[derive(Debug, Clone, Serialize)]
++#[serde(rename_all = "camelCase")]
++pub struct DesktopApp {
++    /// Desktop file ID, e.g. `org.kde.gwenview.desktop`
++    pub id: String,
++    /// Localised display name
++    pub name: String,
++    /// Localised comment / generic name
++    pub comment: Option<String>,
++    /// Icon as data URL (`data:image/png;base64,...`), if it could be resolved
++    pub icon: Option<String>,
++    /// System default application for this MIME type
++    pub is_default: bool,
++    /// Declares support for this MIME type
++    pub recommended: bool,
++}
++
++#[derive(Debug, Clone, Serialize)]
++#[serde(rename_all = "camelCase")]
++pub struct OpenWithApps {
++    pub mime_type: String,
++    pub apps: Vec<DesktopApp>,
++}
++
++/// List applications that can open `file_path`. Recommended apps (matching
++/// MIME type) come first, the default app at the very top, followed by all
++/// other installed applications.
++#[command]
++pub async fn list_open_with_apps(file_path: String) -> Result<OpenWithApps, String> {
++    crate::operations::validate_file_path(&file_path)?;
++
++    #[cfg(target_os = "linux")]
++    {
++        tauri::async_runtime::spawn_blocking(move || linux::list_apps(&file_path))
++            .await
++            .map_err(|e| format!("Failed to list applications: {}", e))?
++    }
++
++    #[cfg(not(target_os = "linux"))]
++    {
++        let _ = file_path;
++        Ok(OpenWithApps {
++            mime_type: String::new(),
++            apps: Vec::new(),
++        })
++    }
++}
++
++/// Launch the application identified by `desktop_id` with the given files.
++#[command]
++pub async fn launch_desktop_app(desktop_id: String, file_paths: Vec<String>) -> Result<(), String> {
++    for p in &file_paths {
++        crate::operations::validate_file_path(p)?;
++        if !std::path::Path::new(p).exists() {
++            return Err(format!("File does not exist: {}", p));
++        }
++    }
++
++    #[cfg(target_os = "linux")]
++    {
++        tauri::async_runtime::spawn_blocking(move || linux::launch(&desktop_id, &file_paths))
++            .await
++            .map_err(|e| format!("Failed to launch application: {}", e))?
++    }
++
++    #[cfg(not(target_os = "linux"))]
++    {
++        let _ = (desktop_id, file_paths);
++        Err("Launching desktop applications is only supported on Linux".to_string())
++    }
++}
++
++#[cfg(target_os = "linux")]
++mod linux {
++    use super::{DesktopApp, OpenWithApps};
++    use base64::Engine;
++    use std::collections::{HashMap, HashSet};
++    use std::path::{Path, PathBuf};
++    use std::process::{Command, Stdio};
++
++    #[derive(Debug, Clone, Default)]
++    pub(super) struct Entry {
++        pub id: String,
++        pub path: PathBuf,
++        pub name: String,
++        pub comment: Option<String>,
++        pub exec: String,
++        pub icon: Option<String>,
++        pub mime_types: Vec<String>,
++        pub terminal: bool,
++        pub no_display: bool,
++    }
++
++    // ── XDG directories ─────────────────────────────────────────────────────
++
++    fn home() -> PathBuf {
++        dirs::home_dir().unwrap_or_else(|| PathBuf::from("/"))
++    }
++
++    fn data_dirs() -> Vec<PathBuf> {
++        let mut out: Vec<PathBuf> = Vec::new();
++        let data_home = std::env::var("XDG_DATA_HOME")
++            .ok()
++            .filter(|s| !s.is_empty())
++            .map(PathBuf::from)
++            .unwrap_or_else(|| home().join(".local/share"));
++        out.push(data_home);
++
++        let sys = std::env::var("XDG_DATA_DIRS")
++            .ok()
++            .filter(|s| !s.is_empty())
++            .unwrap_or_else(|| "/usr/local/share:/usr/share".to_string());
++        out.extend(sys.split(':').filter(|s| !s.is_empty()).map(PathBuf::from));
++
++        // Make sure Flatpak / Snap exports are found even if XDG_DATA_DIRS
++        // was not set up by the session.
++        out.push(home().join(".local/share/flatpak/exports/share"));
++        out.push(PathBuf::from("/var/lib/flatpak/exports/share"));
++        out.push(PathBuf::from("/var/lib/snapd/desktop"));
++        out.push(PathBuf::from("/usr/local/share"));
++        out.push(PathBuf::from("/usr/share"));
++
++        let mut seen = HashSet::new();
++        out.retain(|p| seen.insert(p.clone()));
++        out
++    }
++
++    fn config_dirs() -> Vec<PathBuf> {
++        let mut out = vec![std::env::var("XDG_CONFIG_HOME")
++            .ok()
++            .filter(|s| !s.is_empty())
++            .map(PathBuf::from)
++            .unwrap_or_else(|| home().join(".config"))];
++        let sys = std::env::var("XDG_CONFIG_DIRS")
++            .ok()
++            .filter(|s| !s.is_empty())
++            .unwrap_or_else(|| "/etc/xdg".to_string());
++        out.extend(sys.split(':').filter(|s| !s.is_empty()).map(PathBuf::from));
++        out
++    }
++
++    // ── Locale ──────────────────────────────────────────────────────────────
++
++    /// Locale keys to try, most specific first: `de_AT`, `de`.
++    fn locale_keys() -> Vec<String> {
++        let raw = ["LC_ALL", "LC_MESSAGES", "LANG"]
++            .iter()
++            .filter_map(|k| std::env::var(k).ok())
++            .find(|v| !v.is_empty() && v != "C" && v != "POSIX")
++            .unwrap_or_default();
++        let base = raw.split('.').next().unwrap_or("").split('@').next().unwrap_or("");
++        let mut keys = Vec::new();
++        if !base.is_empty() {
++            keys.push(base.to_string());
++            if let Some((lang, _)) = base.split_once('_') {
++                keys.push(lang.to_string());
++            }
++        }
++        keys
++    }
++
++    // ── .desktop parsing ────────────────────────────────────────────────────
++
++    /// Unescape a desktop entry string value (`\s`, `\n`, `\t`, `\r`, `\\`).
++    fn unescape_value(v: &str) -> String {
++        let mut out = String::with_capacity(v.len());
++        let mut chars = v.chars();
++        while let Some(c) = chars.next() {
++            if c == '\\' {
++                match chars.next() {
++                    Some('s') => out.push(' '),
++                    Some('n') => out.push('\n'),
++                    Some('t') => out.push('\t'),
++                    Some('r') => out.push('\r'),
++                    Some('\\') => out.push('\\'),
++                    Some(o) => {
++                        out.push('\\');
++                        out.push(o);
++                    }
++                    None => out.push('\\'),
++                }
++            } else {
++                out.push(c);
++            }
++        }
++        out
++    }
++
++    /// Parse a desktop file. Returns `Ok(None)` for entries that are hidden
++    /// (they still shadow entries with the same ID in lower-priority dirs).
++    pub(super) fn parse_desktop(
++        id: &str,
++        path: &Path,
++        content: &str,
++        locales: &[String],
++    ) -> Option<Entry> {
++        let mut in_main = false;
++        let mut kv: HashMap<String, String> = HashMap::new();
++        for line in content.lines() {
++            let line = line.trim();
++            if line.is_empty() || line.starts_with('#') {
++                continue;
++            }
++            if line.starts_with('[') {
++                in_main = line == "[Desktop Entry]";
++                continue;
++            }
++            if !in_main {
++                continue;
++            }
++            if let Some((k, v)) = line.split_once('=') {
++                kv.entry(k.trim().to_string())
++                    .or_insert_with(|| v.trim().to_string());
++            }
++        }
++
++        let localized = |key: &str| -> Option<String> {
++            for l in locales {
++                if let Some(v) = kv.get(&format!("{}[{}]", key, l)) {
++                    if !v.is_empty() {
++                        return Some(unescape_value(v));
++                    }
++                }
++            }
++            kv.get(key).filter(|v| !v.is_empty()).map(|v| unescape_value(v))
++        };
++        let is_true = |key: &str| kv.get(key).map(|v| v == "true").unwrap_or(false);
++
++        if kv.get("Type").map(|t| t != "Application").unwrap_or(true) {
++            return None;
++        }
++        if is_true("Hidden") {
++            return None;
++        }
++        let exec = kv.get("Exec").cloned().unwrap_or_default();
++        if exec.is_empty() {
++            return None;
++        }
++        if let Some(try_exec) = kv.get("TryExec").filter(|v| !v.is_empty()) {
++            if find_in_path(&unescape_value(try_exec)).is_none() {
++                return None;
++            }
++        }
++        let name = localized("Name")?;
++
++        let comment = localized("GenericName").or_else(|| localized("Comment"));
++        let mime_types = kv
++            .get("MimeType")
++            .map(|m| {
++                m.split(';')
++                    .map(|s| s.trim().to_lowercase())
++                    .filter(|s| !s.is_empty())
++                    .collect()
++            })
++            .unwrap_or_default();
++
++        Some(Entry {
++            id: id.to_string(),
++            path: path.to_path_buf(),
++            name,
++            comment,
++            exec,
++            icon: localized("Icon"),
++            mime_types,
++            terminal: is_true("Terminal"),
++            no_display: is_true("NoDisplay"),
++        })
++    }
++
++    fn find_in_path(bin: &str) -> Option<PathBuf> {
++        if bin.contains('/') {
++            let p = PathBuf::from(bin);
++            return p.exists().then_some(p);
++        }
++        std::env::var_os("PATH").and_then(|paths| {
++            std::env::split_paths(&paths)
++                .map(|d| d.join(bin))
++                .find(|p| p.is_file())
++        })
++    }
++
++    fn collect_desktop_files(base: &Path, dir: &Path, out: &mut Vec<(String, PathBuf)>, depth: u8) {
++        if depth > 4 {
++            return;
++        }
++        let Ok(entries) = std::fs::read_dir(dir) else { return };
++        let mut entries: Vec<_> = entries.flatten().collect();
++        entries.sort_by_key(|e| e.file_name());
++        for e in entries {
++            let p = e.path();
++            if p.is_dir() {
++                collect_desktop_files(base, &p, out, depth + 1);
++            } else if p.extension().map(|x| x == "desktop").unwrap_or(false) {
++                if let Ok(rel) = p.strip_prefix(base) {
++                    let id = rel.to_string_lossy().replace('/', "-");
++                    out.push((id, p));
++                }
++            }
++        }
++    }
++
++    /// All visible desktop entries, user dirs first (shadowing system ones).
++    pub(super) fn all_entries() -> Vec<Entry> {
++        let locales = locale_keys();
++        let mut seen: HashSet<String> = HashSet::new();
++        let mut result = Vec::new();
++        for d in data_dirs() {
++            let apps_dir = d.join("applications");
++            let mut files = Vec::new();
++            collect_desktop_files(&apps_dir, &apps_dir, &mut files, 0);
++            for (id, path) in files {
++                if !seen.insert(id.clone()) {
++                    continue;
++                }
++                let Ok(content) = std::fs::read_to_string(&path) else { continue };
++                if let Some(entry) = parse_desktop(&id, &path, &content, &locales) {
++                    result.push(entry);
++                }
++            }
++        }
++        result
++    }
++
++    // ── MIME handling ───────────────────────────────────────────────────────
++
++    fn run_trimmed(cmd: &str, args: &[&str]) -> Option<String> {
++        let out = Command::new(cmd)
++            .args(args)
++            .stdin(Stdio::null())
++            .stderr(Stdio::null())
++            .output()
++            .ok()?;
++        if !out.status.success() {
++            return None;
++        }
++        let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
++        (!s.is_empty()).then_some(s)
++    }
++
++    /// Look the file name up in shared-mime-info's `globs2` database.
++    pub(super) fn mime_from_globs(file_name: &str, globs2: &str) -> Option<String> {
++        let lower = file_name.to_lowercase();
++        let mut best: Option<(u32, usize, String)> = None;
++        for line in globs2.lines() {
++            if line.starts_with('#') {
++                continue;
++            }
++            let mut parts = line.splitn(4, ':');
++            let (Some(w), Some(mime), Some(glob)) = (parts.next(), parts.next(), parts.next())
++            else {
++                continue;
++            };
++            let case_sensitive = parts.next().map(|f| f.contains("cs")).unwrap_or(false);
++            let weight: u32 = w.parse().unwrap_or(50);
++            let (name, pat) = if case_sensitive {
++                (file_name.to_string(), glob.to_string())
++            } else {
++                (lower.clone(), glob.to_lowercase())
++            };
++            let hit = if let Some(suffix) = pat.strip_prefix('*') {
++                !suffix.contains(['*', '?', '[']) && name.ends_with(suffix)
++            } else {
++                !pat.contains(['*', '?', '[']) && name == pat
++            };
++            if hit {
++                let better = match &best {
++                    None => true,
++                    Some((bw, bl, _)) => weight > *bw || (weight == *bw && pat.len() > *bl),
++                };
++                if better {
++                    best = Some((weight, pat.len(), mime.to_string()));
++                }
++            }
++        }
++        best.map(|(_, _, m)| m)
++    }
++
++    fn detect_mime(file: &str) -> String {
++        let file_name = Path::new(file)
++            .file_name()
++            .map(|n| n.to_string_lossy().to_string())
++            .unwrap_or_default();
++        data_dirs()
++            .into_iter()
++            .filter_map(|d| std::fs::read_to_string(d.join("mime/globs2")).ok())
++            .find_map(|g| mime_from_globs(&file_name, &g))
++            .or_else(|| run_trimmed("xdg-mime", &["query", "filetype", file]))
++            .or_else(|| run_trimmed("file", &["--brief", "--mime-type", file]))
++            .map(|s| s.split(';').next().unwrap_or("").trim().to_lowercase())
++            .filter(|s| s.contains('/'))
++            .unwrap_or_else(|| "application/octet-stream".to_string())
++    }
++
++    /// Read a group from all mimeapps.list files (highest priority first).
++    fn mimeapps_group(group: &str, mime: &str) -> Vec<String> {
++        let desktop = std::env::var("XDG_CURRENT_DESKTOP")
++            .unwrap_or_default()
++            .to_lowercase();
++        let mut files: Vec<PathBuf> = Vec::new();
++        for d in config_dirs() {
++            for de in desktop.split(':').filter(|s| !s.is_empty()) {
++                files.push(d.join(format!("{}-mimeapps.list", de)));
++            }
++            files.push(d.join("mimeapps.list"));
++        }
++        for d in data_dirs() {
++            files.push(d.join("applications/mimeapps.list"));
++            files.push(d.join("applications/defaults.list"));
++        }
++
++        let header = format!("[{}]", group);
++        let mut out = Vec::new();
++        for f in files {
++            let Ok(content) = std::fs::read_to_string(&f) else { continue };
++            let mut in_group = false;
++            for line in content.lines() {
++                let line = line.trim();
++                if line.starts_with('[') {
++                    in_group = line == header;
++                    continue;
++                }
++                if !in_group {
++                    continue;
++                }
++                if let Some((k, v)) = line.split_once('=') {
++                    if k.trim().eq_ignore_ascii_case(mime) {
++                        for id in v.split(';').map(str::trim).filter(|s| !s.is_empty()) {
++                            if !out.iter().any(|x| x == id) {
++                                out.push(id.to_string());
++                            }
++                        }
++                    }
++                }
++            }
++        }
++        out
++    }
++
++    fn default_app_for(mime: &str) -> Option<String> {
++        run_trimmed("xdg-mime", &["query", "default", mime])
++            .or_else(|| mimeapps_group("Default Applications", mime).into_iter().next())
++    }
++
++    /// Does an app declaring `declared` handle `mime`?
++    pub(super) fn mime_matches(declared: &[String], mime: &str) -> bool {
++        let major = mime.split('/').next().unwrap_or("");
++        declared.iter().any(|d| {
++            d == mime
++                || (d.ends_with("/*") && d.trim_end_matches("/*") == major)
++                // Every text/* file can be shown by a plain-text editor
++                || (major == "text" && d == "text/plain")
++        })
++    }
++
++    // ── Icons ───────────────────────────────────────────────────────────────
++
++    fn icon_theme() -> Option<String> {
++        let kdeglobals = config_dirs().into_iter().next()?.join("kdeglobals");
++        let content = std::fs::read_to_string(kdeglobals).ok()?;
++        let mut in_icons = false;
++        for line in content.lines() {
++            let line = line.trim();
++            if line.starts_with('[') {
++                in_icons = line == "[Icons]";
++            } else if in_icons {
++                if let Some(v) = line.strip_prefix("Theme=") {
++                    return Some(v.trim().to_string());
++                }
++            }
++        }
++        None
++    }
++
++    struct IconResolver {
++        roots: Vec<PathBuf>,
++        cache: HashMap<String, Option<String>>,
++    }
++
++    impl IconResolver {
++        fn new() -> Self {
++            let mut themes: Vec<String> = Vec::new();
++            if let Some(t) = icon_theme() {
++                themes.push(t);
++            }
++            for t in ["breeze", "Papirus", "Adwaita", "hicolor"] {
++                if !themes.iter().any(|x| x == t) {
++                    themes.push(t.to_string());
++                }
++            }
++            let mut bases = vec![home().join(".icons")];
++            bases.extend(data_dirs().into_iter().map(|d| d.join("icons")));
++            let mut roots = Vec::new();
++            for t in &themes {
++                for b in &bases {
++                    let r = b.join(t);
++                    if r.is_dir() {
++                        roots.push(r);
++                    }
++                }
++            }
++            Self { roots, cache: HashMap::new() }
++        }
++
++        fn to_data_url(path: &Path) -> Option<String> {
++            let meta = std::fs::metadata(path).ok()?;
++            if !meta.is_file() || meta.len() > 256 * 1024 {
++                return None;
++            }
++            let mime = match path.extension()?.to_str()?.to_lowercase().as_str() {
++                "png" => "image/png",
++                "svg" => "image/svg+xml",
++                "jpg" | "jpeg" => "image/jpeg",
++                _ => return None,
++            };
++            let bytes = std::fs::read(path).ok()?;
++            Some(format!(
++                "data:{};base64,{}",
++                mime,
++                base64::engine::general_purpose::STANDARD.encode(bytes)
++            ))
++        }
++
++        fn resolve(&mut self, icon: &str) -> Option<String> {
++            if let Some(c) = self.cache.get(icon) {
++                return c.clone();
++            }
++            let found = self.find(icon).and_then(|p| Self::to_data_url(&p));
++            self.cache.insert(icon.to_string(), found.clone());
++            found
++        }
++
++        fn find(&self, icon: &str) -> Option<PathBuf> {
++            if icon.starts_with('/') {
++                let p = PathBuf::from(icon);
++                return p.is_file().then_some(p);
++            }
++            const SUBDIRS: &[&str] = &[
++                "48x48/apps", "apps/48", "64x64/apps", "apps/64", "scalable/apps",
++                "apps/scalable", "128x128/apps", "96x96/apps", "32x32/apps", "apps/32",
++                "256x256/apps", "48x48/mimetypes", "scalable/mimetypes",
++                "48x48/categories", "scalable/categories",
++            ];
++            for root in &self.roots {
++                for sub in SUBDIRS {
++                    for ext in ["svg", "png"] {
++                        let p = root.join(sub).join(format!("{}.{}", icon, ext));
++                        if p.is_file() {
++                            return Some(p);
++                        }
++                    }
++                }
++            }
++            for d in data_dirs() {
++                for ext in ["svg", "png"] {
++                    let p = d.join("pixmaps").join(format!("{}.{}", icon, ext));
++                    if p.is_file() {
++                        return Some(p);
++                    }
++                }
++            }
++            None
++        }
++    }
++
++    // ── Public operations ───────────────────────────────────────────────────
++
++    pub fn list_apps(file: &str) -> Result<OpenWithApps, String> {
++        let mime = detect_mime(file);
++        let default_id = default_app_for(&mime);
++        let added = mimeapps_group("Added Associations", &mime);
++        let removed = mimeapps_group("Removed Associations", &mime);
++
++        let mut icons = IconResolver::new();
++        let mut apps: Vec<DesktopApp> = all_entries()
++            .into_iter()
++            .filter_map(|e| {
++                let is_default = default_id.as_deref() == Some(e.id.as_str());
++                let recommended = is_default
++                    || added.contains(&e.id)
++                    || (mime_matches(&e.mime_types, &mime) && !removed.contains(&e.id));
++                // Hidden helper entries only make sense when they handle the type
++                if e.no_display && !recommended {
++                    return None;
++                }
++                Some(DesktopApp {
++                    icon: e.icon.as_deref().and_then(|i| icons.resolve(i)),
++                    id: e.id,
++                    name: e.name,
++                    comment: e.comment,
++                    is_default,
++                    recommended,
++                })
++            })
++            .collect();
++
++        apps.sort_by(|a, b| {
++            b.is_default
++                .cmp(&a.is_default)
++                .then(b.recommended.cmp(&a.recommended))
++                .then(a.name.to_lowercase().cmp(&b.name.to_lowercase()))
++        });
++
++        Ok(OpenWithApps { mime_type: mime, apps })
++    }
++
++    /// Split an Exec value into arguments following the quoting rules of the
++    /// Desktop Entry spec.
++    pub(super) fn tokenize_exec(exec: &str) -> Vec<String> {
++        let exec = unescape_value(exec);
++        let mut args = Vec::new();
++        let mut cur = String::new();
++        let mut in_quotes = false;
++        let mut has_token = false;
++        let mut chars = exec.chars().peekable();
++        while let Some(c) = chars.next() {
++            match c {
++                '"' => {
++                    in_quotes = !in_quotes;
++                    has_token = true;
++                }
++                '\\' if in_quotes => {
++                    if let Some(&n) = chars.peek() {
++                        if matches!(n, '"' | '`' | '$' | '\\') {
++                            cur.push(n);
++                            chars.next();
++                            continue;
++                        }
++                    }
++                    cur.push('\\');
++                }
++                c if c.is_whitespace() && !in_quotes => {
++                    if has_token || !cur.is_empty() {
++                        args.push(std::mem::take(&mut cur));
++                        has_token = false;
++                    }
++                }
++                c => cur.push(c),
++            }
++        }
++        if has_token || !cur.is_empty() {
++            args.push(cur);
++        }
++        args
++    }
++
++    /// Expand field codes. Returns one argv per process to start.
++    pub(super) fn build_commands(entry: &Entry, files: &[String]) -> Vec<Vec<String>> {
++        let tokens = tokenize_exec(&entry.exec);
++        let multi = tokens.iter().any(|t| t == "%F" || t == "%U");
++        let single = tokens.iter().any(|t| t.contains("%f") || t.contains("%u"));
++
++        let expand = |file_set: &[String]| -> Vec<String> {
++            let mut argv = Vec::new();
++            for t in &tokens {
++                match t.as_str() {
++                    "%F" | "%U" => argv.extend(file_set.iter().cloned()),
++                    "%i" => {
++                        if let Some(icon) = &entry.icon {
++                            argv.push("--icon".to_string());
++                            argv.push(icon.clone());
++                        }
++                    }
++                    _ => {
++                        let mut out = String::new();
++                        let mut chars = t.chars().peekable();
++                        while let Some(c) = chars.next() {
++                            if c != '%' {
++                                out.push(c);
++                                continue;
++                            }
++                            match chars.next() {
++                                Some('%') => out.push('%'),
++                                Some('f') | Some('u') => {
++                                    if let Some(f) = file_set.first() {
++                                        out.push_str(f);
++                                    }
++                                }
++                                Some('c') => out.push_str(&entry.name),
++                                Some('k') => out.push_str(&entry.path.to_string_lossy()),
++                                _ => {} // deprecated / unknown codes are dropped
++                            }
++                        }
++                        // Drop arguments that consisted only of a removed field code
++                        if !out.is_empty() || !t.starts_with('%') {
++                            argv.push(out);
++                        }
++                    }
++                }
++            }
++            if !multi && !single {
++                argv.extend(file_set.iter().cloned());
++            }
++            argv
++        };
++
++        if multi || !single || files.len() <= 1 {
++            vec![expand(files)]
++        } else {
++            files.iter().map(|f| expand(std::slice::from_ref(f))).collect()
++        }
++    }
++
++    fn wrap_terminal(argv: Vec<String>) -> Vec<String> {
++        let candidates: Vec<(String, &str)> = std::env::var("TERMINAL")
++            .ok()
++            .filter(|s| !s.is_empty())
++            .map(|t| vec![(t, "-e")])
++            .unwrap_or_default()
++            .into_iter()
++            .chain(
++                [
++                    ("x-terminal-emulator", "-e"),
++                    ("konsole", "-e"),
++                    ("gnome-terminal", "--"),
++                    ("xfce4-terminal", "-x"),
++                    ("lxterminal", "-e"),
++                    ("xterm", "-e"),
++                ]
++                .into_iter()
++                .map(|(a, b)| (a.to_string(), b)),
++            )
++            .collect();
++        for (term, flag) in candidates {
++            if find_in_path(&term).is_some() {
++                let mut out = vec![term, flag.to_string()];
++                out.extend(argv);
++                return out;
++            }
++        }
++        argv
++    }
++
++    pub fn launch(desktop_id: &str, files: &[String]) -> Result<(), String> {
++        let entry = all_entries()
++            .into_iter()
++            .find(|e| e.id == desktop_id)
++            .ok_or_else(|| format!("Application not found: {}", desktop_id))?;
++
++        let cwd = files
++            .first()
++            .and_then(|f| Path::new(f).parent().map(Path::to_path_buf))
++            .unwrap_or_else(home);
++
++        for mut argv in build_commands(&entry, files) {
++            if entry.terminal {
++                argv = wrap_terminal(argv);
++            }
++            if argv.is_empty() {
++                return Err("Invalid Exec line".to_string());
++            }
++            let mut cmd = Command::new(&argv[0]);
++            cmd.args(&argv[1..])
++                .current_dir(&cwd)
++                .stdin(Stdio::null())
++                .stdout(Stdio::null())
++                .stderr(Stdio::null());
++            {
++                use std::os::unix::process::CommandExt;
++                // Detach from Splorer's process group so closing Splorer
++                // does not take the launched application with it.
++                cmd.process_group(0);
++            }
++            let mut child = cmd
++                .spawn()
++                .map_err(|e| format!("Failed to start {}: {}", entry.name, e))?;
++            // Reap the child in the background to avoid zombies.
++            std::thread::spawn(move || {
++                let _ = child.wait();
++            });
++        }
++        Ok(())
++    }
++}
++
++#[cfg(all(test, target_os = "linux"))]
++mod tests {
++    use super::linux::*;
++    use std::path::Path;
++
++    const SAMPLE: &str = "[Desktop Entry]\nType=Application\nName=Gwenview\nName[de]=Gwenview DE\nGenericName=Image Viewer\nExec=gwenview %U\nIcon=gwenview\nMimeType=image/png;image/jpeg;\n\n[Desktop Action foo]\nName=Other\nExec=other\n";
++
++    #[test]
++    fn parses_main_group_and_locale() {
++        let e = parse_desktop("g.desktop", Path::new("/x/g.desktop"), SAMPLE, &["de_AT".into(), "de".into()]).unwrap();
++        assert_eq!(e.name, "Gwenview DE");
++        assert_eq!(e.exec, "gwenview %U");
++        assert_eq!(e.mime_types, vec!["image/png", "image/jpeg"]);
++    }
++
++    #[test]
++    fn globs_lookup() {
++        let g = "60:text/x-python:*.py\n50:image/png:*.png\n40:image/apng:*.png\n50:text/x-makefile:makefile\n";
++        assert_eq!(mime_from_globs("Colibri.PNG", g).as_deref(), Some("image/png"));
++        assert_eq!(mime_from_globs("a.py", g).as_deref(), Some("text/x-python"));
++        assert_eq!(mime_from_globs("Makefile", g).as_deref(), Some("text/x-makefile"));
++        assert_eq!(mime_from_globs("x.zzz", g), None);
++    }
++
++    #[test]
++    fn mime_matching() {
++        assert!(mime_matches(&["image/*".into()], "image/png"));
++        assert!(mime_matches(&["text/plain".into()], "text/x-python"));
++        assert!(!mime_matches(&["image/jpeg".into()], "image/png"));
++    }
++
++    #[test]
++    fn exec_expansion() {
++        let mut e = parse_desktop("g.desktop", Path::new("/x/g.desktop"), SAMPLE, &[]).unwrap();
++        let files = vec!["/a b.png".to_string(), "/c.png".to_string()];
++        assert_eq!(build_commands(&e, &files), vec![vec!["gwenview", "/a b.png", "/c.png"]]);
++
++        e.exec = "\"/opt/My App/bin\" --x %f".into();
++        assert_eq!(
++            build_commands(&e, &files),
++            vec![vec!["/opt/My App/bin", "--x", "/a b.png"], vec!["/opt/My App/bin", "--x", "/c.png"]]
++        );
++
++        e.exec = "foo %i --name=%c".into();
++        assert_eq!(
++            build_commands(&e, &files[..1]),
++            vec![vec!["foo", "--icon", "gwenview", "--name=Gwenview", "/a b.png"]]
++        );
++
++        e.exec = "/usr/bin/flatpak run --file-forwarding org.x.Y @@u %U @@".into();
++        assert_eq!(
++            build_commands(&e, &files[..1]),
++            vec![vec!["/usr/bin/flatpak", "run", "--file-forwarding", "org.x.Y", "@@u", "/a b.png", "@@"]]
++        );
++    }
++}
+-- 
+2.43.0
+

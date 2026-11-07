@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useRef, useEffect, useCallback } from 'react';
 import type { ActivityEntry, ActivityFilter } from '@/hooks/use-activity-feed';
 
@@ -166,7 +167,7 @@ const QuickActions: React.FC<{ entry: ActivityEntry; onNavigate?: (path: string)
       >
         <button
           onClick={handleOpen}
-          title="Show in Explorer"
+          title={i18n.t('panels.activity.showInExplorer')}
           style={{
             background: 'var(--xp-surface-light, rgba(255,255,255,0.06))',
             border: '1px solid var(--xp-border, rgba(255,255,255,0.08))',
@@ -178,11 +179,11 @@ const QuickActions: React.FC<{ entry: ActivityEntry; onNavigate?: (path: string)
             whiteSpace: 'nowrap',
           }}
         >
-          Open
+          {i18n.t('common.open')}
         </button>
         <button
           onClick={handleShowInExplorer}
-          title="Show in Explorer"
+          title={i18n.t('panels.activity.showInExplorer')}
           style={{
             background: 'var(--xp-surface-light, rgba(255,255,255,0.06))',
             border: '1px solid var(--xp-border, rgba(255,255,255,0.08))',
@@ -194,7 +195,7 @@ const QuickActions: React.FC<{ entry: ActivityEntry; onNavigate?: (path: string)
             whiteSpace: 'nowrap',
           }}
         >
-          Show
+          {i18n.t('common.show')}
         </button>
       </div>
     );
@@ -252,7 +253,7 @@ const ActivityRow: React.FC<{ entry: ActivityEntry; onNavigate?: (path: string) 
                   fontStyle: 'italic',
                 }}
               >
-                from {extractName(entry.oldPath)}
+                {i18n.t('panels.activity.from', { name: extractName(entry.oldPath) })}
               </span>
             )}
           </div>
@@ -408,7 +409,7 @@ const ActivityFeedPanel: React.FC<ActivityFeedPanelProps> = React.memo(
           {/* Clear button */}
           <button
             onClick={clearFeed}
-            title="Clear activity feed"
+            title={i18n.t('panels.activity.clear')}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -455,7 +456,7 @@ const ActivityFeedPanel: React.FC<ActivityFeedPanelProps> = React.memo(
               <rect x="5" y="4" width="3" height="12" rx="1" />
               <rect x="12" y="4" width="3" height="12" rx="1" />
             </svg>
-            Feed paused — entries are being collected
+            {i18n.t('panels.activity.paused')}
           </div>
         )}
 
@@ -485,7 +486,7 @@ const ActivityFeedPanel: React.FC<ActivityFeedPanelProps> = React.memo(
                 <circle cx="10" cy="10" r="8" />
                 <path d="M10 6v4l2.5 2.5" strokeLinecap="round" />
               </svg>
-              No activity recorded yet
+              {i18n.t('panels.activity.empty')}
             </div>
           ) : (
             bucketOrder.map((bucket) => {

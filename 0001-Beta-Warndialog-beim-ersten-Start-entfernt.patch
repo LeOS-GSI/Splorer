@@ -1,0 +1,461 @@
+From 5960391f214bb7e02468ccae7e60ae8438232e98 Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Fri, 6 Nov 2026 13:30:58 +0100
+Subject: [PATCH] Beta-Warndialog beim ersten Start entfernt
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Dialog, Einstellung 'Warnung erneut anzeigen', Storage-Key,
+Übersetzungen und zugehörigen Test entfernt.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpETV5tW91aWLpJjWdJZ
+---
+ .../src/__tests__/pages/settings.test.tsx     |  13 --
+ .../components/dialogs/BetaWarningDialog.tsx  | 126 ------------------
+ .../components/explorer/DialogsOverlay.tsx    |   4 -
+ .../settings/BackupRestoreSettings.tsx        |   1 -
+ .../components/settings/GeneralSettings.tsx   |  17 ---
+ apps/client/src/lib/storage-keys.ts           |   1 -
+ apps/client/src/locales/en.json               |  21 +--
+ apps/client/src/locales/id.json               |  21 +--
+ apps/client/src/locales/ja.json               |  21 +--
+ apps/client/src/locales/zh.json               |  21 +--
+ 10 files changed, 4 insertions(+), 242 deletions(-)
+ delete mode 100644 apps/client/src/components/dialogs/BetaWarningDialog.tsx
+
+diff --git a/apps/client/src/__tests__/pages/settings.test.tsx b/apps/client/src/__tests__/pages/settings.test.tsx
+index c617336..525b6a8 100644
+--- a/apps/client/src/__tests__/pages/settings.test.tsx
++++ b/apps/client/src/__tests__/pages/settings.test.tsx
+@@ -121,11 +121,6 @@ vi.mock('@/hooks/use-tour', () => ({
+   resetTourCompleted: vi.fn(),
+ }));
+ 
+-// Mock beta warning dialog
+-vi.mock('@/components/dialogs/BetaWarningDialog', () => ({
+-  resetBetaWarning: vi.fn(),
+-}));
+-
+ // Mock heavy sub-components that are not the focus of this test
+ vi.mock('@/components/TokenizerSettings', () => ({
+   default: () => <div data-testid="tokenizer-settings">Tokenizer Settings</div>,
+@@ -485,14 +480,6 @@ describe('Settings Page', () => {
+       });
+     });
+ 
+-    it('renders the Show Warning button for beta warning', async () => {
+-      render(<Settings />);
+-
+-      await waitFor(() => {
+-        expect(screen.getByText('Show Warning')).toBeInTheDocument();
+-      });
+-    });
+-
+     it('renders the Reset button', async () => {
+       render(<Settings />);
+ 
+diff --git a/apps/client/src/components/dialogs/BetaWarningDialog.tsx b/apps/client/src/components/dialogs/BetaWarningDialog.tsx
+deleted file mode 100644
+index 29441fc..0000000
+--- a/apps/client/src/components/dialogs/BetaWarningDialog.tsx
++++ /dev/null
+@@ -1,126 +0,0 @@
+-import { useState, useEffect } from 'react';
+-import { useTranslation } from 'react-i18next';
+-import { AlertTriangle, Heart, X, ExternalLink } from 'lucide-react';
+-import { STORAGE_KEYS } from '@/lib/storage-keys';
+-
+-const BETA_DISMISSED_KEY = STORAGE_KEYS.BETA_WARNING_DISMISSED;
+-const SPONSOR_URL = 'https://github.com/sponsors/kimlimjustin';
+-
+-export const isBetaWarningDismissed = (): boolean => {
+-  return localStorage.getItem(BETA_DISMISSED_KEY) === 'true';
+-};
+-
+-export const resetBetaWarning = () => {
+-  localStorage.removeItem(BETA_DISMISSED_KEY);
+-};
+-
+-const BetaWarningDialog = () => {
+-  const { t } = useTranslation();
+-  const [isOpen, setIsOpen] = useState(false);
+-
+-  useEffect(() => {
+-    if (!isBetaWarningDismissed()) {
+-      const timer = setTimeout(() => setIsOpen(true), 400);
+-      return () => clearTimeout(timer);
+-    }
+-  }, []);
+-
+-  if (!isOpen) return null;
+-
+-  const handleDismiss = () => {
+-    localStorage.setItem(BETA_DISMISSED_KEY, 'true');
+-    setIsOpen(false);
+-  };
+-
+-  return (
+-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm duration-200 animate-in fade-in">
+-      <div className="bg-xp-bg border-xp-border relative mx-4 w-full max-w-md overflow-hidden rounded-xl border shadow-2xl">
+-        {/* Close button */}
+-        <button
+-          onClick={handleDismiss}
+-          className="text-xp-muted hover:text-xp-text hover:bg-xp-hover absolute right-3 top-3 rounded-md p-1 transition-colors"
+-          aria-label={t('common.close')}
+-        >
+-          <X size={16} />
+-        </button>
+-
+-        {/* Warning header */}
+-        <div className="px-6 pb-4 pt-6">
+-          <div className="mb-4 flex items-center gap-3">
+-            <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-amber-500/15">
+-              <AlertTriangle className="h-5 w-5 text-amber-500" />
+-            </div>
+-            <div>
+-              <h2 className="text-xp-text text-lg font-semibold">{t('dialogs.beta.title')}</h2>
+-              <p className="text-xp-muted text-xs">{t('dialogs.beta.subtitle')}</p>
+-            </div>
+-          </div>
+-
+-          <div className="text-xp-muted space-y-3 text-sm leading-relaxed">
+-            <p>{t('dialogs.beta.intro')}</p>
+-            <ul className="ml-1 space-y-1.5">
+-              <li className="flex items-start gap-2">
+-                <span className="mt-0.5 text-amber-500">•</span>
+-                {t('dialogs.beta.bullet1')}
+-              </li>
+-              <li className="flex items-start gap-2">
+-                <span className="mt-0.5 text-amber-500">•</span>
+-                {t('dialogs.beta.bullet2')}
+-              </li>
+-              <li className="flex items-start gap-2">
+-                <span className="mt-0.5 text-amber-500">•</span>
+-                <span>{t('dialogs.beta.bullet3')}</span>
+-              </li>
+-            </ul>
+-            <p className="text-xs">
+-              {t('dialogs.beta.bugReport')}{' '}
+-              <a
+-                href="https://github.com/LeOS-GSI/Splorer/issues"
+-                target="_blank"
+-                rel="noopener noreferrer"
+-                className="text-xp-blue hover:underline"
+-              >
+-                {t('dialogs.beta.githubIssues')}
+-              </a>
+-              .
+-            </p>
+-          </div>
+-        </div>
+-
+-        {/* Sponsor section */}
+-        <div className="mx-6 mb-4 rounded-lg border border-pink-500/20 bg-pink-500/5 p-3">
+-          <div className="mb-1.5 flex items-center gap-2">
+-            <Heart className="h-4 w-4 text-pink-500" />
+-            <span className="text-xp-text text-sm font-medium">
+-              {t('dialogs.beta.supportTitle')}
+-            </span>
+-          </div>
+-          <p className="text-xp-muted mb-2.5 text-xs">{t('dialogs.beta.supportDesc')}</p>
+-          <a
+-            href={SPONSOR_URL}
+-            target="_blank"
+-            rel="noopener noreferrer"
+-            className="inline-flex items-center gap-1.5 rounded-md bg-pink-500 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-pink-600"
+-          >
+-            <Heart size={12} />
+-            {t('dialogs.beta.becomeSponsor')}
+-            <ExternalLink size={10} />
+-          </a>
+-        </div>
+-
+-        {/* Footer */}
+-        <div className="bg-xp-hover/50 border-xp-border flex items-center justify-between border-t px-6 py-3">
+-          <span className="text-xp-muted text-xs">{t('dialogs.beta.showAgainHint')}</span>
+-          <button
+-            onClick={handleDismiss}
+-            className="bg-xp-blue rounded-md px-4 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+-          >
+-            {t('dialogs.beta.iUnderstand')}
+-          </button>
+-        </div>
+-      </div>
+-    </div>
+-  );
+-};
+-
+-export default BetaWarningDialog;
+diff --git a/apps/client/src/components/explorer/DialogsOverlay.tsx b/apps/client/src/components/explorer/DialogsOverlay.tsx
+index 3f30149..45854e0 100644
+--- a/apps/client/src/components/explorer/DialogsOverlay.tsx
++++ b/apps/client/src/components/explorer/DialogsOverlay.tsx
+@@ -29,7 +29,6 @@ const ExtensionPermissionDialog = React.lazy(
+ const WorkspaceLayoutDialog = React.lazy(
+   () => import('@/components/dialogs/WorkspaceLayoutDialog'),
+ );
+-const BetaWarningDialog = React.lazy(() => import('@/components/dialogs/BetaWarningDialog'));
+ const CommandPalette = React.lazy(() => import('@/components/CommandPalette'));
+ const TourOverlay = React.lazy(() => import('@/components/tour/TourOverlay'));
+ const FileOperationProgressDialog = React.lazy(
+@@ -364,9 +363,6 @@ const DialogsOverlay = ({
+         {/* Quick Look Overlay (pulls in react-syntax-highlighter) */}
+         {quickLookFile && <QuickLookOverlay file={quickLookFile} onClose={onCloseQuickLook} />}
+ 
+-        {/* Beta Warning (first launch) */}
+-        <BetaWarningDialog />
+-
+         {/* Extension Permission Consent Dialog */}
+         <ExtensionPermissionDialog />
+ 
+diff --git a/apps/client/src/components/settings/BackupRestoreSettings.tsx b/apps/client/src/components/settings/BackupRestoreSettings.tsx
+index fba7293..e822e14 100644
+--- a/apps/client/src/components/settings/BackupRestoreSettings.tsx
++++ b/apps/client/src/components/settings/BackupRestoreSettings.tsx
+@@ -14,7 +14,6 @@ const KNOWN_KEYS: string[] = [
+   STORAGE_KEYS.AUTO_WHITELIST_VISITED,
+   STORAGE_KEYS.SPLIT_LAYOUT,
+   STORAGE_KEYS.TOUR_COMPLETED,
+-  STORAGE_KEYS.BETA_WARNING_DISMISSED,
+   STORAGE_KEYS.CUSTOM_THEMES,
+   STORAGE_KEYS.LAST_EXPORT_DATE,
+   STORAGE_KEYS.VIM_MODE,
+diff --git a/apps/client/src/components/settings/GeneralSettings.tsx b/apps/client/src/components/settings/GeneralSettings.tsx
+index ddc29ba..feb16f0 100644
+--- a/apps/client/src/components/settings/GeneralSettings.tsx
++++ b/apps/client/src/components/settings/GeneralSettings.tsx
+@@ -8,11 +8,9 @@ import {
+   PanelLeft,
+   Bell,
+   HelpCircle,
+-  AlertTriangle,
+   RotateCcw,
+ } from 'lucide-react';
+ import { startTour, resetTourCompleted } from '@/hooks/use-tour';
+-import { resetBetaWarning } from '@/components/dialogs/BetaWarningDialog';
+ import { applyFontSize } from '@/lib/utils';
+ import { useAllThemes } from '@/lib/theme-registry';
+ import {
+@@ -172,21 +170,6 @@ const GeneralSettings = ({ settings, updateSetting, setSettings }: GeneralSettin
+           {t('settings.general.replayTour')}
+         </button>
+       </SettingRow>
+-      <SettingRow
+-        icon={AlertTriangle}
+-        label={t('settings.general.betaWarning')}
+-        description={t('settings.general.betaWarningDesc')}
+-      >
+-        <button
+-          onClick={() => {
+-            resetBetaWarning();
+-            setLocation('/');
+-          }}
+-          className="flex items-center gap-2 rounded-md bg-amber-500 px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
+-        >
+-          {t('settings.general.showWarning')}
+-        </button>
+-      </SettingRow>
+ 
+       <Divider />
+       <div className="px-4 pt-4">
+diff --git a/apps/client/src/lib/storage-keys.ts b/apps/client/src/lib/storage-keys.ts
+index 868d605..44a4635 100644
+--- a/apps/client/src/lib/storage-keys.ts
++++ b/apps/client/src/lib/storage-keys.ts
+@@ -32,7 +32,6 @@ export const STORAGE_KEYS = {
+ 
+   // Onboarding / tour
+   TOUR_COMPLETED: 'xplorer:tour-completed',
+-  BETA_WARNING_DISMISSED: 'xplorer:beta-warning-dismissed',
+   AUTO_WHITELIST_VISITED: 'xplorer:auto-whitelist-visited',
+ 
+   // Pane sync
+diff --git a/apps/client/src/locales/en.json b/apps/client/src/locales/en.json
+index bf0184b..cceb493 100644
+--- a/apps/client/src/locales/en.json
++++ b/apps/client/src/locales/en.json
+@@ -274,10 +274,7 @@
+       "help": "Help",
+       "onboardingTour": "Onboarding Tour",
+       "onboardingTourDesc": "Replay the interactive guided tour of the app",
+-      "replayTour": "Replay Tour",
+-      "betaWarning": "Beta Warning",
+-      "betaWarningDesc": "Show the early beta warning dialog again",
+-      "showWarning": "Show Warning"
++      "replayTour": "Replay Tour"
+     },
+     "explorer": {
+       "display": "Display",
+@@ -735,7 +732,6 @@
+     "createSymlink": "Create Symbolic Link",
+     "movePreview": "Move Preview",
+     "openWith": "Open With",
+-    "betaWarning": "Beta Warning",
+     "extensionInstall": "Install Extension",
+     "advancedSelection": "Advanced Selection",
+     "fileOp": {
+@@ -880,21 +876,6 @@
+       "resolved": "Resolved ({{count}})",
+       "inputPlaceholder": "Add an annotation..."
+     },
+-    "beta": {
+-      "title": "Early Beta",
+-      "subtitle": "v0.1.0 — Preview Release",
+-      "intro": "Welcome to Splorer! This is an early beta release.",
+-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
+-      "bullet2": "Features may change or break between updates",
+-      "bullet3": "Back up your files — use this app at your own risk",
+-      "bugReport": "Found a bug? Report it on",
+-      "githubIssues": "GitHub Issues",
+-      "supportTitle": "Support Development",
+-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
+-      "becomeSponsor": "Become a Sponsor",
+-      "showAgainHint": "You can show this again in Settings",
+-      "iUnderstand": "I Understand"
+-    },
+     "crossTab": {
+       "title": "Batch Operations",
+       "subtitle": "{{fileCount}} file(s) from {{tabCount}} tab(s)",
+diff --git a/apps/client/src/locales/id.json b/apps/client/src/locales/id.json
+index 1d8438b..a0ee855 100644
+--- a/apps/client/src/locales/id.json
++++ b/apps/client/src/locales/id.json
+@@ -274,10 +274,7 @@
+       "help": "Bantuan",
+       "onboardingTour": "Tur Pengenalan",
+       "onboardingTourDesc": "Putar ulang tur panduan interaktif aplikasi",
+-      "replayTour": "Putar Ulang Tur",
+-      "betaWarning": "Peringatan Beta",
+-      "betaWarningDesc": "Tampilkan dialog peringatan beta awal lagi",
+-      "showWarning": "Tampilkan Peringatan"
++      "replayTour": "Putar Ulang Tur"
+     },
+     "explorer": {
+       "display": "Tampilan",
+@@ -797,7 +794,6 @@
+     "createSymlink": "Buat Tautan Simbolik",
+     "movePreview": "Pratinjau Pindah",
+     "openWith": "Buka Dengan",
+-    "betaWarning": "Peringatan Beta",
+     "extensionInstall": "Pasang Ekstensi",
+     "advancedSelection": "Pilihan Lanjutan",
+     "fileOp": {
+@@ -880,21 +876,6 @@
+       "resolved": "Resolved ({{count}})",
+       "inputPlaceholder": "Add an annotation..."
+     },
+-    "beta": {
+-      "title": "Early Beta",
+-      "subtitle": "v0.1.0 — Preview Release",
+-      "intro": "Welcome to Splorer! This is an early beta release.",
+-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
+-      "bullet2": "Features may change or break between updates",
+-      "bullet3": "Back up your files — use this app at your own risk",
+-      "bugReport": "Found a bug? Report it on",
+-      "githubIssues": "GitHub Issues",
+-      "supportTitle": "Support Development",
+-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
+-      "becomeSponsor": "Become a Sponsor",
+-      "showAgainHint": "You can show this again in Settings",
+-      "iUnderstand": "I Understand"
+-    },
+     "crossTab": {
+       "title": "Batch Operations",
+       "subtitle": "{{fileCount}} file(s) from {{tabCount}} tab(s)",
+diff --git a/apps/client/src/locales/ja.json b/apps/client/src/locales/ja.json
+index 7efea36..159a227 100644
+--- a/apps/client/src/locales/ja.json
++++ b/apps/client/src/locales/ja.json
+@@ -274,10 +274,7 @@
+       "help": "ヘルプ",
+       "onboardingTour": "ガイドツアー",
+       "onboardingTourDesc": "アプリのインタラクティブガイドツアーを再生",
+-      "replayTour": "ツアーを再生",
+-      "betaWarning": "ベータ警告",
+-      "betaWarningDesc": "早期ベータ警告ダイアログを再表示",
+-      "showWarning": "警告を表示"
++      "replayTour": "ツアーを再生"
+     },
+     "explorer": {
+       "display": "表示",
+@@ -797,7 +794,6 @@
+     "createSymlink": "シンボリックリンクを作成",
+     "movePreview": "移動プレビュー",
+     "openWith": "プログラムから開く",
+-    "betaWarning": "ベータ警告",
+     "extensionInstall": "拡張機能をインストール",
+     "advancedSelection": "高度な選択",
+     "fileOp": {
+@@ -880,21 +876,6 @@
+       "resolved": "Resolved ({{count}})",
+       "inputPlaceholder": "Add an annotation..."
+     },
+-    "beta": {
+-      "title": "Early Beta",
+-      "subtitle": "v0.1.0 — Preview Release",
+-      "intro": "Welcome to Splorer! This is an early beta release.",
+-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
+-      "bullet2": "Features may change or break between updates",
+-      "bullet3": "Back up your files — use this app at your own risk",
+-      "bugReport": "Found a bug? Report it on",
+-      "githubIssues": "GitHub Issues",
+-      "supportTitle": "Support Development",
+-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
+-      "becomeSponsor": "Become a Sponsor",
+-      "showAgainHint": "You can show this again in Settings",
+-      "iUnderstand": "I Understand"
+-    },
+     "crossTab": {
+       "title": "Batch Operations",
+       "subtitle": "{{fileCount}} file(s) from {{tabCount}} tab(s)",
+diff --git a/apps/client/src/locales/zh.json b/apps/client/src/locales/zh.json
+index eef83a1..f72f23a 100644
+--- a/apps/client/src/locales/zh.json
++++ b/apps/client/src/locales/zh.json
+@@ -274,10 +274,7 @@
+       "help": "帮助",
+       "onboardingTour": "引导教程",
+       "onboardingTourDesc": "重新播放应用交互式引导教程",
+-      "replayTour": "重新播放",
+-      "betaWarning": "Beta 警告",
+-      "betaWarningDesc": "再次显示早期 Beta 警告对话框",
+-      "showWarning": "显示警告"
++      "replayTour": "重新播放"
+     },
+     "explorer": {
+       "display": "显示",
+@@ -797,7 +794,6 @@
+     "createSymlink": "创建符号链接",
+     "movePreview": "移动预览",
+     "openWith": "打开方式",
+-    "betaWarning": "Beta 警告",
+     "extensionInstall": "安装扩展",
+     "advancedSelection": "高级选择",
+     "fileOp": {
+@@ -880,21 +876,6 @@
+       "resolved": "Resolved ({{count}})",
+       "inputPlaceholder": "Add an annotation..."
+     },
+-    "beta": {
+-      "title": "Early Beta",
+-      "subtitle": "v0.1.0 — Preview Release",
+-      "intro": "Welcome to Splorer! This is an early beta release.",
+-      "bullet1": "You may encounter bugs, crashes, or unexpected behavior",
+-      "bullet2": "Features may change or break between updates",
+-      "bullet3": "Back up your files — use this app at your own risk",
+-      "bugReport": "Found a bug? Report it on",
+-      "githubIssues": "GitHub Issues",
+-      "supportTitle": "Support Development",
+-      "supportDesc": "Splorer is free and open source. If you find it useful, consider sponsoring to help keep development going.",
+-      "becomeSponsor": "Become a Sponsor",
+-      "showAgainHint": "You can show this again in Settings",
+-      "iUnderstand": "I Understand"
+-    },
+     "crossTab": {
+       "title": "Batch Operations",
+       "subtitle": "{{fileCount}} file(s) from {{tabCount}} tab(s)",
+-- 
+2.43.0
+

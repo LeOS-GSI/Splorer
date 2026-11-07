@@ -1,6 +1,6 @@
 [package]
 name = "splorer"
-version = "0.99.1"
+version = "1.0.0-alpha.1"
 description = "Splorer — privacy-focused file explorer built with Tauri"
 authors = ["Justin Maximillian Kimlim", "harvey186"]
 license = "AGPL-3.0"
@@ -30,7 +30,6 @@ aes-gcm = "0.10"
 argon2 = "0.5"
 reqwest = { version = "0.12", features = ["json", "blocking", "stream"] }
 chrono = { version = "0.4", features = ["serde"] }
-ollama-rs = "0.3.2"
 trash = "5.1"
 dirs = "5.0"
 base64 = "0.22"
@@ -59,7 +58,6 @@ roaring = "0.10"
 notify-debouncer-full = "0.4"
 image = "0.25"
 git2 = "0.19"
-keyring = { version = "3", features = ["windows-native", "apple-native", "linux-native"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 thiserror = "2"
@@ -71,6 +69,7 @@ wasmi = "0.40"
 ed25519-dalek = { version = "2.2.0", features = ["rand_core"] }
 portable-pty = "0.8"
 moka = { version = "0.12", features = ["sync"] }
+arboard = { version = "3.7", default-features = false, features = ["wayland-data-control"] }
 
 [dev-dependencies]
 tokio-test = "0.4"
@@ -85,3 +84,7 @@ winreg = "0.55"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]
+
+[patch.crates-io]
+# Fix: Linux-Drag lieferte keine Dateien an Zielprogramme (siehe vendor/drag/SPLORER-PATCH.md)
+drag = { path = "vendor/drag" }

@@ -4,30 +4,24 @@
 
 # Splorer
 
-**A modern, AI-powered file manager built with Rust and React.**
+**A modern, privacy-focused file manager built with Rust and React.**
 
-Cross-platform. AI-integrated. Extensible. One app for all your files.
+Cross-platform. Local-first. Extensible. One app for all your files.
 
 [![LICENSE](https://img.shields.io/github/license/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/blob/next/LICENSE) [![Downloads](https://img.shields.io/github/downloads/LeOS-GSI/Splorer/total.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/releases) [![Stars](https://img.shields.io/github/stars/LeOS-GSI/Splorer.svg?style=flat-square)](https://github.com/LeOS-GSI/Splorer/stargazers)
-[![Windows](https://img.shields.io/badge/Windows-0078D6?style=flat-square&logo=windows&logoColor=white)](https://github.com/LeOS-GSI/Splorer/releases)[![macOS](https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white)](https://github.com/LeOS-GSI/Splorer/releases)[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/LeOS-GSI/Splorer/releases)
+(https://github.com/LeOS-GSI/Splorer/releases)[![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/LeOS-GSI/Splorer/releases)
 
-[Releases](https://github.com/LeOS-GSI/Splorer/releases) | [Discussions](https://github.com/LeOS-GSI/Splorer/discussions)
+[Releases](https://github.com/LeOS-GSI/Splorer/releases) | [Discussions](https://t.me/+ccodgiVNqYZkOGQy)
 
-Splorer is a privacy-hardened fork of [Xplorer](https://github.com/kimlimjustin/xplorer) by Justin Maximillian Kimlim, maintained for SnakeOS. No automatic update checks, no phone-home.
+Splorer is a privacy-hardened fork of [Xplorer](https://github.com/kimlimjustin/xplorer) by Justin Maximillian Kimlim, maintained for SnakeOS. No AI, no cloud services, no marketplace, no automatic update checks, no phone-home.
 
 </div>
 
 ---
 
-<div align="center">
-<img src="images/xplorer.png" alt="Splorer — File Manager" width="100%" />
-</div>
-
 ## Why Splorer?
 
-Most file managers haven't changed in decades. Splorer is a ground-up rethink: a Tauri 2 desktop app with a Rust backend for speed and a React frontend for flexibility. It ships with AI chat, Git integration, an extension marketplace, and themeable UI out of the box.
-
-> **Note:** This is the `next` branch -- a full rewrite using Tauri 2, React 18, and a new extension system. Not yet production-ready, but actively developed. Feedback welcome!
+Most file managers haven't changed in decades. Splorer is a ground-up rethink: a Tauri 2 desktop app with a Rust backend for speed and a React frontend for flexibility. It ships with Git integration, a fast local search index, local extensions, and a themeable UI out of the box. Everything runs on your machine.
 
 ## Features
 
@@ -36,7 +30,6 @@ Most file managers haven't changed in decades. Splorer is a ground-up rethink: a
 <td width="50%">
 
 **File Management**
-- Cross-platform: Windows, macOS, Linux
 - 6 view modes: Grid, List, Details, Column, Gallery, Tree
 - Hardware-accelerated file operations (memory-mapped I/O, parallel chunked transfers)
 - Archive support: ZIP, TAR, GZ, BZ2, XZ with password protection
@@ -45,11 +38,11 @@ Most file managers haven't changed in decades. Splorer is a ground-up rethink: a
 </td>
 <td width="50%">
 
-**AI Integration**
-- Connect any AI provider through API (OpenAI, Anthropic, Google, DeepSeek, Mistral, Ollama)
-- Natural language, fuzzy, and semantic file search
-- AI chat with full file context awareness
-- Agentic file operations and smart categorization
+**Local Search**
+- Local full-text index (BM25F) with fuzzy matching and stemming
+- Natural-language style queries ("large images from last week") parsed locally
+- Content search (grep) inside folders
+- Nothing leaves your computer
 
 </td>
 </tr>
@@ -66,10 +59,10 @@ Most file managers haven't changed in decades. Splorer is a ground-up rethink: a
 <td width="50%">
 
 **Extensibility**
-- Optional extension marketplace (upstream [xplorer.space](https://xplorer.space), contacted only when you open it)
-- Git UI, SSH manager, Docker, Google Drive, code editor, image editor, file hasher, and more
+- Local extensions (install from folder or `.xtension` file)
+- Git UI, SSH manager, Docker, code editor, image editor, file hasher, and more
 - Themes: Tokyo Night, Dracula, Nord, Cyberpunk, Ocean Deep
-- Sandboxed runtime with public SDK — build and publish your own
+- Sandboxed runtime with public SDK — build your own
 
 </td>
 </tr>
@@ -81,11 +74,6 @@ Most file managers haven't changed in decades. Splorer is a ground-up rethink: a
 Split-pane file browsing with integrated Git status, terminal, and code editor. Stage commits, view diffs, and manage branches without leaving the file manager.
 
 <img src="images/xplorerfordeveloper.png" alt="Developer workflow with Git integration and terminal" width="100%" />
-
-### For Researchers and Students
-AI chat that understands your files. Ask questions about documents, get summaries, and search by meaning — not just filename.
-
-<img src="images/xplorerforstudents.png" alt="AI chat analyzing documents with context" width="100%" />
 
 ### For Power Users
 Command palette, vim keybindings, custom keyboard shortcuts, and per-folder view settings. Six view modes, smart search with filters, and bulk file operations.
@@ -101,8 +89,7 @@ Command palette, vim keybindings, custom keyboard shortcuts, and per-folder view
 <td><img src="images/demo2.png" alt="Rich file previews" width="100%" /></td>
 </tr>
 <tr>
-<td><img src="images/demo3.png" alt="AI chat assistant" width="100%" /></td>
-<td><img src="images/demo5.png" alt="Git integration" width="100%" /></td>
+<td colspan="2"><img src="images/demo5.png" alt="Git integration" width="100%" /></td>
 </tr>
 </table>
 </div>
@@ -113,9 +100,7 @@ Download the latest release for your platform from the [Releases page](https://g
 
 | Platform | Format |
 |---|---|
-| Windows | `.msi` / `.exe` |
-| macOS | `.dmg` |
-| Linux | `.deb` / `.AppImage` |
+| Linux | `.deb` / `.AppImage` / '.rpm' |
 
 ## Getting Started (Development)
 
@@ -128,15 +113,13 @@ Download the latest release for your platform from the [Releases page](https://g
 ### Setup
 
 ```bash
-git clone https://github.com/LeOS-GSI/Splorer.git -b next
+git clone https://github.com/LeOS-GSI/Splorer.git
 cd Splorer
 pnpm install
-pnpm dev:app
+pnpm dev
 ```
 
 This starts the React frontend and Tauri backend. The app window will open automatically.
-
-> To run the full stack including the [marketplace web server](https://xplorer.space), use `pnpm dev` (requires local PostgreSQL via `pnpm run marketplace:db`).
 
 ### Build and Test
 
@@ -152,15 +135,14 @@ pnpm run test:tauri      # Rust backend tests
 splorer/
 ├── apps/
 │   ├── client/           # React 18 + TypeScript + Vite frontend
-│   ├── src-tauri/        # Rust backend (Tauri 2, Tokio, Rayon)
-│   └── web/              # Next.js marketplace (Prisma, Stripe)
+│   └── src-tauri/        # Rust backend (Tauri 2, Tokio, Rayon)
 ├── packages/
 │   ├── sdk/              # @xplorer/sdk — internal service layer
 │   ├── extension-sdk/    # @xplorer/extension-sdk — public extension API
 │   ├── create-extension/ # CLI scaffolder for new extensions
+│   ├── cli/              # `splorer` command-line launcher
 │   └── extensions/       # Built-in extension packages
 ├── e2e/                  # Playwright end-to-end tests
-├── infra/                # Docker Compose (PostgreSQL)
 └── scripts/              # Extension signing utilities
 ```
 
@@ -171,7 +153,6 @@ splorer/
 | Frontend | React 18 + TypeScript |
 | Styling | Tailwind CSS |
 | Build tool | Vite |
-| AI | Any provider via API (OpenAI, Anthropic, Google, Ollama, etc.) |
 
 ## Contributing
 

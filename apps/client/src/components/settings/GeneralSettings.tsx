@@ -7,13 +7,10 @@ import {
   Sparkles,
   PanelLeft,
   Bell,
-  Save,
   HelpCircle,
-  AlertTriangle,
   RotateCcw,
 } from 'lucide-react';
 import { startTour, resetTourCompleted } from '@/hooks/use-tour';
-import { resetBetaWarning } from '@/components/dialogs/BetaWarningDialog';
 import { applyFontSize } from '@/lib/utils';
 import { useAllThemes } from '@/lib/theme-registry';
 import {
@@ -35,6 +32,7 @@ interface GeneralSettingsProps {
 
 const languageOptions = [
   { value: 'en', label: 'English' },
+  { value: 'de', label: 'Deutsch' },
   { value: 'zh', label: '中文' },
   { value: 'ja', label: '日本語' },
   { value: 'id', label: 'Bahasa Indonesia' },
@@ -150,18 +148,6 @@ const GeneralSettings = ({ settings, updateSetting, setSettings }: GeneralSettin
           onChange={(v) => updateSetting('enableNotifications', v)}
         />
       </SettingRow>
-      <SettingRow
-        icon={Save}
-        label={t('settings.general.autoSave')}
-        description={t('settings.general.autoSaveDesc')}
-      >
-        <Toggle
-          id="autoSave"
-          label={t('settings.general.autoSave')}
-          checked={settings.autoSave}
-          onChange={(v) => updateSetting('autoSave', v)}
-        />
-      </SettingRow>
 
       <Divider />
       <SectionTitle title={t('settings.general.systemIntegration')} />
@@ -183,21 +169,6 @@ const GeneralSettings = ({ settings, updateSetting, setSettings }: GeneralSettin
           className="bg-xp-blue flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
         >
           {t('settings.general.replayTour')}
-        </button>
-      </SettingRow>
-      <SettingRow
-        icon={AlertTriangle}
-        label={t('settings.general.betaWarning')}
-        description={t('settings.general.betaWarningDesc')}
-      >
-        <button
-          onClick={() => {
-            resetBetaWarning();
-            setLocation('/');
-          }}
-          className="flex items-center gap-2 rounded-md bg-amber-500 px-3 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90"
-        >
-          {t('settings.general.showWarning')}
         </button>
       </SettingRow>
 

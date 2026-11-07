@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
@@ -18,6 +19,7 @@ import {
   computeRelativeSyncPath,
 } from '@/hooks/use-pane-sync';
 import { useFolderViewSettings } from '@/hooks/use-folder-view-settings';
+import { useAppSettings } from '@/lib/app-settings';
 
 // Re-export components needed by the pane content
 import HomePage from '@/pages/HomePage';
@@ -25,7 +27,6 @@ import TrashPage from '@/components/TrashPage';
 import FileComparisonPage from '@/pages/FileComparisonPage';
 import PaneFileExplorer from './PaneFileExplorer';
 
-const ChatFileView = React.lazy(() => import('@/pages/ChatFileView'));
 const FileEditorView = React.lazy(() => import('@/pages/FileEditorView'));
 
 export interface SharedPaneActions {
@@ -46,15 +47,6 @@ export interface SharedPaneActions {
 
   // Navigation from home
   onNavigateFromHome: (path: string, groupId: string) => void;
-
-  // GDrive
-  onGDriveNavigate?: (
-    accountId: string,
-    folderId: string,
-    folderName: string,
-    groupId: string,
-  ) => void;
-  onGDriveFileSelect?: (file: FileEntry) => void;
 
   // Toast
   onError: (title: string, description: string) => void;
@@ -180,8 +172,6 @@ const EditorGroupPane = ({
     handleBackgroundRightClick,
     handleDelete,
     handleCreateFolder,
-    onGDriveNavigate: _onGDriveNavigate,
-    onGDriveFileSelect: _onGDriveFileSelect,
     onError,
     onAdvancedSelection,
     onQuickLook,
@@ -217,14 +207,6 @@ const EditorGroupPane = ({
   } = useQuery<FileEntry[]>({
     queryKey: ['files', group.id, currentPath],
     queryFn: async () => {
-      if (currentPath.startsWith('gdrive://')) {
-        const match = currentPath.match(/^gdrive:\/\/([^/]+)\/(.*)$/);
-        if (match) {
-          const [, accountId, folderId] = match;
-          return await TauriAPI.gdriveListFiles(accountId, folderId || 'root');
-        }
-        return [];
-      }
       if (currentPath.startsWith('ssh://')) {
         return await TauriAPI.sshReadDirectory(currentPath);
       }
@@ -235,11 +217,16 @@ const EditorGroupPane = ({
       activeTab?.type !== 'editor' &&
       currentPath !== 'splorer://home' &&
       currentPath !== 'splorer://trash' &&
-      currentPath !== 'splorer://gdrive-manager' &&
       !currentPath.startsWith('comparison://') &&
       !isCollectionPath,
   });
-  const queryFiles = queryFilesRaw ?? EMPTY_FILES;
+  // "Show Hidden Files" off: hide dotfiles from the listing
+  const appSettings = useAppSettings();
+  const queryFiles = useMemo(() => {
+    const list = queryFilesRaw ?? EMPTY_FILES;
+    if (appSettings.showHiddenFiles) return list;
+    return list.filter((f) => !f.name.startsWith('.'));
+  }, [queryFilesRaw, EMPTY_FILES, appSettings.showHiddenFiles]);
 
   // Fallback base path for collection scanning (memoized to avoid re-renders)
   const collectionFallbackPath = useMemo(() => {
@@ -286,18 +273,10 @@ const EditorGroupPane = ({
 
   // Auto-calculate folder sizes if the setting is enabled
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
-      if (saved) {
-        const settings = JSON.parse(saved);
-        if (settings.autoCalculateFolderSizes && files.some((f) => f.is_dir)) {
-          calculateMissingSizes();
-        }
-      }
-    } catch {
-      /* ignore localStorage/parse errors */
+    if (appSettings.autoCalculateFolderSizes && files.some((f) => f.is_dir)) {
+      calculateMissingSizes();
     }
-  }, [files, calculateMissingSizes]);
+  }, [files, calculateMissingSizes, appSettings.autoCalculateFolderSizes]);
 
   // Listen for files-changed events (from drag-drop operations) to refetch
   useEffect(() => {
@@ -518,17 +497,6 @@ const EditorGroupPane = ({
       );
     }
 
-    if (
-      activeTab?.type === 'gdrive-manager' ||
-      (activeTab?.type === 'gdrive' && activeTab.gdriveData)
-    ) {
-      return (
-        <div className="text-xp-text-muted flex flex-1 items-center justify-center overflow-auto text-sm">
-          Install the Google Drive extension
-        </div>
-      );
-    }
-
     if (activeTab?.type === 'comparison' && activeTab.comparisonData) {
       return (
         <FileComparisonPage
@@ -536,23 +504,6 @@ const EditorGroupPane = ({
           file2Path={activeTab.comparisonData.file2Path}
           onError={(error: string) => onError('Comparison Error', error)}
         />
-      );
-    }
-
-    // Chat file view
-    if (activeTab?.path?.endsWith('.chat')) {
-      return (
-        <div className="flex-1 overflow-auto">
-          <React.Suspense
-            fallback={
-              <div className="text-xp-text-muted flex h-full items-center justify-center">
-                Loading chat...
-              </div>
-            }
-          >
-            <ChatFileView filePath={activeTab.path} />
-          </React.Suspense>
-        </div>
       );
     }
 
@@ -571,7 +522,7 @@ const EditorGroupPane = ({
           <React.Suspense
             fallback={
               <div className="text-xp-text-muted flex h-full items-center justify-center">
-                Loading editor...
+                {i18n.t('splitView.loadingEditor')}
               </div>
             }
           >
@@ -624,7 +575,6 @@ const EditorGroupPane = ({
   const isDroppablePath =
     !isEditorTab &&
     !currentPath.startsWith('splorer://') &&
-    !currentPath.startsWith('gdrive://') &&
     !currentPath.startsWith('collection://');
 
   // Only show PaneTabBar when there are multiple tabs or multiple panes

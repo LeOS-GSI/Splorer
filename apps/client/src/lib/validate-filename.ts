@@ -1,3 +1,5 @@
+import i18n from '@/i18n';
+
 /**
  * Inline file rename validation helper.
  *
@@ -63,7 +65,7 @@ export const validateFileName = (
 
   // 1. Empty name
   if (trimmed.length === 0) {
-    return { valid: false, warning: false, message: 'Name cannot be empty' };
+    return { valid: false, warning: false, message: i18n.t('validation.nameEmpty') };
   }
 
   // 2. Invalid characters
@@ -71,7 +73,7 @@ export const validateFileName = (
     return {
       valid: false,
       warning: false,
-      message: `Name contains invalid characters: ${INVALID_CHARS_DISPLAY}`,
+      message: i18n.t('validation.invalidChars', { chars: INVALID_CHARS_DISPLAY }),
     };
   }
 
@@ -80,7 +82,7 @@ export const validateFileName = (
     return {
       valid: false,
       warning: false,
-      message: 'Name cannot end with a dot or space',
+      message: i18n.t('validation.nameTrailing'),
     };
   }
 
@@ -91,7 +93,7 @@ export const validateFileName = (
     return {
       valid: false,
       warning: false,
-      message: `"${basePart}" is a reserved system name`,
+      message: i18n.t('validation.reserved', { name: basePart }),
     };
   }
 
@@ -100,7 +102,7 @@ export const validateFileName = (
     return {
       valid: false,
       warning: false,
-      message: `Name is too long (${trimmed.length}/255 characters)`,
+      message: i18n.t('validation.tooLong', { length: trimmed.length }),
     };
   }
 
@@ -113,7 +115,7 @@ export const validateFileName = (
       return {
         valid: false,
         warning: true,
-        message: `"${conflict}" already exists in this folder`,
+        message: i18n.t('validation.exists', { name: conflict }),
       };
     }
   }

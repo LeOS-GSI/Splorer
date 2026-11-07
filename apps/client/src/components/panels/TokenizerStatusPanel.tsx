@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -5,12 +6,9 @@ import {
   type TokenIndex,
   type TokenizerSettings,
   type SearchResult,
-  type AIIndexStatus,
 } from '@/lib/tauri-api';
-import { AgentService } from '@/lib/agent-service';
 import { useToast } from '@/hooks/use-toast';
 import { TOKENIZER_PANEL_REFRESH_MS } from '@/lib/constants';
-import { STORAGE_KEYS } from '@/lib/storage-keys';
 
 const TokenizerStatusPanel = () => {
   const { t } = useTranslation();
@@ -21,22 +19,7 @@ const TokenizerStatusPanel = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [aiStatus, setAiStatus] = useState<AIIndexStatus | null>(null);
-  const [aiProvider, setAiProvider] = useState<'ollama' | 'claude' | 'openai'>('ollama');
   const { toast } = useToast();
-
-  /** Check whether an API key is configured (keys are stored in the backend keychain). */
-  const hasApiKey = async (provider: 'claude' | 'openai'): Promise<boolean> => {
-    if (provider === 'claude') {
-      try {
-        const s = await AgentService.getSettings();
-        return s.has_api_key;
-      } catch {
-        return false;
-      }
-    }
-    return Boolean(localStorage.getItem(STORAGE_KEYS.OPENAI_KEY));
-  };
 
   const loadStats = async () => {
     try {
@@ -48,14 +31,6 @@ const TokenizerStatusPanel = () => {
       setStats(tokenizerStats);
       setSettings(tokenizerSettings);
       setIsIndexing(indexingStatus);
-
-      // Try loading AI index status (may fail if Ollama isn't running)
-      try {
-        const aiIndexStatus = await TauriAPI.getAIIndexStatus();
-        setAiStatus(aiIndexStatus);
-      } catch {
-        // AI indexing not available
-      }
     } catch (error) {
       console.error('Failed to load tokenizer stats:', error);
     } finally {
@@ -82,52 +57,6 @@ const TokenizerStatusPanel = () => {
     } catch (error) {
       toast({
         title: t('panels.tokenizerStatus.toastRebuildFailedTitle'),
-        description: error instanceof Error ? error.message : String(error),
-        variant: 'destructive',
-      });
-    }
-  };
-
-  const handleTriggerAIIndexing = async () => {
-    if (!settings?.whitelisted_paths?.length) {
-      toast({
-        title: t('panels.tokenizerStatus.toastNoPathsTitle'),
-        description: t('panels.tokenizerStatus.toastNoPathsDesc'),
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    if (aiProvider !== 'ollama') {
-      const keySet = await hasApiKey(aiProvider);
-      if (!keySet) {
-        toast({
-          title: t('panels.tokenizerStatus.toastApiKeyTitle'),
-          description: t('panels.tokenizerStatus.toastApiKeyDesc', {
-            provider: aiProvider === 'claude' ? 'Claude' : 'OpenAI',
-          }),
-          variant: 'destructive',
-        });
-        return;
-      }
-    }
-
-    try {
-      // API keys are resolved from the backend keychain — no need to pass them from the frontend
-      await TauriAPI.triggerAIIndexing(settings.whitelisted_paths, aiProvider, undefined);
-      const providerLabel = (() => {
-        if (aiProvider === 'claude') return 'Claude';
-        if (aiProvider === 'openai') return 'OpenAI';
-        return 'Ollama';
-      })();
-      toast({
-        title: t('panels.tokenizerStatus.toastAIStartedTitle'),
-        description: t('panels.tokenizerStatus.toastAIStartedDesc', { provider: providerLabel }),
-      });
-      setTimeout(loadStats, 2000);
-    } catch (error) {
-      toast({
-        title: t('panels.tokenizerStatus.toastAIFailedTitle'),
         description: error instanceof Error ? error.message : String(error),
         variant: 'destructive',
       });
@@ -165,11 +94,10 @@ const TokenizerStatusPanel = () => {
   // Get content source badge
   const getSourceBadge = (relevanceType: string) => {
     const badges: Record<string, { label: string; color: string }> = {
-      exact: { label: 'Exact', color: 'bg-xp-green' },
-      semantic: { label: 'Semantic', color: 'bg-indigo-500' },
-      fuzzy: { label: 'Fuzzy', color: 'bg-yellow-500' },
-      metadata: { label: 'Metadata', color: 'bg-teal-500' },
-      ai_description: { label: 'AI', color: 'bg-purple-500' },
+      exact: { label: i18n.t('panels.common.relevanceExact'), color: 'bg-xp-green' },
+      semantic: { label: i18n.t('panels.common.relevanceSemantic'), color: 'bg-indigo-500' },
+      fuzzy: { label: i18n.t('panels.common.relevanceFuzzy'), color: 'bg-yellow-500' },
+      metadata: { label: i18n.t('panels.common.relevanceMetadata'), color: 'bg-teal-500' },
     };
     return badges[relevanceType] || { label: relevanceType, color: 'bg-xp-blue' };
   };
@@ -247,102 +175,6 @@ const TokenizerStatusPanel = () => {
             ? t('panels.tokenizerStatus.rebuilding')
             : t('panels.tokenizerStatus.rebuildIndex')}
         </button>
-      </div>
-
-      {/* AI Indexing Section (Phase 3) */}
-      <div className="border-xp-border border-b px-4 py-3">
-        <h4 className="mb-2 text-sm font-medium">{t('panels.tokenizerStatus.aiVisionTitle')}</h4>
-        <div className="space-y-2">
-          {/* Provider Selector */}
-          <div className="flex items-center gap-2">
-            <span className="text-xp-text-muted whitespace-nowrap text-xs">
-              {t('panels.tokenizerStatus.providerLabel')}
-            </span>
-            <div className="flex flex-1 gap-1">
-              {(['ollama', 'claude', 'openai'] as const).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setAiProvider(p)}
-                  className={`flex-1 rounded px-2 py-1 text-xs transition-colors ${
-                    aiProvider === p
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-xp-surface text-xp-text-muted hover:bg-xp-surface-light'
-                  }`}
-                >
-                  {(() => {
-                    if (p === 'ollama') return 'Ollama';
-                    if (p === 'claude') return 'Claude';
-                    return 'OpenAI';
-                  })()}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Hint for online providers */}
-          {aiProvider !== 'ollama' && (
-            <p className="text-xp-text-muted text-[10px]">
-              {t('panels.tokenizerStatus.apiKeyFromSettings')}
-            </p>
-          )}
-
-          {aiStatus ? (
-            <>
-              <div className="flex justify-between text-xs">
-                <span className="text-xp-text-muted">
-                  {t('panels.tokenizerStatus.aiIndexedLabel')}
-                </span>
-                <span className="text-xp-text">{aiStatus.total_indexed}</span>
-              </div>
-              {aiStatus.vision_model && (
-                <div className="flex justify-between text-xs">
-                  <span className="text-xp-text-muted">
-                    {t('panels.tokenizerStatus.visionModelLabel')}
-                  </span>
-                  <span className="text-xp-text ml-2 truncate">{aiStatus.vision_model}</span>
-                </div>
-              )}
-              {aiStatus.is_processing && (
-                <div className="flex items-center gap-2 text-xs text-purple-400">
-                  <div className="h-3 w-3 animate-spin rounded-full border-b border-purple-400" />
-                  <span className="truncate">
-                    {t('panels.tokenizerStatus.processingLabel', {
-                      file: aiStatus.current_file?.split(/[/\\]/).pop() || '...',
-                    })}
-                  </span>
-                </div>
-              )}
-              {aiStatus.queue_length > 0 && (
-                <div className="text-xp-text-muted text-xs">
-                  {t('panels.tokenizerStatus.queueLabel', { count: aiStatus.queue_length })}
-                </div>
-              )}
-              <button
-                onClick={handleTriggerAIIndexing}
-                disabled={aiStatus.is_processing}
-                className="disabled:bg-xp-surface-light disabled:text-xp-text-muted w-full rounded bg-purple-600 px-3 py-1.5 text-xs text-white transition-colors hover:bg-purple-500"
-              >
-                {aiStatus.is_processing
-                  ? t('panels.tokenizerStatus.processing')
-                  : t('panels.tokenizerStatus.indexImagesWithAI')}
-              </button>
-            </>
-          ) : null}
-          {!aiStatus && aiProvider === 'ollama' && (
-            <p className="text-xp-text-muted text-xs">
-              {t('panels.tokenizerStatus.ollamaRequirement')}
-            </p>
-          )}
-          {!aiStatus && aiProvider !== 'ollama' && (
-            <button
-              onClick={handleTriggerAIIndexing}
-              disabled={!settings?.whitelisted_paths?.length}
-              className="disabled:bg-xp-surface-light disabled:text-xp-text-muted w-full rounded bg-purple-600 px-3 py-1.5 text-xs text-white transition-colors hover:bg-purple-500"
-            >
-              {t('panels.tokenizerStatus.indexImagesWithAI')}
-            </button>
-          )}
-        </div>
       </div>
 
       {/* Search */}

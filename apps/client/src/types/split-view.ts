@@ -17,7 +17,7 @@ export interface TabItem {
   id: string;
   name: string;
   path: string;
-  type: 'file' | 'folder' | 'editor' | 'comparison' | 'gdrive' | 'gdrive-manager';
+  type: 'file' | 'folder' | 'editor' | 'comparison';
   isPinned?: boolean;
   /** Per-tab navigation history (saved/restored on tab switch) */
   pathHistory?: string[];
@@ -25,11 +25,6 @@ export interface TabItem {
   comparisonData?: {
     file1Path: string;
     file2Path: string;
-  };
-  gdriveData?: {
-    accountId: string;
-    folderId: string;
-    folderName: string;
   };
 }
 

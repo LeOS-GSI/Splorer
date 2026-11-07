@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { TauriAPI, type BulkRenameResult, type FileEntry } from '@/lib/tauri-api';
@@ -124,7 +125,7 @@ export const useBulkRename = (
       const message = (err as Error).message || String(err);
       setPatternError(message);
       toast({
-        title: 'Preview Failed',
+        title: i18n.t('bulkRename.toast.previewFailed'),
         description: message,
         variant: 'destructive',
       });
@@ -136,8 +137,8 @@ export const useBulkRename = (
   const handleRename = async () => {
     if (!pattern.trim() && !activeTemplateLabel) {
       toast({
-        title: 'Pattern Required',
-        description: 'Please enter a regex pattern or select a template.',
+        title: i18n.t('bulkRename.toast.patternRequired'),
+        description: i18n.t('bulkRename.toast.patternRequiredDesc'),
         variant: 'destructive',
       });
       return;
@@ -154,13 +155,16 @@ export const useBulkRename = (
 
       if (failCount === 0) {
         toast({
-          title: 'Bulk Rename Complete',
-          description: `Successfully renamed ${successCount} file${successCount !== 1 ? 's' : ''}.`,
+          title: i18n.t('bulkRename.toast.complete'),
+          description: i18n.t('bulkRename.toast.completeDesc', { count: successCount }),
         });
       } else {
         toast({
-          title: 'Bulk Rename Partially Complete',
-          description: `${successCount} succeeded, ${failCount} failed.`,
+          title: i18n.t('bulkRename.toast.partial'),
+          description: i18n.t('bulkRename.toast.partialDesc', {
+            ok: successCount,
+            failed: failCount,
+          }),
           variant: 'destructive',
         });
       }
@@ -170,7 +174,7 @@ export const useBulkRename = (
       }
     } catch (err) {
       toast({
-        title: 'Bulk Rename Failed',
+        title: i18n.t('bulkRename.toast.failed'),
         description: (err as Error).message || String(err),
         variant: 'destructive',
       });

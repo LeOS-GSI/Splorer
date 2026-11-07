@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PreviewProps } from '@/lib/preview-factory';
@@ -33,7 +34,8 @@ const TextPreview = ({ file, onError, onLoad }: PreviewProps) => {
         setContent(truncatedContent);
         onLoad?.();
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load text file';
+        const errorMessage =
+          err instanceof Error ? err.message : i18n.t('previews.text.failedToLoad');
         setError(errorMessage);
         onError?.(err instanceof Error ? err : new Error(errorMessage));
       } finally {

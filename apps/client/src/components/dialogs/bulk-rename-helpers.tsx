@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -31,26 +32,42 @@ export interface DiffSpan {
 
 export const PRESETS: Preset[] = [
   {
-    label: 'Add prefix',
-    description: 'Add text before filename',
+    get label() {
+      return i18n.t('bulkRename.presets.addPrefix');
+    },
+    get description() {
+      return i18n.t('bulkRename.presets.addPrefixDesc');
+    },
     pattern: '^(.+)$',
     replacement: 'prefix_$1',
   },
   {
-    label: 'Add suffix',
-    description: 'Add text before extension',
+    get label() {
+      return i18n.t('bulkRename.presets.addSuffix');
+    },
+    get description() {
+      return i18n.t('bulkRename.presets.addSuffixDesc');
+    },
     pattern: '^(.+)(\\.[^.]+)$',
     replacement: '$1_suffix$2',
   },
   {
-    label: 'Replace text',
-    description: 'Find and replace in filename',
+    get label() {
+      return i18n.t('bulkRename.presets.replace');
+    },
+    get description() {
+      return i18n.t('bulkRename.presets.replaceDesc');
+    },
     pattern: 'find',
     replacement: 'replace',
   },
   {
-    label: 'Sequential numbering',
-    description: 'Rename to prefix_001, prefix_002...',
+    get label() {
+      return i18n.t('bulkRename.presets.numbering');
+    },
+    get description() {
+      return i18n.t('bulkRename.presets.numberingDesc');
+    },
     pattern: '^.*$',
     replacement: 'file_{N}',
   },
@@ -93,7 +110,9 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
   {
     label: 'camelCase',
     icon: 'Aa',
-    description: 'Convert filename to camelCase',
+    get description() {
+      return i18n.t('bulkRename.templates.camel');
+    },
     apply: (filename: string) => {
       const dot = filename.lastIndexOf('.');
       if (dot <= 0) return toCamelCase(filename);
@@ -105,7 +124,9 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
   {
     label: 'snake_case',
     icon: 'a_b',
-    description: 'Convert filename to snake_case',
+    get description() {
+      return i18n.t('bulkRename.templates.snake');
+    },
     apply: (filename: string) => {
       const dot = filename.lastIndexOf('.');
       if (dot <= 0) return toSnakeCase(filename);
@@ -117,7 +138,9 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
   {
     label: 'kebab-case',
     icon: 'a-b',
-    description: 'Convert filename to kebab-case',
+    get description() {
+      return i18n.t('bulkRename.templates.kebab');
+    },
     apply: (filename: string) => {
       const dot = filename.lastIndexOf('.');
       if (dot <= 0) return toKebabCase(filename);
@@ -129,7 +152,9 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
   {
     label: 'UPPERCASE',
     icon: 'AB',
-    description: 'Convert filename to UPPERCASE',
+    get description() {
+      return i18n.t('bulkRename.templates.upper');
+    },
     apply: (filename: string) => {
       const dot = filename.lastIndexOf('.');
       if (dot <= 0) return filename.toUpperCase();
@@ -141,7 +166,9 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
   {
     label: 'lowercase',
     icon: 'ab',
-    description: 'Convert filename to lowercase',
+    get description() {
+      return i18n.t('bulkRename.templates.lower');
+    },
     apply: (filename: string) => {
       const dot = filename.lastIndexOf('.');
       if (dot <= 0) return filename.toLowerCase();
@@ -151,9 +178,13 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
     },
   },
   {
-    label: 'Add Date Prefix',
+    get label() {
+      return i18n.t('bulkRename.templates.datePrefix');
+    },
     icon: 'D+',
-    description: 'Prepend YYYY-MM-DD to filename',
+    get description() {
+      return i18n.t('bulkRename.templates.datePrefixDesc');
+    },
     apply: (filename: string) => {
       const today = new Date();
       const y = today.getFullYear();
@@ -163,9 +194,13 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
     },
   },
   {
-    label: 'Remove Spaces',
+    get label() {
+      return i18n.t('bulkRename.templates.removeSpaces');
+    },
     icon: '_',
-    description: 'Replace spaces with underscores',
+    get description() {
+      return i18n.t('bulkRename.templates.removeSpacesDesc');
+    },
     apply: (filename: string) => filename.replace(/\s+/g, '_'),
   },
 ];
@@ -173,18 +208,90 @@ export const PATTERN_TEMPLATES: PatternTemplate[] = [
 // ── Regex Snippets ───────────────────────────────────────────────────────────
 
 export const REGEX_SNIPPETS: RegexSnippet[] = [
-  { label: '(.*)', pattern: '(.*)', description: 'Capture everything' },
-  { label: '(.+)', pattern: '(.+)', description: 'Capture one or more chars' },
-  { label: '\\d+', pattern: '\\d+', description: 'One or more digits' },
-  { label: '\\w+', pattern: '\\w+', description: 'Word characters' },
-  { label: '\\s', pattern: '\\s', description: 'Whitespace character' },
-  { label: '^', pattern: '^', description: 'Start of string' },
-  { label: '$', pattern: '$', description: 'End of string' },
-  { label: '\\.', pattern: '\\.', description: 'Literal dot' },
-  { label: '[^.]+', pattern: '[^.]+', description: 'Non-dot characters' },
-  { label: '(\\.[^.]+)$', pattern: '(\\.[^.]+)$', description: 'File extension' },
-  { label: '(.+?)(?=\\.)', pattern: '(.+?)(?=\\.)', description: 'Name before first dot' },
-  { label: '[A-Z]', pattern: '[A-Z]', description: 'Uppercase letter' },
+  {
+    label: '(.*)',
+    pattern: '(.*)',
+    get description() {
+      return i18n.t('bulkRename.regex.all');
+    },
+  },
+  {
+    label: '(.+)',
+    pattern: '(.+)',
+    get description() {
+      return i18n.t('bulkRename.regex.oneOrMore');
+    },
+  },
+  {
+    label: '\\d+',
+    pattern: '\\d+',
+    get description() {
+      return i18n.t('bulkRename.regex.digits');
+    },
+  },
+  {
+    label: '\\w+',
+    pattern: '\\w+',
+    get description() {
+      return i18n.t('bulkRename.regex.word');
+    },
+  },
+  {
+    label: '\\s',
+    pattern: '\\s',
+    get description() {
+      return i18n.t('bulkRename.regex.whitespace');
+    },
+  },
+  {
+    label: '^',
+    pattern: '^',
+    get description() {
+      return i18n.t('bulkRename.regex.start');
+    },
+  },
+  {
+    label: '$',
+    pattern: '$',
+    get description() {
+      return i18n.t('bulkRename.regex.end');
+    },
+  },
+  {
+    label: '\\.',
+    pattern: '\\.',
+    get description() {
+      return i18n.t('bulkRename.regex.dot');
+    },
+  },
+  {
+    label: '[^.]+',
+    pattern: '[^.]+',
+    get description() {
+      return i18n.t('bulkRename.regex.nonDot');
+    },
+  },
+  {
+    label: '(\\.[^.]+)$',
+    pattern: '(\\.[^.]+)$',
+    get description() {
+      return i18n.t('bulkRename.regex.ext');
+    },
+  },
+  {
+    label: '(.+?)(?=\\.)',
+    pattern: '(.+?)(?=\\.)',
+    get description() {
+      return i18n.t('bulkRename.regex.beforeDot');
+    },
+  },
+  {
+    label: '[A-Z]',
+    pattern: '[A-Z]',
+    get description() {
+      return i18n.t('bulkRename.regex.upper');
+    },
+  },
 ];
 
 // ── Diff Highlighting ────────────────────────────────────────────────────────

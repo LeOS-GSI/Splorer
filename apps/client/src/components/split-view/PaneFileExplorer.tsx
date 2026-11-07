@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import type { FileEntry } from '@/lib/tauri-api';
 import {
@@ -264,6 +265,9 @@ const PaneFileExplorer = React.memo(
             onQuickLook={onQuickLook}
             showSizeBadges={showSizeBadges}
             onRenameFile={onRenameFile}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSortColumn={(field) => (field === sortBy ? toggleSortOrder() : setSortBy(field))}
           />
         </div>
 
@@ -271,9 +275,10 @@ const PaneFileExplorer = React.memo(
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <span>
-                {displayFiles.length} items{colorFilter ? ` (filtered)` : ''}
+                {i18n.t('splitView.itemCount', { count: displayFiles.length })}
+                {colorFilter ? i18n.t('splitView.filteredSuffix') : ''}
               </span>
-              <span>{selectedFiles.size} selected</span>
+              <span>{i18n.t('splitView.selectedCount', { count: selectedFiles.size })}</span>
               {showSizeBadges && <SizeDistributionChart files={displayFiles} />}
               <FolderColorLegend
                 files={sortedFiles}

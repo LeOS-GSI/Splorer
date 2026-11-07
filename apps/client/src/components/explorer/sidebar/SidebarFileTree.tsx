@@ -5,6 +5,7 @@ import { PATH_SEPARATOR, ROOT_PATH } from '@/lib/constants';
 import { getFolderColorHex } from '@/lib/folder-colors';
 import { useWindowEvent } from '@/hooks/use-window-event';
 import { useTranslation } from 'react-i18next';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 
 type SortBy = 'name' | 'dateModified' | 'size' | 'type';
 type SortOrder = 'asc' | 'desc';
@@ -31,6 +32,11 @@ const SidebarFileTree = ({
   const { t } = useTranslation();
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
   const [folderContents, setFolderContents] = useState<Map<string, FileEntry[]>>(new Map());
+  const { showHiddenFiles, showFileExtensions } = useAppSettings();
+  const visible = useCallback(
+    (list: FileEntry[]) => (showHiddenFiles ? list : list.filter((f) => !f.name.startsWith('.'))),
+    [showHiddenFiles],
+  );
   const [loadingFolders, setLoadingFolders] = useState<Set<string>>(new Set());
 
   // Re-render when folder colors change
@@ -125,8 +131,8 @@ const SidebarFileTree = ({
   const sortedRootContents = useMemo(() => {
     const rootContents = folderContents.get(rootPath);
     if (!rootContents) return undefined;
-    return sortFiles(rootContents);
-  }, [folderContents, rootPath, sortFiles]);
+    return visible(sortFiles(rootContents));
+  }, [folderContents, rootPath, sortFiles, visible]);
 
   const toggleFolder = async (folderPath: string, event: React.MouseEvent) => {
     event.stopPropagation();
@@ -165,7 +171,7 @@ const SidebarFileTree = ({
     const isExpanded = expandedFolders.has(file.path);
     const isLoading = loadingFolders.has(file.path);
     const hasChildren = folderContents.has(file.path);
-    const children = folderContents.get(file.path) ?? [];
+    const children = visible(folderContents.get(file.path) ?? []);
 
     return (
       <div key={file.path}>
@@ -174,7 +180,7 @@ const SidebarFileTree = ({
           aria-selected={currentPath === file.path}
           aria-expanded={file.is_dir ? isExpanded : undefined}
           aria-label={`${file.name}${file.is_dir ? ', folder' : ', file'}`}
-          className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs transition-colors ${currentPath === file.path ? 'bg-xp-blue text-xp-blue border-xp-blue border-l-2 bg-opacity-25' : 'text-xp-text'} `}
+          className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs transition-colors ${currentPath === file.path ? 'bg-xp-blue/20 text-xp-blue border-xp-blue border-l-2' : 'text-xp-text'} `}
           style={{ paddingLeft: `${depth * 16 + 8}px` }}
           onClick={() => handleItemClick(file)}
           onContextMenu={(e) => handleItemRightClick(file, e)}
@@ -240,12 +246,14 @@ const SidebarFileTree = ({
                   />
                 ) : null;
               })()}
-            <span className="flex-1 truncate">{file.name}</span>
+            <span className="flex-1 truncate">
+              {getDisplayName(file.name, file.is_dir, showFileExtensions)}
+            </span>
           </div>
         </div>
 
         {file.is_dir && isExpanded && hasChildren && (
-          <div role="group" aria-label={`Contents of ${file.name}`}>
+          <div role="group" aria-label={t('sidebar.contentsOf', { name: file.name })}>
             {children.map((childFile) => renderFileItem(childFile, depth + 1))}
           </div>
         )}
@@ -257,7 +265,7 @@ const SidebarFileTree = ({
     <div
       className="flex-1 overflow-y-auto"
       role="region"
-      aria-label="File tree"
+      aria-label={t('sidebar.fileTreeAria')}
       tabIndex={0}
       data-sidebar-section="fileTree"
     >
@@ -275,15 +283,19 @@ const SidebarFileTree = ({
         {t('sidebar.fileTree')}
       </button>
       {!collapsed && (
-        <div className="space-y-0 px-3 pb-2" role="tree" aria-label="Directory tree">
+        <div
+          className="space-y-0 px-3 pb-2"
+          role="tree"
+          aria-label={t('sidebar.directoryTreeAria')}
+        >
           {sortedRootContents && (
             <div>
               <div
                 role="treeitem"
                 aria-selected={currentPath === rootPath}
                 aria-expanded={expandedFolders.has(rootPath)}
-                aria-label={`Root drive ${rootPath}`}
-                className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs font-medium transition-colors ${currentPath === rootPath ? 'bg-xp-blue text-xp-blue border-xp-blue border-l-2 bg-opacity-25' : 'text-xp-text'} `}
+                aria-label={t('sidebar.rootDrive', { path: rootPath })}
+                className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs font-medium transition-colors ${currentPath === rootPath ? 'bg-xp-blue/20 text-xp-blue border-xp-blue border-l-2' : 'text-xp-text'} `}
                 onClick={() => navigateToPath(rootPath)}
               >
                 <button
@@ -311,7 +323,7 @@ const SidebarFileTree = ({
               </div>
 
               {expandedFolders.has(rootPath) && (
-                <div role="group" aria-label={`Contents of ${rootPath}`}>
+                <div role="group" aria-label={t('sidebar.contentsOf', { name: rootPath })}>
                   {sortedRootContents.map((file) => renderFileItem(file, 1))}
                 </div>
               )}

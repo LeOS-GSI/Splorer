@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useEffect, useRef } from 'react';
 import {
   operationIcon,
@@ -77,8 +78,11 @@ const DetailsPopover = React.memo(
 
         {entries.length > 1 && durationMs > 0 && (
           <div style={{ padding: '4px 12px', fontSize: '10px', color: 'var(--xp-text-muted)' }}>
-            Duration: {durationMs < 1000 ? `${durationMs}ms` : `${(durationMs / 1000).toFixed(1)}s`}{' '}
-            -- {entries.length} file{entries.length !== 1 ? 's' : ''}
+            {i18n.t('panels.undo.duration', {
+              duration:
+                durationMs < 1000 ? `${durationMs} ms` : `${(durationMs / 1000).toFixed(1)} s`,
+              files: i18n.t('search.fileCount', { count: entries.length }),
+            })}
           </div>
         )}
 
@@ -273,7 +277,7 @@ const ContextMenu = React.memo(
               <polyline points="1 4 1 10 7 10" />
               <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
             </svg>
-            Undo This
+            {i18n.t('panels.undo.undoThis')}
           </button>
         )}
         {isUndoable && (
@@ -301,7 +305,7 @@ const ContextMenu = React.memo(
               <line x1="9" y1="9" x2="15" y2="15" />
               <line x1="15" y1="9" x2="9" y2="15" />
             </svg>
-            Undo This + All After
+            {i18n.t('panels.undo.undoThisAndAfter')}
           </button>
         )}
         {!isUndoable && (
@@ -327,7 +331,7 @@ const ContextMenu = React.memo(
               <polyline points="23 4 23 10 17 10" />
               <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
             </svg>
-            Redo This
+            {i18n.t('panels.undo.redoThis')}
           </button>
         )}
         <button
@@ -353,7 +357,7 @@ const ContextMenu = React.memo(
             <path d="M12 16v-4" />
             <path d="M12 8h.01" />
           </svg>
-          Show Details
+          {i18n.t('panels.undo.showDetails')}
         </button>
         <button
           style={menuItemStyle}
@@ -376,7 +380,7 @@ const ContextMenu = React.memo(
           >
             <polygon points="5 3 19 12 5 21 5 3" />
           </svg>
-          Replay on Selection
+          {i18n.t('panels.undo.replay')}
         </button>
 
         <div style={{ height: '1px', backgroundColor: 'var(--xp-border)', margin: '4px 8px' }} />
@@ -403,7 +407,7 @@ const ContextMenu = React.memo(
             <polyline points="3 6 5 6 21 6" />
             <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
           </svg>
-          Clear History Above
+          {i18n.t('panels.undo.clearAbove')}
         </button>
       </div>
     );
@@ -463,7 +467,7 @@ const ReplayConfirmDialog = React.memo(
               {operationIcon(operationType)}
             </span>
             <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--xp-text)' }}>
-              Replay {operationType}
+              {i18n.t('panels.undo.replayOp', { operation: operationType })}
             </span>
           </div>
           <p
@@ -474,7 +478,7 @@ const ReplayConfirmDialog = React.memo(
               lineHeight: '1.5',
             }}
           >
-            This will apply the same operation pattern to your currently selected files:
+            {i18n.t('panels.undo.replayDesc')}
           </p>
           <div
             style={{
@@ -487,10 +491,10 @@ const ReplayConfirmDialog = React.memo(
               border: '1px solid var(--xp-border)',
             }}
           >
-            <strong>Operation:</strong> {operationDescription}
+            <strong>{i18n.t('panels.undo.operation')}</strong> {operationDescription}
             {destPath && (
               <div style={{ marginTop: '4px' }}>
-                <strong>Destination:</strong> {parentDir(destPath)}
+                <strong>{i18n.t('panels.undo.destination')}</strong> {parentDir(destPath)}
               </div>
             )}
           </div>
@@ -508,7 +512,7 @@ const ReplayConfirmDialog = React.memo(
                 cursor: 'pointer',
               }}
             >
-              Cancel
+              {i18n.t('common.cancel')}
             </button>
             <button
               onClick={onConfirm}
@@ -574,7 +578,7 @@ const Toolbar = ({
     <button
       onClick={onUndo}
       disabled={!canUndo || actionInProgress}
-      title="Undo (Ctrl+Z)"
+      title={i18n.t('panels.undo.undoShortcut')}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -609,7 +613,7 @@ const Toolbar = ({
     <button
       onClick={onRedo}
       disabled={!canRedo || actionInProgress}
-      title="Redo (Ctrl+Y)"
+      title={i18n.t('panels.undo.redoShortcut')}
       style={{
         display: 'flex',
         alignItems: 'center',
@@ -651,7 +655,7 @@ const Toolbar = ({
     <button
       onClick={onClear}
       disabled={totalEntries === 0 || actionInProgress}
-      title="Clear all history"
+      title={i18n.t('panels.undo.clearAll')}
       style={{
         display: 'flex',
         alignItems: 'center',

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useMemo } from 'react';
 import { FileEntry } from '@/lib/tauri-api';
 import { COMMON_FILE_TYPES } from './types';
@@ -75,7 +76,7 @@ export const SelectByExtensionDialog = ({
       <div className="bg-xp-surface border-xp-border flex max-h-[80vh] w-[500px] flex-col rounded-lg border shadow-xl">
         {/* Header */}
         <div className="border-xp-border flex items-center justify-between border-b p-4">
-          <h2 className="text-xp-text text-lg font-semibold">Select by File Type</h2>
+          <h2 className="text-xp-text text-lg font-semibold">{i18n.t('advSel.typeTitle')}</h2>
           <button onClick={onClose} className="hover:bg-xp-surface-light rounded p-1">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -93,7 +94,9 @@ export const SelectByExtensionDialog = ({
           {/* Quick Categories */}
           {relevantFileTypes.length > 0 && (
             <div>
-              <h3 className="text-xp-text-muted mb-2 text-sm font-medium">Quick Select</h3>
+              <h3 className="text-xp-text-muted mb-2 text-sm font-medium">
+                {i18n.t('advSel.quick')}
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {relevantFileTypes.map((type) => (
                   <button
@@ -140,14 +143,16 @@ export const SelectByExtensionDialog = ({
 
           {/* Custom Extension */}
           <div>
-            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">Custom Extension</h3>
+            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">
+              {i18n.t('advSel.customExt')}
+            </h3>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={customExtension}
                 onChange={(e) => setCustomExtension(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && addCustomExtension()}
-                placeholder="e.g., txt or .md"
+                placeholder={i18n.t('advSel.extPlaceholder')}
                 className="bg-xp-bg border-xp-border flex-1 rounded-md border px-3 py-2 text-sm"
               />
               <button
@@ -171,7 +176,7 @@ export const SelectByExtensionDialog = ({
                   onClick={clearSelection}
                   className="text-xp-text-muted hover:text-xp-text text-xs"
                 >
-                  Clear all
+                  {i18n.t('advSel.clearAll')}
                 </button>
               </div>
               <div className="flex flex-wrap gap-1">
@@ -209,14 +214,14 @@ export const SelectByExtensionDialog = ({
             onClick={onClose}
             className="text-xp-text-muted hover:text-xp-text px-4 py-2 text-sm"
           >
-            Cancel
+            {i18n.t('common.cancel')}
           </button>
           <button
             onClick={handleSelect}
             disabled={selectedExtensions.size === 0}
             className="bg-xp-primary rounded-md px-4 py-2 text-sm text-white disabled:opacity-50"
           >
-            Select Files
+            {i18n.t('advSel.selectFiles')}
           </button>
         </div>
       </div>

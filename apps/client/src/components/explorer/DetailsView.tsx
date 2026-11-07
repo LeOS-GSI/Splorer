@@ -1,13 +1,79 @@
 import React, { useRef, useMemo, useCallback } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useTranslation } from 'react-i18next';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FileEntry, FolderSizeInfo } from '@/lib/tauri-api';
 import { ViewComponentProps } from './FileGridTypes';
-import type { FileGroup } from '@/lib/utils';
+import type { FileGroup, SortField } from '@/lib/utils';
+import { ArrowUp, ArrowDown } from 'lucide-react';
+import { useDraggable } from '@/hooks/use-draggable';
 
 interface DetailsViewProps extends ViewComponentProps {
   fileGroups?: FileGroup[] | null;
+  sortBy?: SortField;
+  sortOrder?: 'asc' | 'desc';
+  onSortColumn?: (field: SortField) => void;
 }
+
+interface SortHeaderProps {
+  field: SortField;
+  label: string;
+  className: string;
+  justify: 'start' | 'center' | 'end';
+  sortBy?: SortField;
+  sortOrder?: 'asc' | 'desc';
+  onSortColumn?: (field: SortField) => void;
+}
+
+/** Klickbarer Spaltenkopf: Klick sortiert, erneuter Klick dreht die Richtung um. */
+const SortHeader = ({
+  field,
+  label,
+  className,
+  justify,
+  sortBy,
+  sortOrder,
+  onSortColumn,
+}: SortHeaderProps) => {
+  const active = sortBy === field;
+  const justifyClass =
+    justify === 'end' ? 'justify-end' : justify === 'center' ? 'justify-center' : 'justify-start';
+  const arrow = active ? (
+    sortOrder === 'asc' ? (
+      <ArrowUp size={11} />
+    ) : (
+      <ArrowDown size={11} />
+    )
+  ) : null;
+
+  if (!onSortColumn) {
+    return (
+      <div className={className} role="columnheader">
+        {label}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={className}
+      role="columnheader"
+      aria-sort={active ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
+      <button
+        type="button"
+        onClick={() => onSortColumn(field)}
+        className={`hover:text-xp-text flex w-full items-center gap-1 transition-colors ${justifyClass} ${
+          active ? 'text-xp-blue' : ''
+        }`}
+      >
+        {justify === 'end' && arrow}
+        <span>{label}</span>
+        {justify !== 'end' && arrow}
+      </button>
+    </div>
+  );
+};
 
 const DETAILS_ROW_HEIGHT = 40;
 const GROUP_HEADER_HEIGHT = 36;
@@ -20,6 +86,7 @@ type FlatItem =
 interface FileRowProps {
   file: FileEntry;
   selectedFiles: Set<string>;
+  allFiles: FileEntry[];
   getFileIcon: (file: FileEntry) => React.ReactNode;
   formatFileSize: (bytes: number) => string;
   formatFolderSize: (folderSizeInfo: FolderSizeInfo | null, isCalculating?: boolean) => string;
@@ -36,6 +103,7 @@ const FileRow = React.memo(
   ({
     file,
     selectedFiles,
+    allFiles,
     getFileIcon,
     formatFileSize,
     formatFolderSize,
@@ -47,7 +115,10 @@ const FileRow = React.memo(
     isCalculatingSize,
     onCalculateFolderSize,
   }: FileRowProps) => {
+    const { showFileExtensions } = useAppSettings();
     const { t } = useTranslation();
+    // Native drag via tauri-plugin-drag (wie in der Kachel-/Listenansicht)
+    const dragHandlers = useDraggable({ file, selectedFiles, allFiles });
     const handleClick = useCallback(
       (e: React.MouseEvent) => onFileClick(file.path, e),
       [onFileClick, file.path],
@@ -93,7 +164,7 @@ const FileRow = React.memo(
         tabIndex={0}
         data-file-path={file.path}
         data-drop-target={file.is_dir ? file.path : undefined}
-        className={`hover:bg-xp-surface-light grid cursor-pointer grid-cols-12 items-center gap-3 px-3 py-2.5 transition-colors ${
+        className={`hover:bg-xp-surface-light grid cursor-pointer select-none grid-cols-12 items-center gap-3 px-3 py-2.5 transition-colors ${
           selectedFiles.has(file.path)
             ? 'bg-xp-purple/20 border-xp-purple/40 border'
             : 'text-xp-text border border-transparent'
@@ -102,12 +173,15 @@ const FileRow = React.memo(
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenu}
         onKeyDown={handleKeyDown}
+        {...dragHandlers}
       >
         <div className="col-span-1 flex justify-center">
           <span className="text-lg">{getFileIcon(file)}</span>
         </div>
         <div className="col-span-5 min-w-0">
-          <div className="truncate font-medium">{file.name}</div>
+          <div className="truncate font-medium">
+            {getDisplayName(file.name, file.is_dir, showFileExtensions)}
+          </div>
         </div>
         <div className="text-xp-text-muted col-span-2 text-right text-xs">
           {(() => {
@@ -168,7 +242,11 @@ const DetailsView = (props: DetailsViewProps) => {
     isCalculatingSize,
     calculateFolderSize,
     fileGroups,
+    sortBy,
+    sortOrder,
+    onSortColumn,
   } = props;
+  const sortProps = { sortBy, sortOrder, onSortColumn };
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -251,24 +329,41 @@ const DetailsView = (props: DetailsViewProps) => {
           role="columnheader"
           aria-label={t('explorer.details.iconCol')}
         />
-        <div className="col-span-5" role="columnheader">
-          {t('explorer.details.nameCol')}
-        </div>
-        <div className="col-span-2 text-right" role="columnheader">
-          {t('explorer.details.sizeCol')}
-        </div>
-        <div className="col-span-2 text-center" role="columnheader">
-          {t('explorer.details.typeCol')}
-        </div>
-        <div className="col-span-2 text-right" role="columnheader">
-          {t('explorer.details.modifiedCol')}
-        </div>
+        <SortHeader
+          field="name"
+          label={t('explorer.details.nameCol')}
+          className="col-span-5"
+          justify="start"
+          {...sortProps}
+        />
+        <SortHeader
+          field="size"
+          label={t('explorer.details.sizeCol')}
+          className="col-span-2 text-right"
+          justify="end"
+          {...sortProps}
+        />
+        <SortHeader
+          field="type"
+          label={t('explorer.details.typeCol')}
+          className="col-span-2 text-center"
+          justify="center"
+          {...sortProps}
+        />
+        <SortHeader
+          field="dateModified"
+          label={t('explorer.details.modifiedCol')}
+          className="col-span-2 text-right"
+          justify="end"
+          {...sortProps}
+        />
       </div>
     </div>
   );
 
   const stableRowProps = {
     selectedFiles,
+    allFiles: files,
     getFileIcon,
     formatFileSize,
     formatFolderSize,

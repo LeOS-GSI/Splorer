@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef } from 'react';
 import { FileEntry, TauriAPI, FolderSizeInfo } from '@/lib/tauri-api';
 import { getFileIcon } from '@/lib/utils';
@@ -140,7 +141,7 @@ const EnhancedFilePreview: React.FC<{
       } catch (err) {
         if (!cancelled) {
           console.error('Failed to load preview component:', err);
-          setError(err instanceof Error ? err.message : 'Failed to load preview');
+          setError(err instanceof Error ? err.message : i18n.t('panels.preview.failedToLoad'));
         }
       } finally {
         if (!cancelled) {
@@ -173,7 +174,9 @@ const EnhancedFilePreview: React.FC<{
   if (error) {
     return (
       <div className="mt-4">
-        <h4 className="text-xp-text mb-2 text-xs font-semibold">Preview Error</h4>
+        <h4 className="text-xp-text mb-2 text-xs font-semibold">
+          {i18n.t('panels.preview.error')}
+        </h4>
         <div
           className="bg-xp-surface border-xp-border text-xp-text-secondary rounded border p-4 text-center"
           role="alert"
@@ -190,7 +193,7 @@ const EnhancedFilePreview: React.FC<{
               clipRule="evenodd"
             />
           </svg>
-          <p className="text-xs">Preview failed</p>
+          <p className="text-xs">{i18n.t('panels.preview.failed')}</p>
           <p className="mt-1 text-xs opacity-70">{error}</p>
         </div>
       </div>
@@ -211,13 +214,15 @@ const EnhancedFilePreview: React.FC<{
     <div className="flex h-full items-center justify-center">
       <div className="text-center">
         <div className="mb-4 text-4xl">{getFileIcon(file)}</div>
-        <p className="text-xp-text-secondary mb-2 text-sm">No preview available</p>
+        <p className="text-xp-text-secondary mb-2 text-sm">{i18n.t('panels.preview.noPreview')}</p>
         <p className="text-xp-text-secondary text-xs">
           {file.size > 50 * 1024 * 1024
             ? 'File is too large for preview'
             : 'Preview not supported for this file type'}
         </p>
-        <p className="text-xp-text-secondary mt-1 text-xs">Double-click to open</p>
+        <p className="text-xp-text-secondary mt-1 text-xs">
+          {i18n.t('panels.preview.doubleClickOpen')}
+        </p>
       </div>
     </div>
   );
@@ -237,24 +242,28 @@ const FolderDetails: React.FC<{
     <div className="flex h-full flex-col items-center justify-center">
       <div className="bg-xp-surface border-xp-border max-w-sm rounded border p-6 text-center">
         <div className="mb-4 text-4xl">{getFileIcon(file)}</div>
-        <h4 className="text-xp-text mb-4 text-sm font-medium">Folder Contents</h4>
+        <h4 className="text-xp-text mb-4 text-sm font-medium">
+          {i18n.t('panels.preview.folderContents')}
+        </h4>
         <div className="space-y-3 text-sm">
           {folderSize && (
             <>
               <div className="flex justify-between">
-                <span className="text-xp-text-secondary">Total Size:</span>
+                <span className="text-xp-text-secondary">{i18n.t('panels.preview.totalSize')}</span>
                 <span>{formatFileSize(folderSize.total_size)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xp-text-secondary">Files:</span>
+                <span className="text-xp-text-secondary">{i18n.t('panels.preview.files')}</span>
                 <span>{folderSize.file_count}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xp-text-secondary">Folders:</span>
+                <span className="text-xp-text-secondary">{i18n.t('panels.preview.folders')}</span>
                 <span>{folderSize.dir_count}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-xp-text-secondary">Total Items:</span>
+                <span className="text-xp-text-secondary">
+                  {i18n.t('panels.preview.totalItems')}
+                </span>
                 <span>{folderSize.file_count + folderSize.dir_count}</span>
               </div>
             </>
@@ -277,13 +286,13 @@ const FolderDetails: React.FC<{
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
-                Calculating size...
+                {i18n.t('panels.preview.calculating')}
               </div>
             </div>
           )}
           {!folderSize && !calculating && (
             <div className="text-xp-text-secondary py-2 text-center text-xs">
-              Click to calculate folder size
+              {i18n.t('panels.preview.clickCalculate')}
             </div>
           )}
         </div>
@@ -378,7 +387,7 @@ const PreviewPanel = ({
       <div
         className="text-xp-text-secondary flex h-full items-center justify-center text-center"
         role="region"
-        aria-label="No file selected for preview"
+        aria-label={i18n.t('panels.preview.noFileSelected')}
       >
         <div>
           <svg
@@ -393,7 +402,7 @@ const PreviewPanel = ({
               clipRule="evenodd"
             />
           </svg>
-          <p>Select a file to preview</p>
+          <p>{i18n.t('panels.preview.selectFile')}</p>
         </div>
       </div>
     );
@@ -408,7 +417,7 @@ const PreviewPanel = ({
     <div
       className="flex h-full flex-col"
       role="region"
-      aria-label={`Preview of ${selectedFile.name}`}
+      aria-label={i18n.t('panels.preview.previewOf', { name: selectedFile.name })}
     >
       {/* Main Preview Area - Takes most of the space */}
       <div
@@ -454,7 +463,9 @@ const PreviewPanel = ({
           onClick={() => setShowProperties(!showProperties)}
           className="hover:bg-xp-surface-light flex w-full items-center justify-between px-3 py-2 text-left transition-colors"
           aria-expanded={showProperties}
-          aria-label={`${showProperties ? 'Hide' : 'Show'} file properties`}
+          aria-label={
+            showProperties ? i18n.t('panels.preview.hideProps') : i18n.t('panels.preview.showProps')
+          }
         >
           <div className="flex items-center">
             <div className="mr-2 text-lg">{getFileIcon(selectedFile)}</div>
@@ -485,37 +496,43 @@ const PreviewPanel = ({
           <div className="px-3 pb-3">
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-xp-text-secondary">Type:</span>
+                <span className="text-xp-text-secondary">{i18n.t('panels.common.typeLabel')}</span>
                 <span>{selectedFile.is_dir ? 'Folder' : 'File'}</span>
               </div>
 
               {!selectedFile.is_dir && (
                 <div className="flex justify-between">
-                  <span className="text-xp-text-secondary">Size:</span>
+                  <span className="text-xp-text-secondary">
+                    {i18n.t('panels.common.sizeLabel')}
+                  </span>
                   <span>{formatFileSize(selectedFile.size)}</span>
                 </div>
               )}
 
               <div className="flex justify-between">
-                <span className="text-xp-text-secondary">Modified:</span>
+                <span className="text-xp-text-secondary">
+                  {i18n.t('panels.common.modifiedLabel')}
+                </span>
                 <span>{formatDate(selectedFile.modified)}</span>
               </div>
 
               {selectedFile.mime_type && (
                 <div className="flex justify-between">
-                  <span className="text-xp-text-secondary">MIME Type:</span>
+                  <span className="text-xp-text-secondary">
+                    {i18n.t('panels.preview.mimeType')}
+                  </span>
                   <span className="break-all">{selectedFile.mime_type}</span>
                 </div>
               )}
 
               <div className="flex justify-between">
-                <span className="text-xp-text-secondary">Category:</span>
+                <span className="text-xp-text-secondary">{i18n.t('panels.preview.category')}</span>
                 <span className="capitalize">{category}</span>
               </div>
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-xp-text-secondary">Path:</span>
+                  <span className="text-xp-text-secondary">{i18n.t('panels.preview.path')}</span>
                   <button
                     onClick={handleCopyPath}
                     className={`border-xp-border rounded border px-2 py-1 text-xs transition-colors ${
@@ -523,7 +540,7 @@ const PreviewPanel = ({
                         ? 'bg-xp-green border-xp-border text-xp-green bg-opacity-20'
                         : 'bg-xp-bg hover:bg-xp-surface-light'
                     }`}
-                    title="Copy path to clipboard"
+                    title={i18n.t('panels.preview.copyPath')}
                     aria-label={
                       copyFeedback ? 'Path copied to clipboard' : 'Copy file path to clipboard'
                     }

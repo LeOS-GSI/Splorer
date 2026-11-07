@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import './i18n';
+import { runLegacyCleanup } from './lib/legacy-cleanup';
+import { installDocumentSettings } from './lib/app-settings';
 import App from './App';
 import './index.css';
 
@@ -26,5 +28,11 @@ window.addEventListener('xplorer:extension-toast', ((e: CustomEvent) => {
 window.addEventListener('unhandledrejection', (event) => {
   console.error('[Unhandled Promise Rejection]', event.reason);
 });
+
+// Remove leftovers of removed features (AI, Google Drive, marketplace, sync)
+runLegacyCleanup();
+
+// Apply accessibility / animation settings at startup and keep them in sync
+installDocumentSettings();
 
 createRoot(document.getElementById('root')!).render(<App />);

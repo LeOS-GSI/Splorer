@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback } from 'react';
 import { getHistory, clearHistory, type ClipboardEntry } from '@/hooks/use-clipboard-history';
 import { useWindowEvent } from '@/hooks/use-window-event';
@@ -165,8 +166,8 @@ const ClipboardHistoryPanel = ({ onPaste }: ClipboardHistoryPanelProps) => {
         }}
       >
         <ClipboardIcon />
-        <span>No clipboard history</span>
-        <span style={{ fontSize: 11, opacity: 0.7 }}>Copy or cut files to see them here</span>
+        <span>{i18n.t('panels.clipboard.empty')}</span>
+        <span style={{ fontSize: 11, opacity: 0.7 }}>{i18n.t('panels.clipboard.emptyHint')}</span>
       </div>
     );
   }
@@ -197,7 +198,7 @@ const ClipboardHistoryPanel = ({ onPaste }: ClipboardHistoryPanelProps) => {
         </span>
         <button
           onClick={handleClear}
-          title="Clear clipboard history"
+          title={i18n.t('panels.clipboard.clear')}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -311,7 +312,7 @@ const ClipboardHistoryPanel = ({ onPaste }: ClipboardHistoryPanelProps) => {
             {/* Paste button */}
             <button
               onClick={() => onPaste(entry)}
-              title="Paste these files to current directory"
+              title={i18n.t('panels.clipboard.pasteHereTitle')}
               style={{
                 flexShrink: 0,
                 padding: '3px 10px',
@@ -333,7 +334,7 @@ const ClipboardHistoryPanel = ({ onPaste }: ClipboardHistoryPanelProps) => {
                 (e.target as HTMLElement).style.backgroundColor = 'rgba(122, 162, 247, 0.1)';
               }}
             >
-              Paste Here
+              {i18n.t('panels.clipboard.pasteHere')}
             </button>
           </div>
         ))}

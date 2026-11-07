@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useMemo } from 'react';
 import { FileEntry } from '@/lib/tauri-api';
 import { DATE_RANGE_PRESETS } from './types';
@@ -71,7 +72,7 @@ export const SelectByDateDialog = ({
       <div className="bg-xp-surface border-xp-border flex max-h-[80vh] w-[450px] flex-col rounded-lg border shadow-xl">
         {/* Header */}
         <div className="border-xp-border flex items-center justify-between border-b p-4">
-          <h2 className="text-xp-text text-lg font-semibold">Select by Date</h2>
+          <h2 className="text-xp-text text-lg font-semibold">{i18n.t('advSel.dateTitle')}</h2>
           <button onClick={onClose} className="hover:bg-xp-surface-light rounded p-1">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -89,18 +90,20 @@ export const SelectByDateDialog = ({
           {/* File Date Info */}
           <div className="bg-xp-bg rounded-md p-3 text-sm">
             <div className="text-xp-text-muted flex justify-between">
-              <span>Oldest file:</span>
+              <span>{i18n.t('advSel.oldest')}</span>
               <span>{dateRange.oldest.toLocaleDateString()}</span>
             </div>
             <div className="text-xp-text-muted flex justify-between">
-              <span>Newest file:</span>
+              <span>{i18n.t('advSel.newest')}</span>
               <span>{dateRange.newest.toLocaleDateString()}</span>
             </div>
           </div>
 
           {/* Presets */}
           <div>
-            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">Quick Select</h3>
+            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">
+              {i18n.t('advSel.quick')}
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               {DATE_RANGE_PRESETS.map((preset) => (
                 <button
@@ -120,7 +123,9 @@ export const SelectByDateDialog = ({
 
           {/* Custom Date Range */}
           <div>
-            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">Custom Range</h3>
+            <h3 className="text-xp-text-muted mb-2 text-sm font-medium">
+              {i18n.t('advSel.custom')}
+            </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xp-text-muted mb-1 block text-xs">From</label>
@@ -154,7 +159,7 @@ export const SelectByDateDialog = ({
           {/* Preview Count */}
           {dateFrom && dateTo && (
             <div className="bg-xp-primary/10 border-xp-primary/30 flex items-center justify-between rounded-md border p-3">
-              <span className="text-xp-text text-sm">Files matching:</span>
+              <span className="text-xp-text text-sm">{i18n.t('advSel.matching')}</span>
               <span className="text-xp-primary text-lg font-semibold">{matchCount}</span>
             </div>
           )}
@@ -170,14 +175,14 @@ export const SelectByDateDialog = ({
               onClick={onClose}
               className="text-xp-text-muted hover:text-xp-text px-4 py-2 text-sm"
             >
-              Cancel
+              {i18n.t('common.cancel')}
             </button>
             <button
               onClick={handleSelect}
               disabled={!dateFrom || !dateTo || matchCount === 0}
               className="bg-xp-primary rounded-md px-4 py-2 text-sm text-white disabled:opacity-50"
             >
-              Select {matchCount} Files
+              {i18n.t('advSel.selectN', { count: matchCount })}
             </button>
           </div>
         </div>

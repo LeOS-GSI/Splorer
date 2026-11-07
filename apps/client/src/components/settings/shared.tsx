@@ -1,5 +1,5 @@
+import i18n from '@/i18n';
 import { useState, useEffect } from 'react';
-import { STORAGE_KEYS } from '@/lib/storage-keys';
 import { Monitor, FolderOpen, AlertTriangle } from 'lucide-react';
 import {
   Select,
@@ -174,18 +174,19 @@ export const SystemIntegrationSettings = () => {
   }, [isWindows]);
 
   if (!isWindows) return null;
-  if (loading) return <div className="text-xp-text-muted px-4 py-2 text-sm">Loading...</div>;
+  if (loading)
+    return <div className="text-xp-text-muted px-4 py-2 text-sm">{i18n.t('common.loading')}</div>;
 
   return (
     <>
       <SettingRow
         icon={Monitor}
-        label="Default File Explorer"
-        description="Double-clicking folders opens Splorer instead of Windows Explorer"
+        label={i18n.t('settings.general.defaultExplorer')}
+        description={i18n.t('settings.general.defaultExplorerDesc')}
       >
         <Toggle
           id="defaultExplorer"
-          label="Default Explorer"
+          label={i18n.t('settings.general.defaultExplorerToggle')}
           checked={isDefaultHandler}
           onChange={async (v) => {
             try {
@@ -202,12 +203,12 @@ export const SystemIntegrationSettings = () => {
       </SettingRow>
       <SettingRow
         icon={FolderOpen}
-        label="Folder Context Menu"
-        description="Add 'Open with Splorer' to folder right-click menu"
+        label={i18n.t('settings.general.folderContextMenu')}
+        description={i18n.t('settings.general.folderContextMenuDesc')}
       >
         <Toggle
           id="contextMenu"
-          label="Context Menu"
+          label={i18n.t('settings.general.contextMenuToggle')}
           checked={contextMenuInstalled}
           onChange={async (v) => {
             try {
@@ -230,7 +231,7 @@ export const SystemIntegrationSettings = () => {
       {isDefaultHandler && (
         <div className="flex items-center gap-2 px-4 py-2 text-xs text-amber-400">
           <AlertTriangle size={12} />
-          Folders will open in Splorer. Disable to restore Windows Explorer.
+          {i18n.t('settings.general.explorerWarning')}
         </div>
       )}
     </>
@@ -239,58 +240,4 @@ export const SystemIntegrationSettings = () => {
 
 // ── Shared types ──────────────────────────────────────────────────
 
-export interface AppSettings {
-  theme: string;
-  language: string;
-  showHiddenFiles: boolean;
-  enableMarkdownPreview: boolean;
-  defaultView: string;
-  enableAnimations: boolean;
-  showFileExtensions: boolean;
-  enableNotifications: boolean;
-  autoSave: boolean;
-  fontSize: string;
-  sidebarWidth: string;
-  reducedMotion: boolean;
-  enhancedFocus: boolean;
-  highContrast: boolean;
-  autoCalculateFolderSizes: boolean;
-  rememberViewPerFolder: boolean;
-  aiSearchProvider: string;
-  aiSearchModel: string;
-  aiSearchApiKey: string;
-  aiServiceMode: 'cloud' | 'custom';
-  aiCloudModel: string;
-  aiCustomProvider: string;
-  aiCustomModel: string;
-  aiCustomApiKey: string;
-}
-
-export const DEFAULT_SETTINGS: AppSettings = {
-  theme: 'glass',
-  language: '',
-  showHiddenFiles: false,
-  enableMarkdownPreview: true,
-  defaultView: 'grid',
-  enableAnimations: true,
-  showFileExtensions: true,
-  enableNotifications: true,
-  autoSave: true,
-  fontSize: 'medium',
-  sidebarWidth: 'medium',
-  reducedMotion: false,
-  enhancedFocus: false,
-  highContrast: false,
-  autoCalculateFolderSizes: false,
-  rememberViewPerFolder: false,
-  aiSearchProvider: 'auto',
-  aiSearchModel: '',
-  aiSearchApiKey: '',
-  aiServiceMode: 'cloud',
-  aiCloudModel: 'anthropic/claude-sonnet-4',
-  aiCustomProvider: 'ollama',
-  aiCustomModel: '',
-  aiCustomApiKey: '',
-};
-
-export const SETTINGS_KEY = STORAGE_KEYS.SETTINGS;
+export { DEFAULT_SETTINGS, SETTINGS_KEY, type AppSettings } from '@/lib/app-settings';

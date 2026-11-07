@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 import {
   PRESETS,
@@ -54,7 +55,7 @@ const RenamePatternForm = ({
           letterSpacing: '0.05em',
         }}
       >
-        Pattern Templates
+        {i18n.t('bulkRename.form.templates')}
       </label>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         {PATTERN_TEMPLATES.map((tmpl) => (
@@ -115,7 +116,7 @@ const RenamePatternForm = ({
           letterSpacing: '0.05em',
         }}
       >
-        Quick Presets
+        {i18n.t('bulkRename.form.presets')}
       </label>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
         {PRESETS.map((preset) => (
@@ -168,7 +169,7 @@ const RenamePatternForm = ({
           letterSpacing: '0.05em',
         }}
       >
-        Pattern (Regex)
+        {i18n.t('bulkRename.form.pattern')}
       </label>
       <input
         ref={patternInputRef as React.RefObject<HTMLInputElement>}
@@ -195,13 +196,13 @@ const RenamePatternForm = ({
         onBlur={(e) => {
           if (!patternError) e.currentTarget.style.borderColor = 'var(--xp-border)';
         }}
-        placeholder="e.g. ^(.+)\.txt$ or find_this"
+        placeholder={i18n.t('bulkRename.form.patternPlaceholder')}
       />
       {patternError && (
         <p style={{ fontSize: 11, color: 'var(--xp-red)', marginTop: 4 }}>{patternError}</p>
       )}
       <p style={{ fontSize: 11, color: 'var(--xp-text-muted)', marginTop: 4 }}>
-        Applied to the filename only (not the full path). Uses regex syntax.
+        {i18n.t('bulkRename.form.patternHint')}
       </p>
     </div>
 
@@ -244,7 +245,7 @@ const RenamePatternForm = ({
         onBlur={(e) => {
           e.currentTarget.style.borderColor = 'var(--xp-border)';
         }}
-        placeholder="e.g. $1_renamed.txt or new_name"
+        placeholder={i18n.t('bulkRename.form.replacementPlaceholder')}
       />
       <p style={{ fontSize: 11, color: 'var(--xp-text-muted)', marginTop: 4 }}>
         Supports{' '}
@@ -328,7 +329,7 @@ const RenamePatternForm = ({
         }}
       >
         <ChevronIcon open={regexHelperOpen} />
-        Regex Quick Reference
+        {i18n.t('bulkRename.form.regexRef')}
       </button>
       {regexHelperOpen && (
         <div
@@ -346,7 +347,7 @@ const RenamePatternForm = ({
               marginBottom: 8,
             }}
           >
-            Click a pattern to insert it into the search field.
+            {i18n.t('bulkRename.form.regexRefHint')}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
             {REGEX_SNIPPETS.map((snippet) => (

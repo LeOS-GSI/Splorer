@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useCallback } from 'react';
 import { FileEntry } from '@/lib/tauri-api';
 import { useToast } from '@/hooks/use-toast';
@@ -30,8 +31,8 @@ export const useFileComparison = () => {
       }));
 
       toast({
-        title: 'File marked for comparison',
-        description: `${file.name} is ready to compare`,
+        title: i18n.t('comparison.marked'),
+        description: i18n.t('comparison.markedDesc', { name: file.name }),
       });
     },
     [toast],
@@ -101,7 +102,7 @@ export const useFileComparison = () => {
   const handleComparisonError = useCallback(
     (error: string) => {
       toast({
-        title: 'Comparison Error',
+        title: i18n.t('comparison.error'),
         description: error,
         variant: 'destructive',
       });

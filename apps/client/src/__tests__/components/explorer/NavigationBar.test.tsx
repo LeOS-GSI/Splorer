@@ -85,11 +85,6 @@ describe('NavigationBar', () => {
       render(<NavigationBar {...defaultProps} currentPath="splorer://trash" />);
       expect(screen.getByText('trash')).toBeInTheDocument();
     });
-
-    it('displays "Google Drive" label for splorer://gdrive-manager', () => {
-      render(<NavigationBar {...defaultProps} currentPath="splorer://gdrive-manager" />);
-      expect(screen.getByText('googleDrive')).toBeInTheDocument();
-    });
   });
 
   describe('Breadcrumb navigation', () => {

@@ -25,10 +25,6 @@ apps/src-tauri/gen/
 *.tsbuildinfo
 .next
 
-# One-off publish scripts (contain local paths)
-apps/web/_bulk-publish.mjs
-apps/web/_publish-update.mjs
-
 # IDE
 .vscode/*
 !.vscode/settings.json

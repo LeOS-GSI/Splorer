@@ -127,7 +127,6 @@ export default [
       'node_modules/**',
       'dist/**',
       'target/**',
-      'apps/web/**',
       'packages/extensions/**',
       'packages/extension-sdk/**',
       'packages/create-extension/**',

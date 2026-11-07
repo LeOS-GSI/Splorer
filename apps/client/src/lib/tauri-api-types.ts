@@ -93,6 +93,24 @@ export interface Application {
   is_default: boolean;
 }
 
+/** A freedesktop application entry for the "Open With" dialog (Linux). */
+export interface DesktopApp {
+  /** Desktop file ID, e.g. `org.kde.gwenview.desktop` */
+  id: string;
+  name: string;
+  comment?: string | null;
+  /** Icon as data URL */
+  icon?: string | null;
+  isDefault: boolean;
+  /** App declares support for the file's MIME type */
+  recommended: boolean;
+}
+
+export interface OpenWithApps {
+  mimeType: string;
+  apps: DesktopApp[];
+}
+
 export interface FileAssociation {
   extension: string;
   mime_type?: string;
@@ -183,133 +201,6 @@ export interface FileSystemNode {
   content?: string; // Only for files
   children?: FileSystemNode[]; // Only for directories
   error?: string; // If there was an error reading
-}
-
-// ── Agent types ──────────────────────────────────────────────────────────────
-
-export interface AgentProgress {
-  current_path: string;
-  processed_files: number;
-  processed_dirs: number;
-  total_size: number;
-  recursion_depth: number;
-  status: string;
-}
-
-// Claude Agent types — redacted settings (no plaintext keys)
-export interface SafeAgentSettings {
-  enabled: boolean;
-  has_api_key: boolean;
-  has_openai_api_key: boolean;
-  model: string;
-  max_turns: number;
-  auto_approve: boolean;
-  thinking_enabled: boolean;
-  thinking_budget: number;
-}
-
-export interface UpdateAgentSettingsPayload {
-  enabled: boolean;
-  model: string;
-  max_turns: number;
-  auto_approve: boolean;
-  thinking_enabled: boolean;
-  thinking_budget: number;
-}
-
-export interface UpdateAgentApiKeysPayload {
-  api_key?: string;
-  openai_api_key?: string;
-}
-
-export interface AgentPermissions {
-  disabled_tools: string[];
-  auto_approve_tools: string[];
-  allowed_paths: string[];
-  blocked_paths: string[];
-  custom_blocked_commands: string[];
-  block_internet: boolean;
-}
-
-export interface MemoryEntry {
-  key: string;
-  value: string;
-  category: 'preference' | 'knowledge' | 'context';
-  created_at: number;
-  updated_at: number;
-  access_count: number;
-}
-
-export interface PlanStep {
-  action: string;
-  description: string;
-  params: Record<string, unknown>;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
-  result?: string;
-  error?: string;
-}
-
-export interface OperationPlan {
-  id: string;
-  title: string;
-  description?: string;
-  steps: PlanStep[];
-  status: 'pending_approval' | 'approved' | 'executing' | 'completed' | 'failed' | 'cancelled';
-  created_at: number;
-  completed_at?: number;
-  completed_steps: number;
-  total_steps: number;
-}
-
-// ── Agent Session types ──────────────────────────────────────────────────────
-
-export type AgentSessionStatus =
-  | 'idle'
-  | 'thinking'
-  | 'executing'
-  | 'waiting_approval'
-  | 'done'
-  | 'error'
-  | 'cancelled';
-
-export interface AgentScopeConfig {
-  /** "all" | "selected" | "glob" */
-  file_scope: string;
-  /** Glob pattern when file_scope === "glob" */
-  glob_pattern?: string;
-  /** "folder" | "subfolders" | "project" */
-  depth: string;
-  /** "all" | "modified" | "staged" */
-  git_filter: string;
-}
-
-export interface AgentSessionSummary {
-  id: string;
-  name: string;
-  prompt: string;
-  model: string;
-  provider: string;
-  status: AgentSessionStatus;
-  working_directory: string;
-  selected_files: string[];
-  project_context: string | null;
-  scope: AgentScopeConfig | null;
-  created_at: number;
-  updated_at: number;
-  file_changes_count: number;
-  tool_calls_count: number;
-  turns_completed: number;
-  error_message: string | null;
-}
-
-export interface CreateSessionParams {
-  name: string;
-  prompt: string;
-  model: string;
-  working_directory: string;
-  selected_files?: string[];
-  project_context?: string;
-  scope?: AgentScopeConfig;
 }
 
 // ── Bulk rename types ────────────────────────────────────────────────────────
@@ -558,67 +449,6 @@ export interface ExtensionPackageInfo {
   verified?: boolean;
 }
 
-// ── Chat types ───────────────────────────────────────────────────────────────
-
-export interface ChatFileData {
-  version: number;
-  model: string;
-  thinking_enabled: boolean;
-  context: ChatFileContext[];
-  messages: ChatFileMessage[];
-}
-
-export interface ChatFileMessage {
-  role: string;
-  content: string;
-  timestamp: number;
-  model?: string;
-  thinking?: string;
-}
-
-export interface ChatFileContext {
-  path: string;
-  name: string;
-}
-
-export interface ChatFileSummary {
-  message_count: number;
-  last_message_preview: string;
-  model: string;
-  last_updated: number;
-}
-
-// Chat history types
-export interface ChatHistoryMessage {
-  role: string;
-  content: string;
-  timestamp: number;
-}
-
-export interface ChatSession {
-  id: string;
-  title: string;
-  messages: ChatHistoryMessage[];
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ChatSessionSummary {
-  id: string;
-  title: string;
-  message_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-// ── Sync types ───────────────────────────────────────────────────────────────
-
-export interface SyncResult {
-  success: boolean;
-  synced_at: string | null;
-  message: string;
-}
-
 // ── Docker types ─────────────────────────────────────────────────────────────
 
 export interface DockerContainerInfo {
@@ -764,44 +594,6 @@ export interface EnhancedSearchResult {
   results: SearchResult[];
   parsed_query: StructuredQuery;
   total_scanned: number;
-}
-
-// AI Search re-ranking result
-export interface AISearchResult {
-  results: SearchResult[];
-  provider: string;
-  model: string;
-}
-
-// LLM-powered smart search result
-export interface SmartSearchResult {
-  results: SearchResult[];
-  matched_items: string[];
-  explanation: string | null;
-  provider: string;
-  search_terms_used: string[];
-}
-
-// ── AI Index types ───────────────────────────────────────────────────────────
-
-// Phase 3: AI Index types
-export interface AIIndexStatus {
-  enabled: boolean;
-  total_indexed: number;
-  queue_length: number;
-  is_processing: boolean;
-  current_file?: string;
-  vision_model?: string;
-  embedding_model?: string;
-}
-
-export interface AIIndexEntry {
-  path: string;
-  description?: string;
-  extracted_text?: string;
-  tags: string[];
-  model_used: string;
-  indexed_at: number;
 }
 
 // ── Progress types ───────────────────────────────────────────────────────────

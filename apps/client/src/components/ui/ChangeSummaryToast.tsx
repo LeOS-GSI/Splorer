@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { FileChangeSet } from '@/hooks/use-focus-change-tracker';
 
@@ -193,13 +194,19 @@ const ChangeSummaryToast = React.memo(
 
         <div style={subtitleStyle}>
           {changes.added.length > 0 && (
-            <span style={countStyle('#9ece6a')}>+{changes.added.length} new</span>
+            <span style={countStyle('#9ece6a')}>
+              {i18n.t('ui.changes.new', { count: changes.added.length })}
+            </span>
           )}
           {changes.removed.length > 0 && (
-            <span style={countStyle('#f7768e')}>-{changes.removed.length} deleted</span>
+            <span style={countStyle('#f7768e')}>
+              {i18n.t('ui.changes.deleted', { count: changes.removed.length })}
+            </span>
           )}
           {changes.modified.length > 0 && (
-            <span style={countStyle('#e0af68')}>~{changes.modified.length} modified</span>
+            <span style={countStyle('#e0af68')}>
+              {i18n.t('ui.changes.modified', { count: changes.modified.length })}
+            </span>
           )}
         </div>
 

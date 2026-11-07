@@ -19,12 +19,6 @@ const mockAPI = TauriAPI as unknown as Record<string, ReturnType<typeof vi.fn>>;
 
 const setupDefaultMocks = () => {
   mockAPI.getAuditLog = vi.fn().mockResolvedValue({ entries: [] });
-  mockAPI.getAIIndexStatus = vi.fn().mockResolvedValue({
-    enabled: false,
-    total_indexed: 0,
-    queue_length: 0,
-    is_processing: false,
-  });
   mockAPI.getTokenizerStats = vi.fn().mockResolvedValue(null);
   mockAPI.isTokenizerIndexing = vi.fn().mockResolvedValue(false);
   mockAPI.getTrashItems = vi.fn().mockResolvedValue([]);
@@ -131,9 +125,6 @@ describe('usePerformanceStats', () => {
         initialProps: { path: '/test', files: EMPTY_FILES, visible: false },
       });
 
-      expect(result.current.indexingStatus.aiIndexed).toBe(0);
-      expect(result.current.indexingStatus.aiQueueLength).toBe(0);
-      expect(result.current.indexingStatus.isAiProcessing).toBe(false);
       expect(result.current.indexingStatus.tokenTotalFiles).toBe(0);
       expect(result.current.indexingStatus.tokenTotalTokens).toBe(0);
       expect(result.current.indexingStatus.tokenLastUpdated).toBe(0);
@@ -213,30 +204,6 @@ describe('usePerformanceStats', () => {
       });
     });
 
-    it('fetches AI index status', async () => {
-      mockAPI.getAIIndexStatus = vi.fn().mockResolvedValue({
-        enabled: true,
-        total_indexed: 42,
-        queue_length: 5,
-        is_processing: true,
-        current_file: '/test/image.jpg',
-        vision_model: 'llava',
-        embedding_model: 'nomic',
-      });
-
-      const { result } = renderHook(useHookWithProps, {
-        initialProps: { path: '/test', files: EMPTY_FILES, visible: true },
-      });
-
-      await waitFor(() => {
-        expect(result.current.indexingStatus.aiIndexed).toBe(42);
-      });
-
-      expect(result.current.indexingStatus.aiQueueLength).toBe(5);
-      expect(result.current.indexingStatus.isAiProcessing).toBe(true);
-      expect(result.current.indexingStatus.currentAiFile).toBe('/test/image.jpg');
-    });
-
     it('fetches tokenizer stats', async () => {
       mockAPI.getTokenizerStats = vi.fn().mockResolvedValue({
         files: {},
@@ -263,7 +230,6 @@ describe('usePerformanceStats', () => {
 
     it('handles partial API failures gracefully', async () => {
       mockAPI.getAuditLog = vi.fn().mockRejectedValue(new Error('fail'));
-      mockAPI.getAIIndexStatus = vi.fn().mockRejectedValue(new Error('fail'));
       mockAPI.getTokenizerStats = vi.fn().mockResolvedValue(null);
       mockAPI.isTokenizerIndexing = vi.fn().mockResolvedValue(false);
 
@@ -276,7 +242,6 @@ describe('usePerformanceStats', () => {
       });
 
       expect(result.current.recentOps).toEqual([]);
-      expect(result.current.indexingStatus.aiIndexed).toBe(0);
     });
   });
 
@@ -466,7 +431,6 @@ describe('usePerformanceStats', () => {
 
     it('handles all Promise.allSettled rejections gracefully', async () => {
       mockAPI.getAuditLog = vi.fn().mockRejectedValue(new Error('fail'));
-      mockAPI.getAIIndexStatus = vi.fn().mockRejectedValue(new Error('fail'));
       mockAPI.getTokenizerStats = vi.fn().mockRejectedValue(new Error('fail'));
       mockAPI.isTokenizerIndexing = vi.fn().mockRejectedValue(new Error('fail'));
       mockAPI.getTrashItems = vi.fn().mockRejectedValue(new Error('fail'));
@@ -480,7 +444,6 @@ describe('usePerformanceStats', () => {
       });
 
       expect(result.current.recentOps).toEqual([]);
-      expect(result.current.indexingStatus.aiIndexed).toBe(0);
       expect(result.current.indexingStatus.isTokenizerIndexing).toBe(false);
       expect(result.current.suggestions).toEqual([]);
     });

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect } from 'react';
 import { TauriAPI, type TokenIndex } from '@/lib/tauri-api';
 import { TOKENIZER_STATUS_INTERVAL_MS } from '@/lib/constants';
@@ -24,7 +25,10 @@ const TokenizerStatusIndicator = () => {
   if (!stats || !stats.total_files) return null;
 
   return (
-    <div className="text-xp-text-muted flex items-center gap-1 text-xs" title="Search index">
+    <div
+      className="text-xp-text-muted flex items-center gap-1 text-xs"
+      title={i18n.t('ui.searchIndex')}
+    >
       <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
         <path
           fillRule="evenodd"
@@ -32,7 +36,7 @@ const TokenizerStatusIndicator = () => {
           clipRule="evenodd"
         />
       </svg>
-      <span>{stats.total_files.toLocaleString()} indexed</span>
+      <span>{i18n.t('ui.indexedCount', { n: stats.total_files.toLocaleString() })}</span>
     </div>
   );
 };

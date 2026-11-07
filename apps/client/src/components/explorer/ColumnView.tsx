@@ -1,4 +1,6 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FileEntry, TauriAPI } from '@/lib/tauri-api';
 import { ViewComponentProps } from './FileGridTypes';
@@ -30,6 +32,7 @@ const ColumnFileRow = React.memo(
     onDoubleClick: () => void;
     onRightClick: (e: React.MouseEvent) => void;
   }) => {
+    const { showFileExtensions } = useAppSettings();
     return (
       <div
         role="option"
@@ -100,7 +103,7 @@ const ColumnFileRow = React.memo(
             whiteSpace: 'nowrap',
           }}
         >
-          {file.name}
+          {getDisplayName(file.name, file.is_dir, showFileExtensions)}
         </span>
         {file.is_dir && (
           <span
@@ -184,7 +187,7 @@ const VirtualizedColumnPane = ({
               fontSize: '12px',
             }}
           >
-            Empty folder
+            {i18n.t('explorer.emptyFolder')}
           </div>
         )}
       </div>
@@ -393,22 +396,22 @@ const ColumnView = ({
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Size:</span>
+              <span>{i18n.t('explorer.sizeLabel')}</span>
               <span>{formatFileSize(selectedFileForPreview.size)}</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <span>Modified:</span>
+              <span>{i18n.t('explorer.modifiedLabel')}</span>
               <span>{formatDate(selectedFileForPreview.modified)}</span>
             </div>
             {selectedFileForPreview.file_type && (
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Type:</span>
+                <span>{i18n.t('explorer.typeLabel')}</span>
                 <span>{selectedFileForPreview.file_type}</span>
               </div>
             )}
             {getExtension(selectedFileForPreview.name) && (
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Extension:</span>
+                <span>{i18n.t('explorer.extensionLabel')}</span>
                 <span>.{getExtension(selectedFileForPreview.name)}</span>
               </div>
             )}

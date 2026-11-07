@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef } from 'react';
 
 interface PasswordPromptDialogProps {
@@ -127,10 +128,10 @@ export const PasswordPromptDialog = ({
           {connectionName && username && host && (
             <div className="text-xp-text-muted mb-3 text-sm">
               <p>
-                <strong>Connection:</strong> {connectionName}
+                <strong>{i18n.t('dialogs.password.connection')}</strong> {connectionName}
               </p>
               <p>
-                <strong>Server:</strong> {username}@{host}
+                <strong>{i18n.t('dialogs.password.server')}</strong> {username}@{host}
               </p>
             </div>
           )}
@@ -139,7 +140,11 @@ export const PasswordPromptDialog = ({
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4" aria-label="password form">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+          aria-label={i18n.t('dialogs.password.formAria')}
+        >
           <div>
             <label htmlFor="password-input" className="mb-1 block text-sm font-medium">
               Password
@@ -157,7 +162,7 @@ export const PasswordPromptDialog = ({
                   }
                 }}
                 className="bg-xp-bg border-xp-border focus:ring-xp-blue w-full rounded border px-3 py-2 pr-10 text-sm focus:border-transparent focus:outline-none focus:ring-2"
-                placeholder="Enter your password"
+                placeholder={i18n.t('dialogs.password.placeholder')}
                 autoFocus
                 required
                 disabled={isLoading}
@@ -203,7 +208,7 @@ export const PasswordPromptDialog = ({
                 disabled={isLoading}
               />
               <label htmlFor="remember" className="text-xp-text-muted text-sm">
-                Remember password for this session
+                {i18n.t('dialogs.password.remember')}
               </label>
             </div>
           )}
@@ -226,10 +231,11 @@ export const PasswordPromptDialog = ({
                 />
               </svg>
               <div className="text-sm">
-                <p className="font-medium text-yellow-400">Security Notice</p>
+                <p className="font-medium text-yellow-400">
+                  {i18n.t('dialogs.password.securityNotice')}
+                </p>
                 <p className="mt-1 text-xs text-yellow-300">
-                  Passwords are stored securely in memory and are not saved to disk unless you
-                  explicitly save the connection with a password.
+                  {i18n.t('dialogs.password.securityText')}
                 </p>
               </div>
             </div>
@@ -241,9 +247,9 @@ export const PasswordPromptDialog = ({
               onClick={handleClose}
               disabled={isLoading}
               className="border-xp-border hover:bg-xp-surface-light rounded border px-4 py-2 text-sm transition-colors disabled:opacity-50"
-              aria-label="Cancel authentication"
+              aria-label={i18n.t('dialogs.password.cancelAria')}
             >
-              Cancel
+              {i18n.t('common.cancel')}
             </button>
             <button
               type="submit"

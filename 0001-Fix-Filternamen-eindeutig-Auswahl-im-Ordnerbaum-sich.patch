@@ -1,0 +1,161 @@
+From 73b3ab6b28199d8614ccd00d8f25bf992dc87f93 Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Fri, 6 Nov 2026 16:48:29 +0100
+Subject: [PATCH] =?UTF-8?q?Fix:=20Filternamen=20eindeutig,=20Auswahl=20im?=
+ =?UTF-8?q?=20Ordnerbaum=20sichtbar,=20Reste=20=C3=BCbersetzt?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+- Eingebaute Filter heißen jetzt „Nur Bilddateien“, „Nur Dokumente“ usw.,
+  damit sie nicht mit den Schnellzugriff-Ordnern verwechselt werden
+- Ordnerbaum/Papierkorb: bg-opacity-* wirkt nicht bei Theme-Farben
+  (CSS-Variablen) → Markierung war voll eingefärbt und Text unsichtbar;
+  jetzt bg-xp-blue/20 bzw. bg-xp-accent/20
+- „N items“ in der geteilten Ansicht und im Verschieben-Dialog übersetzt
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpETxhZZoZtuqZFzK7EE
+---
+ apps/client/src/components/TrashPage.tsx        |  2 +-
+ .../dialogs/MoveTreePreviewDialog.tsx           |  4 +++-
+ .../explorer/sidebar/SidebarFileTree.tsx        |  4 ++--
+ .../components/split-view/PaneFileExplorer.tsx  |  3 ++-
+ apps/client/src/locales/de.json                 | 17 ++++++++++-------
+ apps/client/src/locales/en.json                 |  7 +++++--
+ 6 files changed, 23 insertions(+), 14 deletions(-)
+
+diff --git a/apps/client/src/components/TrashPage.tsx b/apps/client/src/components/TrashPage.tsx
+index 56bec3d..01f3246 100644
+--- a/apps/client/src/components/TrashPage.tsx
++++ b/apps/client/src/components/TrashPage.tsx
+@@ -300,7 +300,7 @@ const RecycleBin = ({ onClose }: RecycleBinProps) => {
+                   key={item.original_path}
+                   onClick={(e) => handleSelectItem(item.original_path, e)}
+                   className={`hover:bg-xp-surface flex cursor-pointer items-center rounded p-3 ${
+-                    selectedItems.has(item.original_path) ? 'bg-xp-accent bg-opacity-20' : ''
++                    selectedItems.has(item.original_path) ? 'bg-xp-accent/20' : ''
+                   }`}
+                 >
+                   <div className="flex min-w-0 flex-1 items-center">
+diff --git a/apps/client/src/components/dialogs/MoveTreePreviewDialog.tsx b/apps/client/src/components/dialogs/MoveTreePreviewDialog.tsx
+index d967442..bbbfc6e 100644
+--- a/apps/client/src/components/dialogs/MoveTreePreviewDialog.tsx
++++ b/apps/client/src/components/dialogs/MoveTreePreviewDialog.tsx
+@@ -640,7 +640,9 @@ const MoveTreePreviewDialog = ({
+         <div style={S.body}>
+           {/* Left panel: Source tree */}
+           <div style={S.panel}>
+-            <div style={S.panelHeader}>Source ({data.sourceFiles.length} items)</div>
++            <div style={S.panelHeader}>
++              {i18n.t('dialogs.moveTree.sourceCount', { count: data.sourceFiles.length })}
++            </div>
+             <div style={S.panelContent}>
+               {data.sourceFiles.map((file) => (
+                 <SourceTreeNode key={file.path} file={file} />
+diff --git a/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx b/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx
+index d1ea06e..d14225a 100644
+--- a/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx
++++ b/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx
+@@ -180,7 +180,7 @@ const SidebarFileTree = ({
+           aria-selected={currentPath === file.path}
+           aria-expanded={file.is_dir ? isExpanded : undefined}
+           aria-label={`${file.name}${file.is_dir ? ', folder' : ', file'}`}
+-          className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs transition-colors ${currentPath === file.path ? 'bg-xp-blue text-xp-blue border-xp-blue border-l-2 bg-opacity-25' : 'text-xp-text'} `}
++          className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs transition-colors ${currentPath === file.path ? 'bg-xp-blue/20 text-xp-blue border-xp-blue border-l-2' : 'text-xp-text'} `}
+           style={{ paddingLeft: `${depth * 16 + 8}px` }}
+           onClick={() => handleItemClick(file)}
+           onContextMenu={(e) => handleItemRightClick(file, e)}
+@@ -295,7 +295,7 @@ const SidebarFileTree = ({
+                 aria-selected={currentPath === rootPath}
+                 aria-expanded={expandedFolders.has(rootPath)}
+                 aria-label={t('sidebar.rootDrive', { path: rootPath })}
+-                className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs font-medium transition-colors ${currentPath === rootPath ? 'bg-xp-blue text-xp-blue border-xp-blue border-l-2 bg-opacity-25' : 'text-xp-text'} `}
++                className={`hover:bg-xp-surface-light flex cursor-pointer items-center rounded px-1 py-1 text-xs font-medium transition-colors ${currentPath === rootPath ? 'bg-xp-blue/20 text-xp-blue border-xp-blue border-l-2' : 'text-xp-text'} `}
+                 onClick={() => navigateToPath(rootPath)}
+               >
+                 <button
+diff --git a/apps/client/src/components/split-view/PaneFileExplorer.tsx b/apps/client/src/components/split-view/PaneFileExplorer.tsx
+index 7f395a1..d7e4e23 100644
+--- a/apps/client/src/components/split-view/PaneFileExplorer.tsx
++++ b/apps/client/src/components/split-view/PaneFileExplorer.tsx
+@@ -272,7 +272,8 @@ const PaneFileExplorer = React.memo(
+           <div className="flex items-center justify-between">
+             <div className="flex items-center gap-4">
+               <span>
+-                {displayFiles.length} items{colorFilter ? ` (filtered)` : ''}
++                {i18n.t('splitView.itemCount', { count: displayFiles.length })}
++                {colorFilter ? i18n.t('splitView.filteredSuffix') : ''}
+               </span>
+               <span>{i18n.t('splitView.selectedCount', { count: selectedFiles.size })}</span>
+               {showSizeBadges && <SizeDistributionChart files={displayFiles} />}
+diff --git a/apps/client/src/locales/de.json b/apps/client/src/locales/de.json
+index 3a8936a..5707d98 100644
+--- a/apps/client/src/locales/de.json
++++ b/apps/client/src/locales/de.json
+@@ -1246,7 +1246,8 @@
+       "loadingDest": "Inhalt des Ziels wird geladen …",
+       "noData": "Keine Daten verfügbar",
+       "subtitle": "Vorschau der entstehenden Ordnerstruktur",
+-      "sizeSummary": "{{incoming}} in Ordner mit {{existing}}"
++      "sizeSummary": "{{incoming}} in Ordner mit {{existing}}",
++      "sourceCount": "Quelle ({{count}} Elemente)"
+     },
+     "metadata": {
+       "empty": "Keine Metadatenfelder – klicken Sie unten auf „Feld hinzufügen“.",
+@@ -2053,7 +2054,9 @@
+     "restorePane": "Bereich wiederherstellen",
+     "closePane": "Bereich schließen",
+     "loadingEditor": "Editor wird geladen …",
+-    "selectedCount": "{{count}} ausgewählt"
++    "selectedCount": "{{count}} ausgewählt",
++    "itemCount": "{{count}} Elemente",
++    "filteredSuffix": " (gefiltert)"
+   },
+   "comparison": {
+     "sideBySide": "Nebeneinander",
+@@ -2350,11 +2353,11 @@
+   },
+   "collections": {
+     "builtin": {
+-      "builtin-large-files": "Große Dateien",
+-      "builtin-recent-files": "Kürzlich geändert",
+-      "builtin-images": "Bilder",
+-      "builtin-documents": "Dokumente",
+-      "builtin-code-files": "Quellcode"
++      "builtin-large-files": "Nur große Dateien",
++      "builtin-recent-files": "Nur kürzlich geänderte",
++      "builtin-images": "Nur Bilddateien",
++      "builtin-documents": "Nur Dokumente",
++      "builtin-code-files": "Nur Quellcode"
+     }
+   },
+   "ui": {
+diff --git a/apps/client/src/locales/en.json b/apps/client/src/locales/en.json
+index 38dbac7..51886a2 100644
+--- a/apps/client/src/locales/en.json
++++ b/apps/client/src/locales/en.json
+@@ -1246,7 +1246,8 @@
+       "loadingDest": "Loading destination contents...",
+       "noData": "No data available",
+       "subtitle": "Preview the resulting directory structure",
+-      "sizeSummary": "{{incoming}} into {{existing}} folder"
++      "sizeSummary": "{{incoming}} into {{existing}} folder",
++      "sourceCount": "Source ({{count}} items)"
+     },
+     "metadata": {
+       "empty": "No metadata fields — click Add Field below.",
+@@ -2053,7 +2054,9 @@
+     "restorePane": "Restore pane",
+     "closePane": "Close pane",
+     "loadingEditor": "Loading editor...",
+-    "selectedCount": "{{count}} selected"
++    "selectedCount": "{{count}} selected",
++    "itemCount": "{{count}} items",
++    "filteredSuffix": " (filtered)"
+   },
+   "comparison": {
+     "sideBySide": "Side by Side",
+-- 
+2.43.0
+

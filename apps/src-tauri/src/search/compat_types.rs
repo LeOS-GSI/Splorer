@@ -21,12 +21,6 @@ pub(crate) const DEFAULT_SEARCH_LIMIT: usize = 50;
 /// Default result limit for file recommendation commands.
 pub(crate) const DEFAULT_RECOMMENDATION_LIMIT: usize = 10;
 
-/// Default result limit for semantic search commands.
-pub(crate) const DEFAULT_SEMANTIC_SEARCH_LIMIT: usize = 20;
-
-/// Minimum cosine similarity threshold for semantic search results.
-pub(crate) const SEMANTIC_SIMILARITY_THRESHOLD: f64 = 0.3;
-
 // ===== Frontend-compatible types ============================================
 
 /// Settings exposed to the frontend via `get_tokenizer_settings` /
@@ -91,14 +85,6 @@ pub struct FileToken {
     pub last_modified: u64,
     pub indexed_at: u64,
     pub content_source: String,
-}
-
-/// AI search result type.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct AISearchResult {
-    pub results: Vec<SearchResult>,
-    pub provider: String,
-    pub model: String,
 }
 
 // ===== Defaults =============================================================

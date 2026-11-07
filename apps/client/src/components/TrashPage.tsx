@@ -300,7 +300,7 @@ const RecycleBin = ({ onClose }: RecycleBinProps) => {
                   key={item.original_path}
                   onClick={(e) => handleSelectItem(item.original_path, e)}
                   className={`hover:bg-xp-surface flex cursor-pointer items-center rounded p-3 ${
-                    selectedItems.has(item.original_path) ? 'bg-xp-accent bg-opacity-20' : ''
+                    selectedItems.has(item.original_path) ? 'bg-xp-accent/20' : ''
                   }`}
                 >
                   <div className="flex min-w-0 flex-1 items-center">

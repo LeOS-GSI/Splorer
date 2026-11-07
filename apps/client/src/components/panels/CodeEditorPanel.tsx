@@ -77,11 +77,7 @@ const CodeEditorPanel = ({ selectedFile }: CodeEditorPanelProps) => {
     if (!currentFilePath || !isDirty) return;
     setSaving(true);
     try {
-      await transport('agent_write_file_with_permission', {
-        filePath: currentFilePath,
-        content,
-        permissionGranted: true,
-      });
+      await transport('write_text_file', { path: currentFilePath, content });
       setOriginalContent(content);
     } catch (err) {
       setError(t('panels.codeEditor.failedToSave', { error: err }));

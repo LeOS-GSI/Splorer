@@ -36,7 +36,7 @@ export const useTerminal = (deps: UseTerminalDeps) => {
 
   // Update terminal working directory when path changes
   useEffect(() => {
-    if (currentPath !== 'splorer://home' && currentPath !== 'splorer://gdrive-manager') {
+    if (currentPath !== 'splorer://home') {
       setTerminalCwd(currentPath);
     }
   }, [currentPath]);

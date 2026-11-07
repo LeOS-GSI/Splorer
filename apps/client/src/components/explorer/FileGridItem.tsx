@@ -1,4 +1,6 @@
+import i18n from '@/i18n';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { createPortal } from 'react-dom';
 import { useDraggable } from '@/hooks/use-draggable';
 import { useDroppable } from '@/hooks/use-droppable';
@@ -8,16 +10,6 @@ import { formatFileSize } from '@/lib/utils';
 import { getFolderColorHex } from '@/lib/folder-colors';
 import { validateFileName } from '@/lib/validate-filename';
 import ThumbnailPreview from './ThumbnailPreview';
-
-// ─── Chat file display name helper ───────────────────────────────────────────
-
-const getChatDisplayName = (filename: string): string => {
-  let name = filename.replace(/\.chat$/, '');
-  // Remove date prefix like "2026-03-14_"
-  name = name.replace(/^\d{4}-\d{2}-\d{2}_/, '');
-  // Replace hyphens/underscores with spaces
-  return name.replace(/[-_]/g, ' ');
-};
 
 // ─── Size badge component ────────────────────────────────────────────────────
 
@@ -251,7 +243,7 @@ const InlineRenameInput = React.memo(
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           title={validation.message || undefined}
-          aria-label="Rename file"
+          aria-label={i18n.t('explorer.renameFileAria')}
           aria-invalid={!validation.valid}
           style={{
             flex: 1,
@@ -335,6 +327,7 @@ const FileGridItem = React.memo(
     onRenameCancel,
     onRenameTab,
   }: FileGridItemProps) => {
+    const { showFileExtensions } = useAppSettings();
     // Native drag via tauri-plugin-drag (mousedown/mousemove/mouseup)
     const dragHandlers = useDraggable({ file, selectedFiles, allFiles });
 
@@ -393,7 +386,7 @@ const FileGridItem = React.memo(
       return (
         <>
           <span className="min-w-0 truncate">
-            {file.name.endsWith('.chat') ? getChatDisplayName(file.name) : file.name}
+            {getDisplayName(file.name, file.is_dir, showFileExtensions)}
           </span>
           <LockBadge isReadonly={file.is_readonly} />
           <GitStatusDot status={gitStatus} />
@@ -465,11 +458,6 @@ const FileGridItem = React.memo(
           >
             {renderNameArea()}
           </div>
-          {file.name.endsWith('.chat') && !isRenaming && (
-            <span className="bg-xp-purple/20 text-xp-purple mt-0.5 inline-block rounded-full px-1.5 py-0.5 text-[9px]">
-              Chat
-            </span>
-          )}
           {isGridView && !isRenaming && <TagDots tags={tags} />}
           {!isGridView && !isListView && !isRenaming && (
             <div className="text-xp-text-muted flex items-center space-x-4 text-xs">

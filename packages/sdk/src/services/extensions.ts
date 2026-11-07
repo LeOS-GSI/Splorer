@@ -37,18 +37,6 @@ export const validateExtensionPath = async (
   return await transport('validate_extension_path', { extensionPath });
 };
 
-export const downloadAndInstallExtension = async (
-  downloadUrl: string,
-  extensionId: string,
-  expectedChecksum?: string,
-): Promise<ExtensionPackageInfo> => {
-  return await transport('download_and_install_extension', {
-    downloadUrl,
-    extensionId,
-    expectedChecksum: expectedChecksum || null,
-  });
-};
-
 export const packExtension = async (extensionDir: string, outputPath?: string): Promise<string> => {
   return await transport('pack_extension', { extensionDir, outputPath: outputPath || null });
 };
@@ -68,42 +56,6 @@ export const nativePluginInvoke = async (
   args: Record<string, unknown>,
 ): Promise<unknown> => {
   return await transport('native_plugin_invoke', { extensionId, pluginId, command, args });
-};
-
-export interface ExtensionUpdateInfo {
-  id: string;
-  current_version: string;
-  latest_version: string;
-  download_url: string;
-  checksum: string | null;
-  changelog: string | null;
-}
-
-export const checkForExtensionUpdates = async (
-  marketplaceUrl: string,
-  installedExtensions: Array<{ id: string; version: string }>,
-): Promise<ExtensionUpdateInfo[]> => {
-  return await transport('check_for_extension_updates', {
-    marketplaceUrl,
-    installedExtensions,
-  });
-};
-
-/**
- * Download and install an extension update.
- * This delegates to the existing download_and_install_extension Rust command
- * which downloads the zip, verifies the checksum, and installs it.
- */
-export const downloadExtensionUpdate = async (
-  extensionId: string,
-  downloadUrl: string,
-  expectedChecksum?: string,
-): Promise<ExtensionPackageInfo> => {
-  return await transport('download_and_install_extension', {
-    downloadUrl,
-    extensionId,
-    expectedChecksum: expectedChecksum || null,
-  });
 };
 
 export const registerExtensionShortcut = async (

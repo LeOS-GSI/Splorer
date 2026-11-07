@@ -61,7 +61,7 @@ const SidebarCollections = ({
       <div
         className="border-xp-border border-b"
         role="region"
-        aria-label="Collections"
+        aria-label={t('sidebar.collectionsAria')}
         data-sidebar-section="collections"
       >
         <div className="flex items-center justify-between">
@@ -69,7 +69,7 @@ const SidebarCollections = ({
             className="text-xp-text-muted hover:bg-xp-surface-light/50 flex flex-1 items-center px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest transition-colors"
             onClick={onToggleCollapsed}
             aria-expanded={!collapsed}
-            aria-label="Toggle collections"
+            aria-label={t('sidebar.toggleCollections')}
           >
             {collapsed ? (
               <ChevronRight className="mr-1 h-3 w-3 flex-shrink-0" />
@@ -82,8 +82,8 @@ const SidebarCollections = ({
             <button
               onClick={onCreateCollection}
               className="text-xp-text-muted hover:text-xp-blue mr-2 transition-colors"
-              title="Create new collection"
-              aria-label="Create new collection"
+              title={t('sidebar.createCollection')}
+              aria-label={t('sidebar.createCollection')}
               style={{ padding: '2px' }}
             >
               <Plus size={13} />
@@ -138,7 +138,7 @@ const SidebarCollections = ({
                         });
                       }
                     }}
-                    title={`${col.name} - ${col.filters.length} filter${col.filters.length !== 1 ? 's' : ''}${smartFolder ? ' (smart folder)' : ' (quick filter)'}`}
+                    title={`${t('sidebar.collectionTooltip', { name: col.name, count: col.filters.length })}${smartFolder ? t('sidebar.smartFolder') : t('sidebar.quickFilter')}`}
                   >
                     <span className="mr-2 flex-shrink-0 text-sm" aria-hidden="true">
                       {renderIcon(col.icon, 14)}
@@ -207,7 +207,7 @@ const SidebarCollections = ({
               setCollectionContextMenu(null);
             }}
           >
-            Edit
+            {t('common.edit')}
           </button>
           <button
             className="text-xp-red hover:bg-xp-surface-light flex w-full items-center rounded px-3 py-1.5 text-xs transition-colors"
@@ -216,7 +216,7 @@ const SidebarCollections = ({
               setCollectionContextMenu(null);
             }}
           >
-            Delete
+            {t('common.delete')}
           </button>
         </div>
       )}

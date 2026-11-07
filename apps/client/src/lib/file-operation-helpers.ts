@@ -4,6 +4,7 @@
 
 import { TauriAPI, type FileEntry } from '@/lib/tauri-api';
 import { detectSep } from '@/lib/constants';
+import i18n from '@/i18n';
 import { addEntry as addClipboardHistoryEntry } from '@/hooks/use-clipboard-history';
 
 // ── Error formatting ─────────────────────────────────────────────────────────
@@ -65,14 +66,20 @@ export const setClipboardEntries = (
 ): void => {
   setClipboard({ files, operation });
   updateFactory(files, operation);
+  // Auch ins System-Clipboard, damit andere Programme einfügen können
+  TauriAPI.setSystemClipboardFiles?.(files.map((f) => f.path))?.catch((err) =>
+    console.warn('System-Clipboard konnte nicht gesetzt werden:', err),
+  );
   addClipboardHistoryEntry(
     files.map((f) => ({ path: f.path, name: f.name, isDir: f.is_dir })),
     operation,
   );
-  const label = operation === 'copy' ? 'Copied' : 'Cut';
   toast({
-    title: label,
-    description: `${files.length} item${files.length > 1 ? 's' : ''} ${label.toLowerCase()}`,
+    title: operation === 'copy' ? i18n.t('toast.copied') : i18n.t('toast.cut'),
+    description:
+      operation === 'copy'
+        ? i18n.t('toast.itemsCopied', { count: files.length })
+        : i18n.t('toast.itemsCut', { count: files.length }),
   });
 };
 

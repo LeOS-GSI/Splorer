@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   getPathBookmarks,
@@ -368,7 +369,7 @@ const PathBookmarksDialog = React.memo(
         onClick={handleOverlayClick}
         role="dialog"
         aria-modal="true"
-        aria-label="Path Bookmarks"
+        aria-label={i18n.t('dialogs.pathBookmarks')}
       >
         <div style={styles.dialog}>
           {/* Header */}
@@ -387,7 +388,7 @@ const PathBookmarksDialog = React.memo(
               >
                 <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z" />
               </svg>
-              <h2 style={styles.title}>Path Bookmarks</h2>
+              <h2 style={styles.title}>{i18n.t('dialogs.pathBookmarks')}</h2>
             </div>
             <button
               onClick={onClose}
@@ -490,7 +491,7 @@ const PathBookmarksDialog = React.memo(
                             onBlur={handleSaveLabel}
                             onClick={(e) => e.stopPropagation()}
                             style={styles.editInput}
-                            placeholder="Label..."
+                            placeholder={i18n.t('dialogs.pathBm.labelPlaceholder')}
                           />
                         ) : (
                           <>
@@ -500,7 +501,7 @@ const PathBookmarksDialog = React.memo(
                         )}
                       </>
                     ) : (
-                      <span style={styles.slotEmpty}>Empty</span>
+                      <span style={styles.slotEmpty}>{i18n.t('dialogs.pathBm.empty')}</span>
                     )}
                   </div>
                 );
@@ -514,14 +515,14 @@ const PathBookmarksDialog = React.memo(
               <span style={styles.kbd}>Ctrl</span>
               <span>+</span>
               <span style={styles.kbd}>1-9</span>
-              <span>navigate</span>
+              <span>{i18n.t('dialogs.pathBm.navigate')}</span>
               <span style={{ margin: '0 4px', opacity: 0.4 }}>|</span>
               <span style={styles.kbd}>Ctrl</span>
               <span>+</span>
               <span style={styles.kbd}>Shift</span>
               <span>+</span>
               <span style={styles.kbd}>1-9</span>
-              <span>assign</span>
+              <span>{i18n.t('dialogs.pathBm.assign')}</span>
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               Press <span style={styles.kbd}>Esc</span> to close
@@ -563,7 +564,7 @@ const PathBookmarksDialog = React.memo(
                 <line x1="12" y1="17" x2="12" y2="22" />
                 <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V17z" />
               </svg>
-              Assign Current Path
+              {i18n.t('dialogs.pathBm.assignCurrent')}
             </button>
             {bookmarkMap.has(contextMenu.slot) && (
               <>
@@ -591,7 +592,7 @@ const PathBookmarksDialog = React.memo(
                     <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
                     <path d="m15 5 4 4" />
                   </svg>
-                  Edit Label
+                  {i18n.t('dialogs.pathBm.editLabel')}
                 </button>
                 <button
                   style={{

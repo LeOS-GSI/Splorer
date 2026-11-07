@@ -1,6 +1,5 @@
 import { transport, listenToEvent as transportListen } from '../transport';
 import type {
-  FileEntry,
   ShortcutKey,
   ShortcutAction,
   ShortcutBinding,
@@ -11,8 +10,6 @@ import type {
   AuditLogQuery,
   DockerContainerInfo,
   DockerImageInfo,
-  BookmarkEntry,
-  SyncResult,
 } from '../tauri-api-types';
 
 // ── Terminal operations ─────────────────────────────────────────────────────
@@ -271,39 +268,6 @@ export const readVersionContent = async (
   versionNumber: number,
 ): Promise<string> => await transport('read_version_content', { filePath, versionNumber });
 
-// ── Cloud Sync operations ───────────────────────────────────────────────────
-
-export const syncBookmarksToCloud = async (
-  bookmarks: BookmarkEntry[],
-  apiUrl: string,
-  token: string,
-): Promise<SyncResult> => await transport('sync_bookmarks_to_cloud', { bookmarks, apiUrl, token });
-
-export const fetchCloudBookmarks = async (
-  apiUrl: string,
-  token: string,
-): Promise<BookmarkEntry[]> => await transport('fetch_cloud_bookmarks', { apiUrl, token });
-
-export const setLastSyncTime = async (timestamp: string): Promise<void> =>
-  await transport('set_last_sync_time', { timestamp });
-
-export const getLastSyncTime = async (): Promise<string | null> =>
-  await transport('get_last_sync_time');
-
-export const syncAll = async (apiUrl: string, token: string): Promise<SyncResult> =>
-  await transport('sync_all', { apiUrl, token });
-
-export const startAutoSync = async (
-  apiUrl: string,
-  token: string,
-  intervalSecs?: number,
-): Promise<SyncResult> => await transport('start_auto_sync', { apiUrl, token, intervalSecs });
-
-export const stopAutoSync = async (): Promise<SyncResult> => await transport('stop_auto_sync');
-
-export const getAutoSyncStatus = async (): Promise<boolean> =>
-  await transport('get_auto_sync_status');
-
 // ── Shell integration (Windows) ─────────────────────────────────────────────
 
 export const setDefaultFolderHandler = async (enable: boolean): Promise<void> =>
@@ -319,73 +283,3 @@ export const getShellIntegrationStatus = async (): Promise<{
   is_default_handler: boolean;
   context_menu_installed: boolean;
 }> => await transport('get_shell_integration_status', {});
-
-// ── Google Drive Operations ─────────────────────────────────────────────────
-
-export const gdriveAuthenticate = async (): Promise<{
-  id: string;
-  email: string;
-  display_name: string;
-}> => await transport('gdrive_authenticate');
-
-export const gdriveDisconnect = async (accountId: string): Promise<void> =>
-  await transport('gdrive_disconnect', { accountId });
-
-export const gdriveListAccounts = async (): Promise<
-  Array<{
-    id: string;
-    email: string;
-    display_name: string;
-  }>
-> => await transport('gdrive_list_accounts');
-
-export const gdriveListFiles = async (accountId: string, folderId: string): Promise<FileEntry[]> =>
-  await transport('gdrive_list_files', { accountId, folderId });
-
-export const gdriveDownloadFile = async (
-  accountId: string,
-  fileId: string,
-  localPath: string,
-): Promise<void> => await transport('gdrive_download_file', { accountId, fileId, localPath });
-
-export const gdriveUploadFile = async (
-  accountId: string,
-  localPath: string,
-  parentFolderId: string,
-): Promise<FileEntry> =>
-  await transport('gdrive_upload_file', { accountId, localPath, parentFolderId });
-
-export const gdriveDeleteFile = async (accountId: string, fileId: string): Promise<void> =>
-  await transport('gdrive_delete_file', { accountId, fileId });
-
-export const gdriveRenameFile = async (
-  accountId: string,
-  fileId: string,
-  newName: string,
-): Promise<void> => await transport('gdrive_rename_file', { accountId, fileId, newName });
-
-export const gdriveMoveFile = async (
-  accountId: string,
-  fileId: string,
-  newParentId: string,
-  oldParentId: string,
-): Promise<void> =>
-  await transport('gdrive_move_file', { accountId, fileId, newParentId, oldParentId });
-
-export const gdriveCreateFolder = async (
-  accountId: string,
-  name: string,
-  parentFolderId: string,
-): Promise<FileEntry> =>
-  await transport('gdrive_create_folder', { accountId, name, parentFolderId });
-
-export const gdriveGetFileContent = async (accountId: string, fileId: string): Promise<string> =>
-  await transport('gdrive_get_file_content', { accountId, fileId });
-
-export const getGdriveSettings = async (): Promise<{
-  client_id: string;
-  client_secret: string;
-}> => await transport('get_gdrive_settings');
-
-export const updateGdriveSettings = async (clientId: string, clientSecret: string): Promise<void> =>
-  await transport('update_gdrive_settings', { clientId, clientSecret });

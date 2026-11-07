@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileEntry } from '@/lib/tauri-api';
@@ -407,7 +408,7 @@ const AdvancedSelectDialog = ({
                     value={extensionInput}
                     onChange={(e) => setExtensionInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && addExtensionsFromInput()}
-                    placeholder="jpg, png, gif"
+                    placeholder={i18n.t('explorer.extExample')}
                     className="bg-xp-bg border-xp-border text-xp-text placeholder-xp-text-muted focus:ring-xp-blue focus:border-xp-blue flex-1 rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2"
                   />
                   <button

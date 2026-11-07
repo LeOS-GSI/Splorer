@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { convertAssetUrl } from '@/lib/transport';
 import {
@@ -54,7 +55,7 @@ const FileComparisonPage = ({ file1Path, file2Path, onError }: FileComparisonPag
       const r = await FileComparison.compareFiles(file1Path, file2Path, options);
       setResult(r);
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Comparison failed';
+      const msg = error instanceof Error ? error.message : i18n.t('dialogs.fileComparison.failed');
       onError?.(msg);
       console.error('File comparison error:', error);
     } finally {
@@ -184,7 +185,9 @@ const FileComparisonPage = ({ file1Path, file2Path, onError }: FileComparisonPag
               animation: 'spin 1s linear infinite',
             }}
           />
-          <div style={{ fontSize: 13, color: 'var(--xp-text)' }}>Comparing files...</div>
+          <div style={{ fontSize: 13, color: 'var(--xp-text)' }}>
+            {i18n.t('dialogs.fileComparison.comparing')}
+          </div>
         </div>
       </div>
     );
@@ -212,7 +215,7 @@ const FileComparisonPage = ({ file1Path, file2Path, onError }: FileComparisonPag
             }}
           />
           <div style={{ fontSize: 13, color: 'var(--xp-text)', marginBottom: 12 }}>
-            Comparison failed
+            {i18n.t('dialogs.fileComparison.failed')}
           </div>
           <button
             onClick={runComparison}
@@ -226,7 +229,7 @@ const FileComparisonPage = ({ file1Path, file2Path, onError }: FileComparisonPag
               cursor: 'pointer',
             }}
           >
-            Try Again
+            {i18n.t('common.tryAgain')}
           </button>
         </div>
       </div>

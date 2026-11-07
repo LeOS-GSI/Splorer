@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useCallback } from 'react';
 import { TauriAPI } from '@/lib/tauri-api';
 import { formatFileSize } from '@/lib/utils';
@@ -82,7 +83,7 @@ const PerformanceMetrics = ({
           ) : (
             <ChevronRight size={14} style={{ flexShrink: 0 }} />
           )}
-          Performance Metrics
+          {i18n.t('panels.performance.title')}
         </button>
         <button
           onClick={onCollapseAll}
@@ -98,7 +99,7 @@ const PerformanceMetrics = ({
             opacity: 0.7,
             transition: 'opacity 0.15s',
           }}
-          title="Collapse all sections"
+          title={i18n.t('panels.common.collapseAll')}
         >
           collapse all
         </button>
@@ -122,7 +123,7 @@ const PerformanceMetrics = ({
                 ...smallBtnStyle,
                 opacity: isLoading ? 0.5 : 1,
               }}
-              title="Refresh stats"
+              title={i18n.t('panels.common.refreshStats')}
             >
               {isLoading ? 'Loading...' : 'Refresh'}
             </button>
@@ -130,74 +131,28 @@ const PerformanceMetrics = ({
 
           {/* System Stats Card */}
           <div style={cardStyle}>
-            <div style={cardTitleStyle}>System Stats</div>
+            <div style={cardTitleStyle}>{i18n.t('panels.performance.systemStats')}</div>
             <StatRow label="Files" value={directoryStats.fileCount.toLocaleString()} />
             <StatRow label="Folders" value={directoryStats.folderCount.toLocaleString()} />
-            <StatRow label="Total Size" value={formatFileSize(directoryStats.totalSize)} />
-            <StatRow label="Folders Cached" value={`${directoryStats.cachedFolderCount} folders`} />
+            <StatRow
+              label={i18n.t('panels.performance.totalSize')}
+              value={formatFileSize(directoryStats.totalSize)}
+            />
+            <StatRow
+              label={i18n.t('panels.performance.foldersCached')}
+              value={`${directoryStats.cachedFolderCount} folders`}
+            />
             {memoryUsage !== null && (
-              <StatRow label="JS Heap Usage" value={formatFileSize(memoryUsage)} />
+              <StatRow
+                label={i18n.t('panels.performance.jsHeap')}
+                value={formatFileSize(memoryUsage)}
+              />
             )}
           </div>
 
           {/* Indexing Status Card */}
           <div style={cardStyle}>
-            <div style={cardTitleStyle}>Indexing Status</div>
-
-            {/* AI Indexer */}
-            <div style={{ marginBottom: 8 }}>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
-                <span style={{ fontSize: 12, color: 'var(--xp-text-secondary)' }}>AI Indexer</span>
-                <span
-                  style={{
-                    fontSize: 11,
-                    padding: '1px 6px',
-                    borderRadius: 3,
-                    background: indexingStatus.isAiProcessing
-                      ? 'rgba(59, 130, 246, 0.2)'
-                      : 'rgba(34, 197, 94, 0.15)',
-                    color: indexingStatus.isAiProcessing ? '#60a5fa' : '#4ade80',
-                  }}
-                >
-                  {indexingStatus.isAiProcessing ? 'Indexing' : 'Idle'}
-                </span>
-              </div>
-              <StatRow label="Indexed Files" value={indexingStatus.aiIndexed.toLocaleString()} />
-              {indexingStatus.aiQueueLength > 0 && (
-                <StatRow label="Queue" value={indexingStatus.aiQueueLength.toLocaleString()} />
-              )}
-              {indexingStatus.isAiProcessing && indexingStatus.currentAiFile && (
-                <div
-                  style={{
-                    fontSize: 11,
-                    color: 'var(--xp-text-secondary)',
-                    marginTop: 4,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                  title={indexingStatus.currentAiFile}
-                >
-                  Current: {indexingStatus.currentAiFile.split(/[\\/]/).pop()}
-                </div>
-              )}
-              {indexingStatus.isAiProcessing && indexingStatus.aiQueueLength > 0 && (
-                <ProgressBar
-                  value={indexingStatus.aiIndexed}
-                  max={indexingStatus.aiIndexed + indexingStatus.aiQueueLength}
-                  color="#3b82f6"
-                />
-              )}
-            </div>
-
-            {/* Separator */}
-            <div style={{ borderTop: '1px solid var(--xp-border)', margin: '8px 0' }} />
+            <div style={cardTitleStyle}>{i18n.t('panels.performance.indexingStatus')}</div>
 
             {/* Search Tokenizer */}
             <div>
@@ -209,7 +164,7 @@ const PerformanceMetrics = ({
                 }}
               >
                 <span style={{ fontSize: 12, color: 'var(--xp-text-secondary)' }}>
-                  Search Tokenizer
+                  {i18n.t('panels.performance.searchTokenizer')}
                 </span>
                 <span
                   style={{
@@ -226,16 +181,16 @@ const PerformanceMetrics = ({
                 </span>
               </div>
               <StatRow
-                label="Indexed Files"
+                label={i18n.t('panels.performance.indexedFiles')}
                 value={indexingStatus.tokenTotalFiles.toLocaleString()}
               />
               <StatRow
-                label="Total Tokens"
+                label={i18n.t('panels.performance.totalTokens')}
                 value={indexingStatus.tokenTotalTokens.toLocaleString()}
               />
               {indexingStatus.tokenLastUpdated > 0 && (
                 <StatRow
-                  label="Last Updated"
+                  label={i18n.t('panels.performance.lastUpdated')}
                   value={new Date(indexingStatus.tokenLastUpdated * 1000).toLocaleTimeString()}
                 />
               )}
@@ -261,11 +216,11 @@ const PerformanceMetrics = ({
 
           {/* Recent Operations Card */}
           <div style={cardStyle}>
-            <div style={cardTitleStyle}>Recent Operations</div>
+            <div style={cardTitleStyle}>{i18n.t('panels.performance.recentOps')}</div>
 
             {recentOps.length === 0 ? (
               <div style={{ fontSize: 12, color: 'var(--xp-text-secondary)', padding: '4px 0' }}>
-                No recent operations
+                {i18n.t('panels.performance.noRecentOps')}
               </div>
             ) : (
               <>
@@ -375,7 +330,7 @@ const PerformanceMetrics = ({
           {/* Cleanup Suggestions Card */}
           {suggestions.length > 0 && (
             <div style={cardStyle}>
-              <div style={cardTitleStyle}>Cleanup Suggestions</div>
+              <div style={cardTitleStyle}>{i18n.t('panels.performance.cleanup')}</div>
               {suggestions.map((s, i) => (
                 <div
                   key={s.id}

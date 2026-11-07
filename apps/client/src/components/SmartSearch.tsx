@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, {
   useState,
   useEffect,
@@ -62,11 +63,8 @@ import {
   Music,
   Package,
   File as FileIcon,
-  ChevronDown,
   Star,
 } from 'lucide-react';
-
-export type SearchProvider = 'local' | 'claude' | 'openai' | 'ollama';
 
 interface SmartSearchProps {
   className?: string;
@@ -134,13 +132,6 @@ const FILTER_INDICATORS = [
   'zips',
 ];
 
-const PROVIDER_LABELS: Record<SearchProvider, string> = {
-  local: 'Local',
-  claude: 'Claude',
-  openai: 'GPT',
-  ollama: 'Ollama',
-};
-
 const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
   (
     {
@@ -160,9 +151,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [showResults, setShowResults] = useState(false);
     const [parsedQuery, setParsedQuery] = useState<StructuredQuery | null>(null);
-    const [searchProvider, setSearchProvider] = useState<SearchProvider>('local');
-    const [showProviderMenu, setShowProviderMenu] = useState(false);
-    const providerMenuRef = useRef<HTMLDivElement>(null);
     const [searchContent, setSearchContent] = useState(false);
     const [searchScope, setSearchScope] = useState<SearchScope>(loadSearchScope);
     const [tokenChips, setTokenChips] = useState<TokenChip[]>([]);
@@ -176,17 +164,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
     const resultsRef = useRef<HTMLDivElement>(null);
     const abortRef = useRef<AbortController | null>(null);
     const { toast } = useToast();
-
-    useEffect(() => {
-      if (!showProviderMenu) return;
-      const onMouseDown = (e: MouseEvent) => {
-        if (providerMenuRef.current && !providerMenuRef.current.contains(e.target as Node)) {
-          setShowProviderMenu(false);
-        }
-      };
-      document.addEventListener('mousedown', onMouseDown);
-      return () => document.removeEventListener('mousedown', onMouseDown);
-    }, [showProviderMenu]);
 
     // Keep saved searches in sync with localStorage changes
     useEffect(() => {
@@ -283,31 +260,7 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
           try {
             let searchResults: SearchResult[] = [];
 
-            if (searchProvider !== 'local') {
-              // AI-powered search: BM25F pre-filter → AI re-rank
-              try {
-                const aiResult = await TauriAPI.aiSearch(
-                  effectiveQuery || searchQuery,
-                  searchProvider,
-                  undefined, // API key from env/settings
-                  undefined, // model default
-                  maxResults,
-                );
-                searchResults = aiResult.results;
-              } catch (err) {
-                // AI search failed, fall through to local
-                console.warn('AI search failed, falling back to local:', err);
-                toast({
-                  title: t('smartSearch.aiUnavailableTitle'),
-                  description: t('smartSearch.aiUnavailableDesc', {
-                    provider: PROVIDER_LABELS[searchProvider],
-                  }),
-                  variant: 'destructive',
-                });
-              }
-            }
-
-            // Local search (or AI fallback)
+            // Local search
             if (searchResults.length === 0) {
               const queryForIndex = effectiveQuery || searchQuery;
               // Always try indexed search first (BM25F scored)
@@ -407,7 +360,7 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
             }
           }
         }, SEARCH_DEBOUNCE_MS),
-      [maxResults, searchProvider, currentPath, searchContent, searchScope, toast],
+      [maxResults, currentPath, searchContent, searchScope],
     );
 
     useEffect(() => {
@@ -463,21 +416,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
       onFileSelect?.(result.path, !hasExt);
     };
 
-    const handleFindSimilar = async (e: React.MouseEvent, filePath: string) => {
-      e.stopPropagation();
-      try {
-        const similarResults = await TauriAPI.findSimilarFiles(filePath, maxResults);
-        setResults(similarResults);
-        setParsedQuery(null);
-      } catch {
-        toast({
-          title: t('smartSearch.findSimilarFailedTitle'),
-          description: t('smartSearch.findSimilarFailedDesc'),
-          variant: 'destructive',
-        });
-      }
-    };
-
     const handleGrepSearch = async () => {
       const searchPath =
         currentPath && !currentPath.startsWith('splorer://') ? currentPath : undefined;
@@ -506,20 +444,11 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
         query.trim().length >= 2 &&
         results.length === 0 &&
         !grepTriggered &&
-        !isGrepSearching &&
-        searchProvider === 'local'
+        !isGrepSearching
       ) {
         handleGrepSearch();
       }
-    }, [
-      showResults,
-      isSearching,
-      query,
-      results.length,
-      grepTriggered,
-      isGrepSearching,
-      searchProvider,
-    ]);
+    }, [showResults, isSearching, query, results.length, grepTriggered, isGrepSearching]);
 
     const handleFocus = () => {
       if (results.length > 0 || grepResults.length > 0) setShowResults(true);
@@ -530,7 +459,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
         if (!resultsRef.current?.contains(e.relatedTarget as Node)) {
           setShowResults(false);
           setSelectedIndex(-1);
-          setShowProviderMenu(false);
         }
       }, DROPDOWN_BLUR_DELAY_MS);
     };
@@ -598,17 +526,13 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
     const getRelevanceBadge = (relevanceType: string): { label: string; color: string } => {
       switch (relevanceType) {
         case 'exact':
-          return { label: 'Exact', color: 'bg-xp-green' };
+          return { label: i18n.t('smartSearch.relevanceExact'), color: 'bg-xp-green' };
         case 'semantic':
-          return { label: 'Semantic', color: 'bg-indigo-500' };
+          return { label: i18n.t('smartSearch.relevanceSemantic'), color: 'bg-indigo-500' };
         case 'fuzzy':
           return { label: 'Fuzzy', color: 'bg-yellow-500' };
         case 'metadata':
           return { label: 'Metadata', color: 'bg-teal-500' };
-        case 'ai_description':
-          return { label: 'AI', color: 'bg-purple-500' };
-        case 'ai_reranked':
-          return { label: 'AI Ranked', color: 'bg-purple-500' };
         default:
           return { label: relevanceType, color: 'bg-xp-blue' };
       }
@@ -665,11 +589,15 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
       if (pq.date_filter) {
         if (pq.date_filter.after) {
           const daysAgo = Math.round((Date.now() / 1000 - pq.date_filter.after) / 86400);
-          if (daysAgo <= 1) chips.push({ label: 'Today', type: 'date' });
-          else if (daysAgo <= 2) chips.push({ label: 'Yesterday', type: 'date' });
-          else if (daysAgo <= 7) chips.push({ label: 'Last Week', type: 'date' });
-          else if (daysAgo <= 30) chips.push({ label: 'Last Month', type: 'date' });
-          else if (daysAgo <= 365) chips.push({ label: 'This Year', type: 'date' });
+          if (daysAgo <= 1) chips.push({ label: i18n.t('smartSearch.chipToday'), type: 'date' });
+          else if (daysAgo <= 2)
+            chips.push({ label: i18n.t('smartSearch.chipYesterday'), type: 'date' });
+          else if (daysAgo <= 7)
+            chips.push({ label: i18n.t('smartSearch.chipLastWeek'), type: 'date' });
+          else if (daysAgo <= 30)
+            chips.push({ label: i18n.t('smartSearch.chipLastMonth'), type: 'date' });
+          else if (daysAgo <= 365)
+            chips.push({ label: i18n.t('smartSearch.chipThisYear'), type: 'date' });
         }
         if (pq.date_filter.before && !pq.date_filter.after) {
           chips.push({ label: 'Old', type: 'date' });
@@ -720,47 +648,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
             className="absolute right-2 top-1/2 flex -translate-y-1/2 transform items-center gap-1"
             onMouseDown={(e) => e.preventDefault()}
           >
-            {/* Provider selector */}
-            <div className="relative" ref={providerMenuRef}>
-              <button
-                onClick={() => setShowProviderMenu(!showProviderMenu)}
-                className={`flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs transition-colors ${
-                  searchProvider !== 'local'
-                    ? 'border border-purple-500 border-opacity-30 bg-purple-500 bg-opacity-20 text-purple-400'
-                    : 'text-xp-text-muted hover:text-xp-text'
-                }`}
-                title={`Search provider: ${PROVIDER_LABELS[searchProvider]}`}
-              >
-                {PROVIDER_LABELS[searchProvider]}
-                <ChevronDown size={10} />
-              </button>
-
-              {showProviderMenu && (
-                <>
-                  <div
-                    className="bg-xp-popover border-xp-border absolute right-0 top-full z-50 mt-1 min-w-[120px] rounded border shadow-xl"
-                    onMouseDown={(e) => e.preventDefault()}
-                  >
-                    {(Object.keys(PROVIDER_LABELS) as SearchProvider[]).map((p) => (
-                      <button
-                        key={p}
-                        onClick={() => {
-                          setSearchProvider(p);
-                          setShowProviderMenu(false);
-                        }}
-                        className={`hover:bg-xp-surface-light w-full px-3 py-1.5 text-left text-xs transition-colors ${
-                          searchProvider === p ? 'bg-xp-blue text-xp-blue bg-opacity-20' : ''
-                        }`}
-                      >
-                        {PROVIDER_LABELS[p]}
-                        {p === 'local' && <span className="text-xp-text-muted ml-1">(BM25F)</span>}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-
             {/* Scope toggle: This Folder / Everywhere */}
             {currentPath && !currentPath.startsWith('splorer://') && (
               <button
@@ -967,7 +854,9 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
                       <div className="space-y-1">
                         {result.matches.slice(0, 2).map((match) => (
                           <div key={match.token} className="text-xs">
-                            <span className="text-xp-text-muted">Match: </span>
+                            <span className="text-xp-text-muted">
+                              {i18n.t('smartSearch.matchLabel')}
+                            </span>
                             <span className="rounded bg-yellow-300 bg-opacity-20 px-1">
                               {match.token}
                             </span>
@@ -983,13 +872,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
                         )}
                       </div>
                     )}
-                    <button
-                      onClick={(e) => handleFindSimilar(e, result.path)}
-                      className="mt-1 text-xs text-indigo-400 transition-colors hover:text-indigo-300"
-                      title={t('smartSearch.findSimilarTitle')}
-                    >
-                      {t('smartSearch.findSimilar')}
-                    </button>
                   </div>
                 </div>
               </button>
@@ -999,8 +881,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
               {t('smartSearch.foundResults', { count: results.length })}
               {results.length >= maxResults &&
                 ` ${t('smartSearch.showingFirst', { count: maxResults })}`}
-              {searchProvider !== 'local' &&
-                ` ${t('smartSearch.viaProvider', { provider: PROVIDER_LABELS[searchProvider] })}`}
               {parsedQuery?.sort_hint === 'size_desc' && ` · ${t('smartSearch.sortedSizeDesc')}`}
               {parsedQuery?.sort_hint === 'size_asc' && ` · ${t('smartSearch.sortedSizeAsc')}`}
               {parsedQuery?.sort_hint === 'date_desc' && ` · ${t('smartSearch.sortedDateDesc')}`}
@@ -1084,51 +964,38 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
                   <p className="text-xp-text-muted mt-1 text-xs">
                     {t('smartSearch.noResultsHint')}
                   </p>
-                  {searchProvider === 'local' &&
-                    currentPath &&
-                    !currentPath.startsWith('splorer://') && (
-                      <button
-                        onClick={handleGrepSearch}
-                        disabled={isGrepSearching}
-                        className="border-xp-border text-xp-blue mt-3 flex items-center gap-1.5 rounded border px-3 py-1.5 text-xs transition-colors hover:bg-blue-500 hover:bg-opacity-10 disabled:cursor-wait disabled:opacity-50"
-                        style={{ margin: '12px auto 0' }}
-                      >
-                        {isGrepSearching ? (
-                          <>
-                            <div className="border-xp-blue h-3 w-3 animate-spin rounded-full border-2 border-t-transparent" />
-                            {t('smartSearch.searchingContents')}
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              width="12"
-                              height="12"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                              <polyline points="14 2 14 8 20 8" />
-                              <line x1="16" y1="13" x2="8" y2="13" />
-                              <line x1="16" y1="17" x2="8" y2="17" />
-                            </svg>
-                            {t('smartSearch.searchInContents')}
-                          </>
-                        )}
-                      </button>
-                    )}
-                  {searchProvider === 'local' && (
+                  {currentPath && !currentPath.startsWith('splorer://') && (
                     <button
-                      onClick={() => {
-                        setSearchProvider('claude');
-                        debouncedSearch(query);
-                      }}
-                      className="mt-2 text-xs text-purple-400 hover:text-purple-300"
+                      onClick={handleGrepSearch}
+                      disabled={isGrepSearching}
+                      className="border-xp-border text-xp-blue mt-3 flex items-center gap-1.5 rounded border px-3 py-1.5 text-xs transition-colors hover:bg-blue-500 hover:bg-opacity-10 disabled:cursor-wait disabled:opacity-50"
+                      style={{ margin: '12px auto 0' }}
                     >
-                      {t('smartSearch.tryAiSearch')}
+                      {isGrepSearching ? (
+                        <>
+                          <div className="border-xp-blue h-3 w-3 animate-spin rounded-full border-2 border-t-transparent" />
+                          {t('smartSearch.searchingContents')}
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                          </svg>
+                          {t('smartSearch.searchInContents')}
+                        </>
+                      )}
                     </button>
                   )}
                 </div>
@@ -1143,17 +1010,6 @@ const SmartSearch = forwardRef<SmartSearchHandle, SmartSearchProps>(
                   <p className="text-xp-text-muted mt-1 text-xs">
                     {t('smartSearch.noContentResults')}
                   </p>
-                  {searchProvider === 'local' && (
-                    <button
-                      onClick={() => {
-                        setSearchProvider('claude');
-                        debouncedSearch(query);
-                      }}
-                      className="mt-2 text-xs text-purple-400 hover:text-purple-300"
-                    >
-                      {t('smartSearch.tryAiSearch')}
-                    </button>
-                  )}
                 </div>
               </div>
             )}

@@ -174,10 +174,9 @@ describe('FileEditorView', () => {
         fireEvent.click(saveButton);
       });
 
-      expect(mockTransport).toHaveBeenCalledWith('agent_write_file_with_permission', {
-        filePath: TEST_FILE,
+      expect(mockTransport).toHaveBeenCalledWith('write_text_file', {
+        path: TEST_FILE,
         content: 'New content',
-        permissionGranted: true,
       });
     });
 
@@ -290,7 +289,7 @@ describe('FileEditorView', () => {
       });
 
       expect(mockTransport).toHaveBeenCalledWith(
-        'agent_write_file_with_permission',
+        'write_text_file',
         expect.objectContaining({
           content: 'Edited',
         }),

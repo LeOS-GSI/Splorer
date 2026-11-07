@@ -11,8 +11,6 @@
 //   - chat_files:         Chat-as-files (filesystem-backed)
 
 mod bookmarks;
-mod chat;
-pub mod chat_files;
 mod extensions_storage;
 mod metadata;
 mod notes;
@@ -21,7 +19,6 @@ mod tags;
 
 // Re-export everything so downstream code using `crate::storage::*` keeps working.
 pub use bookmarks::*;
-pub use chat::*;
 pub use extensions_storage::*;
 pub use metadata::*;
 pub use notes::*;

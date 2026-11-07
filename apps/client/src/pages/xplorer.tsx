@@ -118,10 +118,6 @@ const ExplorerUnified = () => {
     return applyCollectionToFiles(sortedFiles, dialogManager.activeCollectionFilter);
   }, [sortedFiles, dialogManager.activeCollectionFilter]);
 
-  const handleGDriveFileSelect = useCallback((file: FileEntry) => {
-    setSelectedFiles(new Set([file.path]));
-  }, []);
-
   // ── File operations ───────────────────────────────────────────────────────
   const fileOps = useFileOperations({
     currentPath,
@@ -212,7 +208,6 @@ const ExplorerUnified = () => {
     theme,
     setTheme,
     handleQuickLook: dialogManager.handleQuickLook,
-    handleGDriveFileSelect,
     setPaneFiles,
     paneRefetchRef,
     pendingSelectRef,
@@ -301,8 +296,6 @@ const ExplorerUnified = () => {
     setShowChangeSummaryToast: dialogManager.setShowChangeSummaryToast,
     fileOps,
     fileChanges,
-    openGDriveTab: actions.openGDriveTab,
-    openGDriveManager: actions.openGDriveManager,
     vimActions: actions.vimActions,
   });
 

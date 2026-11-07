@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -42,7 +43,7 @@ const PermissionReviewDialog = ({
         <DialogHeader>
           <DialogTitle className="text-xp-text flex items-center gap-2">
             <Puzzle className="text-xp-blue h-5 w-5" />
-            Review Extension
+            {i18n.t('dialogs.review.title')}
           </DialogTitle>
         </DialogHeader>
 
@@ -82,12 +83,12 @@ const PermissionReviewDialog = ({
           {verified ? (
             <>
               <ShieldCheck className="h-4 w-4" />
-              Verified — Signature matches
+              {i18n.t('dialogs.review.verified')}
             </>
           ) : (
             <>
               <ShieldQuestion className="h-4 w-4" />
-              Unsigned — This extension has not been verified
+              {i18n.t('dialogs.review.unsigned')}
             </>
           )}
         </div>
@@ -101,14 +102,14 @@ const PermissionReviewDialog = ({
             {hasDanger && (
               <span className="text-xp-red flex items-center gap-1 text-xs">
                 <ShieldAlert className="h-3 w-3" />
-                {counts.danger} dangerous
+                {i18n.t('dialogs.review.dangerousCount', { count: counts.danger })}
               </span>
             )}
           </div>
 
           {permissions.length === 0 ? (
             <div className="text-xp-text-muted bg-xp-surface border-xp-border rounded-lg border p-3 text-center text-xs">
-              This extension requests no special permissions.
+              {i18n.t('dialogs.review.noPermissions')}
             </div>
           ) : (
             <ScrollArea className="max-h-52">
@@ -142,7 +143,7 @@ const PermissionReviewDialog = ({
             onClick={onClose}
             className="text-xp-text border-xp-border hover:bg-xp-surface-light"
           >
-            Cancel
+            {i18n.t('common.cancel')}
           </Button>
           <Button
             size="sm"

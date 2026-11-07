@@ -76,7 +76,7 @@ const PROJECT_TYPE_COLORS: Record<ProjectInfo['type'], string> = {
 };
 
 async function detectProject(api: XplorerAPI, path: string): Promise<ProjectInfo | null> {
-  if (!path || path.startsWith('splorer://') || path.startsWith('gdrive://')) {
+  if (!path || path.startsWith('splorer://')) {
     return null;
   }
 
@@ -711,7 +711,7 @@ function ProjectSidebar({ currentPath, api }: { currentPath: string; api: Xplore
 
   // Detect project and load root entries when currentPath changes
   React.useEffect(() => {
-    if (!currentPath || currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://')) {
+    if (!currentPath || currentPath.startsWith('splorer://')) {
       setProject(null);
       setRootEntries(null);
       setError(null);

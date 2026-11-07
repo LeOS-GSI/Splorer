@@ -1,17 +1,8 @@
+import i18n from '@/i18n';
 import React, { useMemo, useSyncExternalStore } from 'react';
 import { useLocation } from 'wouter';
 import { extensionHost } from '@/lib/extension-host';
-import {
-  Eye,
-  Search,
-  MessageSquare,
-  Bot,
-  Puzzle,
-  ShoppingCart,
-  Settings,
-  Activity,
-} from 'lucide-react';
-import AgentStatusIndicator from '@/components/panels/agent-manager/AgentStatusIndicator';
+import { Eye, Search, Puzzle, Settings, Activity } from 'lucide-react';
 
 interface VerticalExtensionsBarProps {
   rightPanelTab: string;
@@ -49,25 +40,14 @@ const VerticalExtensionsBar = ({
 
   // Core panels (always shown, part of the app core)
   const corePanels = [
-    { id: 'preview', icon: <Eye size={18} />, label: 'File Preview' },
-    { id: 'tokenizer', icon: <Search size={18} />, label: 'Content Search' },
-    { id: 'chat', icon: <MessageSquare size={18} />, label: 'AI Chat' },
-    {
-      id: 'agent-manager',
-      icon: (
-        <AgentStatusIndicator>
-          <Bot size={18} />
-        </AgentStatusIndicator>
-      ),
-      label: 'Agent Manager',
-    },
+    { id: 'preview', icon: <Eye size={18} />, label: i18n.t('explorer.filePreview') },
+    { id: 'tokenizer', icon: <Search size={18} />, label: i18n.t('explorer.contentSearch') },
   ];
 
   // System panels (always shown, not extension-managed)
   const systemPanels = [
     { id: 'performance', icon: <Activity size={18} />, label: 'Performance' },
     { id: 'extensions', icon: <Puzzle size={18} />, label: 'Extensions' },
-    { id: 'marketplace', icon: <ShoppingCart size={18} />, label: 'Marketplace' },
   ];
 
   const handlePanelClick = (id: string) => {

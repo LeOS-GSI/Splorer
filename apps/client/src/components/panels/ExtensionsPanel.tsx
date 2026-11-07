@@ -1,10 +1,9 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useCallback, useSyncExternalStore } from 'react';
 import { extensionHost, resolveIcon } from '@/lib/extension-host';
 import { TauriAPI, type ExtensionManifestInfo } from '@/lib/tauri-api';
-import { AgentService } from '@/lib/agent-service';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
-import { Bot, ArrowDownCircle } from 'lucide-react';
 import PermissionReviewDialog from '@/components/dialogs/PermissionReviewDialog';
 
 interface Theme {
@@ -46,24 +45,6 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
     return () => window.removeEventListener('xplorer:extension-dev-reloaded', handler);
   }, [toast, t]);
 
-  // Agent enabled state — single source synced with AgentService backend
-  const [agentEnabled, setAgentEnabled] = useState(false);
-  useEffect(() => {
-    AgentService.getSettings()
-      .then((s) => setAgentEnabled(s.enabled))
-      .catch((err) => console.warn('Failed to load agent settings:', err));
-  }, []);
-
-  const toggleAgent = useCallback(() => {
-    setAgentEnabled((prev) => {
-      const next = !prev;
-      AgentService.getSettings()
-        .then((s) => AgentService.updateSettings({ ...s, enabled: next }))
-        .catch((err) => console.error('Failed to update agent settings:', err));
-      return next;
-    });
-  }, []);
-
   // Listen for extension host changes via useSyncExternalStore
   const _extVersion = useSyncExternalStore(
     extensionHost.subscribe,
@@ -92,61 +73,13 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
         console.error('Failed to uninstall extension:', err);
         toast({
           variant: 'destructive',
-          title: 'Uninstall Failed',
-          description: `Failed to uninstall extension: ${err}`,
+          title: i18n.t('panels.extensions.uninstallFailed'),
+          description: i18n.t('panels.extensions.uninstallFailedDesc', { error: String(err) }),
         });
       }
     },
     [toast],
   );
-
-  // Listen for extension update events and show toasts
-  useEffect(() => {
-    const updatesAvailableDispose = extensionHost.onEvent(
-      'extensionUpdatesAvailable',
-      (updates: unknown) => {
-        const updateList = updates as Array<{ id: string; latestVersion: string }>;
-        if (updateList.length > 0) {
-          toast({
-            title: t('extensions.updatesFound'),
-            description: t('extensions.updatesFoundDesc', { count: updateList.length }),
-          });
-        }
-      },
-    );
-    const updatedDispose = extensionHost.onEvent('extensionUpdated', (info: unknown) => {
-      const { id, version } = info as { id: string; version: string };
-      const ext = extensionHost.getExtension(id);
-      const name = ext?.manifest.display_name || ext?.manifest.name || id;
-      toast({
-        title: `${name}`,
-        description: t('extensions.updated', { version }),
-      });
-    });
-    const updateFailedDispose = extensionHost.onEvent('extensionUpdateFailed', (info: unknown) => {
-      const { id, error } = info as { id: string; error: string };
-      const ext = extensionHost.getExtension(id);
-      const name = ext?.manifest.display_name || ext?.manifest.name || id;
-      toast({
-        variant: 'destructive',
-        title: t('extensions.updateFailed'),
-        description: t('extensions.updateFailedDesc', { name, error }),
-      });
-    });
-    return () => {
-      updatesAvailableDispose.dispose();
-      updatedDispose.dispose();
-      updateFailedDispose.dispose();
-    };
-  }, [toast, t]);
-
-  const handleUpdateExtension = useCallback(async (id: string) => {
-    await extensionHost.applyExtensionUpdate(id);
-  }, []);
-
-  const handleUpdateAll = useCallback(async () => {
-    await extensionHost.applyAllUpdates();
-  }, []);
 
   const handleInstallFromFolder = useCallback(async () => {
     try {
@@ -160,8 +93,8 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
       console.error('Failed to validate extension:', err);
       toast({
         variant: 'destructive',
-        title: 'Validation Failed',
-        description: `Failed to validate extension: ${err}`,
+        title: i18n.t('panels.extensions.validationFailed'),
+        description: i18n.t('panels.extensions.validationFailedDesc', { error: String(err) }),
       });
     }
   }, [toast]);
@@ -177,8 +110,8 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
       console.error('Failed to install extension:', err);
       toast({
         variant: 'destructive',
-        title: 'Install Failed',
-        description: `Failed to install extension: ${err}`,
+        title: i18n.t('panels.extensions.installFailed'),
+        description: i18n.t('panels.extensions.installFailedDesc', { error: String(err) }),
       });
     } finally {
       setInstalling(false);
@@ -192,39 +125,10 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
         Extensions
       </h3>
 
-      {/* Claude Agent Extension — hardcoded system feature */}
-      <div className="mb-4">
-        <div className="bg-xp-bg border-xp-border rounded-lg border p-3">
-          <div className="mb-2 flex items-center justify-between">
-            <h4 className="flex items-center text-sm font-medium">
-              <Bot size={16} className="mr-2 inline-block" />
-              Claude Agent
-            </h4>
-            <div className="flex items-center space-x-2">
-              <div
-                className={`h-2 w-2 rounded-full ${agentEnabled ? 'bg-xp-purple' : 'bg-xp-border'}`}
-              />
-              <button
-                onClick={toggleAgent}
-                aria-label={agentEnabled ? 'Disable Claude Agent' : 'Enable Claude Agent'}
-                className={`rounded px-2 py-1 text-xs transition-colors ${
-                  agentEnabled
-                    ? 'bg-xp-purple bg-opacity-80 text-white hover:bg-opacity-100'
-                    : 'bg-xp-border text-xp-text hover:bg-xp-surface-light'
-                }`}
-              >
-                {agentEnabled ? 'Enabled' : 'Disabled'}
-              </button>
-            </div>
-          </div>
-          <p className="text-xp-text-muted text-xs">Autonomous AI agent powered by Claude.</p>
-        </div>
-      </div>
-
       {/* Theme Manager */}
       <div className="bg-xp-bg border-xp-border mb-4 rounded-lg border p-3">
         <div className="mb-2 flex items-center justify-between">
-          <h4 className="text-sm font-medium">Theme Manager</h4>
+          <h4 className="text-sm font-medium">{i18n.t('panels.extensions.themeManager')}</h4>
           <div className="bg-xp-green h-2 w-2 rounded-full" />
         </div>
         <div className="grid grid-cols-2 gap-2">
@@ -259,21 +163,9 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
             <h4 className="text-xp-text text-xs font-semibold uppercase tracking-wider">
               Installed Extensions ({allExtensions.length})
             </h4>
-            {extensionHost.hasUpdatesAvailable() && (
-              <button
-                onClick={handleUpdateAll}
-                aria-label={t('extensions.updateAll')}
-                className="bg-xp-blue flex items-center gap-1 rounded px-2 py-0.5 text-xs text-white transition-colors hover:bg-opacity-90"
-              >
-                <ArrowDownCircle size={12} />
-                {t('extensions.updateAll')}
-              </button>
-            )}
           </div>
           <div className="space-y-1.5">
             {allExtensions.map((ext) => {
-              const update = extensionHost.getUpdateForExtension(ext.id);
-              const isUpdatingExt = extensionHost.isUpdating(ext.id);
               return (
                 <div
                   key={ext.id}
@@ -294,18 +186,6 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
                             {t('extensions.devMode')}
                           </span>
                         )}
-                        {update && (
-                          <span
-                            className="inline-flex items-center rounded bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-amber-400"
-                            title={t('extensions.updateAvailable', {
-                              version: update.latestVersion,
-                            })}
-                          >
-                            {t('extensions.updateAvailable', {
-                              version: update.latestVersion,
-                            })}
-                          </span>
-                        )}
                       </p>
                       <p className="text-xp-text-muted text-xs">
                         v{ext.manifest.version} by {ext.manifest.author}
@@ -313,26 +193,6 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
                     </div>
                   </div>
                   <div className="flex flex-shrink-0 items-center space-x-1">
-                    {update && (
-                      <button
-                        onClick={() => handleUpdateExtension(ext.id)}
-                        disabled={isUpdatingExt}
-                        aria-label={`${t('extensions.updateSingle')} ${ext.manifest.display_name || ext.manifest.name}`}
-                        className="bg-xp-blue flex items-center gap-1 rounded px-2 py-0.5 text-xs text-white transition-colors hover:bg-opacity-90 disabled:opacity-50"
-                      >
-                        {isUpdatingExt ? (
-                          <>
-                            <span className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                            {t('extensions.updating')}
-                          </>
-                        ) : (
-                          <>
-                            <ArrowDownCircle size={12} />
-                            {t('extensions.updateSingle')}
-                          </>
-                        )}
-                      </button>
-                    )}
                     <button
                       onClick={() => handleToggleExtension(ext.id)}
                       aria-label={
@@ -368,7 +228,7 @@ const ExtensionsPanel = ({ themes, theme, applyTheme }: ExtensionsPanelProps) =>
         <button
           onClick={handleInstallFromFolder}
           disabled={installing}
-          aria-label="Install extension from folder"
+          aria-label={i18n.t('panels.extensions.installFromFolder')}
           className="bg-xp-blue flex w-full items-center justify-center space-x-2 rounded px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-opacity-90 disabled:opacity-50"
         >
           {installing ? (

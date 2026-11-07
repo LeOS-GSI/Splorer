@@ -545,7 +545,7 @@ describe('Navigation Integration', () => {
         expect(screen.getByText('RemoveMe')).toBeInTheDocument();
       });
 
-      const removeBtn = screen.getByTitle('Remove bookmark');
+      const removeBtn = screen.getByTitle('removeBookmark');
       fireEvent.click(removeBtn);
 
       expect(TauriAPI.removeBookmark).toHaveBeenCalledWith('C:\\Users\\Test\\RemoveMe');

@@ -190,13 +190,7 @@ export const revokeConsent = (extensionId: string): void => {
 // ── Consent helpers ─────────────────────────────────────────────────────────
 
 /** Returns true when any requested permission needs an interactive consent dialog */
-const SAFE_PERMISSIONS = new Set([
-  'ui:notifications',
-  'ui:panels',
-  'ui:theme',
-  'ui:statusbar',
-  'ai:read',
-]);
+const SAFE_PERMISSIONS = new Set(['ui:notifications', 'ui:panels', 'ui:theme', 'ui:statusbar']);
 
 export const requiresConsentDialog = (permissions: string[]): boolean => {
   return permissions.some((p) => !SAFE_PERMISSIONS.has(p));

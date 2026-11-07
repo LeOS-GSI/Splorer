@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronRight, X, Clock, Filter, FolderOpen } from 'lucide-react';
@@ -25,25 +26,90 @@ export type DateRangeOption = 'any' | 'today' | 'last7' | 'last30' | 'thisYear' 
 export type SizeRangeOption = 'any' | 'lt1kb' | '1kb-1mb' | '1mb-100mb' | 'gt100mb';
 
 const FILE_TYPE_OPTIONS: { value: FileTypeFilter; label: string }[] = [
-  { value: 'Images', label: 'Images' },
-  { value: 'Documents', label: 'Documents' },
-  { value: 'Videos', label: 'Videos' },
-  { value: 'Audio', label: 'Audio' },
-  { value: 'Code', label: 'Code' },
-  { value: 'Archives', label: 'Archives' },
+  {
+    value: 'Images',
+    get label() {
+      return i18n.t('search.filterImages');
+    },
+  },
+  {
+    value: 'Documents',
+    get label() {
+      return i18n.t('search.filterDocuments');
+    },
+  },
+  {
+    value: 'Videos',
+    get label() {
+      return i18n.t('search.filterVideos');
+    },
+  },
+  {
+    value: 'Audio',
+    get label() {
+      return i18n.t('search.filterAudio');
+    },
+  },
+  {
+    value: 'Code',
+    get label() {
+      return i18n.t('search.filterCode');
+    },
+  },
+  {
+    value: 'Archives',
+    get label() {
+      return i18n.t('search.filterArchives');
+    },
+  },
 ];
 
 const DATE_RANGE_OPTIONS: { value: DateRangeOption; label: string }[] = [
-  { value: 'any', label: 'Any time' },
-  { value: 'today', label: 'Today' },
-  { value: 'last7', label: 'Last 7 days' },
-  { value: 'last30', label: 'Last 30 days' },
-  { value: 'thisYear', label: 'This year' },
-  { value: 'custom', label: 'Custom range' },
+  {
+    value: 'any',
+    get label() {
+      return i18n.t('search.anyTime');
+    },
+  },
+  {
+    value: 'today',
+    get label() {
+      return i18n.t('search.today');
+    },
+  },
+  {
+    value: 'last7',
+    get label() {
+      return i18n.t('search.last7');
+    },
+  },
+  {
+    value: 'last30',
+    get label() {
+      return i18n.t('search.last30');
+    },
+  },
+  {
+    value: 'thisYear',
+    get label() {
+      return i18n.t('search.thisYear');
+    },
+  },
+  {
+    value: 'custom',
+    get label() {
+      return i18n.t('search.customRange');
+    },
+  },
 ];
 
 const SIZE_RANGE_OPTIONS: { value: SizeRangeOption; label: string }[] = [
-  { value: 'any', label: 'Any size' },
+  {
+    value: 'any',
+    get label() {
+      return i18n.t('search.anySize');
+    },
+  },
   { value: 'lt1kb', label: '< 1 KB' },
   { value: '1kb-1mb', label: '1 KB - 1 MB' },
   { value: '1mb-100mb', label: '1 MB - 100 MB' },
@@ -529,7 +595,7 @@ const SearchFilterPanel = ({ filters, onChange, onClose }: SearchFilterPanelProp
             type="text"
             value={filters.extensions}
             onChange={(e) => setExtensions(e.target.value)}
-            placeholder="e.g. .ts, .tsx, .json"
+            placeholder={i18n.t('search.extPlaceholder')}
             className="bg-xp-bg border-xp-border focus:ring-xp-blue placeholder-xp-text-muted w-full rounded border px-2 py-1.5 text-xs focus:outline-none focus:ring-1"
           />
           {filters.extensions.trim() && (

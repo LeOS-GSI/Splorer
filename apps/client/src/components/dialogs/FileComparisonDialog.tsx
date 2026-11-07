@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import { convertAssetUrl } from '@/lib/transport';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -61,7 +62,8 @@ const FileComparisonDialog = ({
           : 'summary',
       );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Comparison failed';
+      const errorMessage =
+        error instanceof Error ? error.message : i18n.t('dialogs.fileComparison.failed');
       onError?.(errorMessage);
       console.error('File comparison error:', error);
     } finally {
@@ -88,18 +90,20 @@ const FileComparisonDialog = ({
             {identical ? (
               <Badge variant="success" className="gap-2">
                 <Scale className="h-4 w-4" />
-                Files are identical
+                {i18n.t('dialogs.fileComparison.identical')}
               </Badge>
             ) : (
               <Badge variant="warning" className="gap-2">
                 <AlertTriangle className="h-4 w-4" />
-                Files differ
+                {i18n.t('dialogs.fileComparison.differ')}
               </Badge>
             )}
             <Badge variant="outline" className="ml-2">
               {(similarity * 100).toFixed(1)}% similar
             </Badge>
-            <Badge variant="outline">{comparisonType} comparison</Badge>
+            <Badge variant="outline">
+              {i18n.t('dialogs.fileComparison.typeBadge', { type: comparisonType })}
+            </Badge>
           </div>
         </div>
 
@@ -152,21 +156,29 @@ const FileComparisonDialog = ({
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <div className="rounded-lg bg-gray-50 p-3 text-center">
             <div className="text-lg font-semibold text-green-600">{metadata.linesAdded}</div>
-            <div className="text-xs text-gray-600">Lines Added</div>
+            <div className="text-xs text-gray-600">
+              {i18n.t('dialogs.fileComparison.linesAdded')}
+            </div>
           </div>
           <div className="rounded-lg bg-gray-50 p-3 text-center">
             <div className="text-lg font-semibold text-red-600">{metadata.linesRemoved}</div>
-            <div className="text-xs text-gray-600">Lines Removed</div>
+            <div className="text-xs text-gray-600">
+              {i18n.t('dialogs.fileComparison.linesRemoved')}
+            </div>
           </div>
           <div className="rounded-lg bg-gray-50 p-3 text-center">
             <div className="text-lg font-semibold text-orange-600">{metadata.linesModified}</div>
-            <div className="text-xs text-gray-600">Lines Modified</div>
+            <div className="text-xs text-gray-600">
+              {i18n.t('dialogs.fileComparison.linesModified')}
+            </div>
           </div>
           <div className="rounded-lg bg-gray-50 p-3 text-center">
             <div className="text-lg font-semibold text-blue-600">
               {formatFileSize(metadata.bytesDifferent)}
             </div>
-            <div className="text-xs text-gray-600">Bytes Different</div>
+            <div className="text-xs text-gray-600">
+              {i18n.t('dialogs.fileComparison.bytesDifferent')}
+            </div>
           </div>
         </div>
 
@@ -174,11 +186,14 @@ const FileComparisonDialog = ({
         <div className="flex items-center gap-4 text-xs text-gray-500">
           <div className="flex items-center gap-1">
             <Clock className="h-3 w-3" />
-            Processed in {metadata.processingTime}ms
+            {i18n.t('dialogs.fileComparison.processedIn', { ms: metadata.processingTime })}
           </div>
-          <div>Algorithm: {metadata.algorithm}</div>
+          <div>{i18n.t('dialogs.fileComparison.algorithm', { name: metadata.algorithm })}</div>
           <div>
-            Total lines: {metadata.totalLines1} / {metadata.totalLines2}
+            {i18n.t('dialogs.fileComparison.totalLines', {
+              a: metadata.totalLines1,
+              b: metadata.totalLines2,
+            })}
           </div>
         </div>
       </div>
@@ -190,8 +205,8 @@ const FileComparisonDialog = ({
       return (
         <div className="py-8 text-center text-gray-500">
           <Scale className="mx-auto mb-4 h-12 w-12 text-gray-300" />
-          <div className="text-lg font-medium">No differences found</div>
-          <div className="text-sm">The files are identical</div>
+          <div className="text-lg font-medium">{i18n.t('dialogs.fileComparison.noDiff')}</div>
+          <div className="text-sm">{i18n.t('dialogs.fileComparison.theFilesIdentical')}</div>
         </div>
       );
     }
@@ -332,10 +347,10 @@ const FileComparisonDialog = ({
       return (
         <div className="py-8 text-center text-gray-500">
           <FileIcon className="mx-auto mb-4 h-12 w-12 text-gray-300" />
-          <div className="text-lg font-medium">Side-by-side view not available</div>
-          <div className="text-sm">
-            This view is only available for text, image, and video files
+          <div className="text-lg font-medium">
+            {i18n.t('dialogs.fileComparison.sbsUnavailable')}
           </div>
+          <div className="text-sm">{i18n.t('dialogs.fileComparison.sbsHint')}</div>
         </div>
       );
     }
@@ -393,7 +408,7 @@ const FileComparisonDialog = ({
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2">
               <Scale className="h-5 w-5" />
-              File Comparison
+              {i18n.t('dialogs.fileComparison.title')}
             </DialogTitle>
             <Button variant="ghost" size="sm" onClick={onClose}>
               <X className="h-4 w-4" />
@@ -407,7 +422,9 @@ const FileComparisonDialog = ({
             <div className="flex h-64 items-center justify-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500" />
-                <div className="text-sm text-gray-600">Comparing files...</div>
+                <div className="text-sm text-gray-600">
+                  {i18n.t('dialogs.fileComparison.comparing')}
+                </div>
               </div>
             </div>
           ) : comparisonResult ? (
@@ -417,7 +434,9 @@ const FileComparisonDialog = ({
                 <TabsTrigger value="differences">
                   Differences ({comparisonResult.differences.length})
                 </TabsTrigger>
-                <TabsTrigger value="side-by-side">Side by Side</TabsTrigger>
+                <TabsTrigger value="side-by-side">
+                  {i18n.t('dialogs.fileComparison.sideBySide')}
+                </TabsTrigger>
               </TabsList>
 
               <div className="mt-4 h-full">
@@ -435,8 +454,8 @@ const FileComparisonDialog = ({
           ) : (
             <div className="py-8 text-center text-gray-500">
               <AlertTriangle className="mx-auto mb-4 h-12 w-12 text-gray-300" />
-              <div className="text-lg font-medium">Comparison failed</div>
-              <div className="text-sm">Unable to compare the selected files</div>
+              <div className="text-lg font-medium">{i18n.t('dialogs.fileComparison.failed')}</div>
+              <div className="text-sm">{i18n.t('dialogs.fileComparison.unable')}</div>
             </div>
           )}
         </div>
@@ -447,7 +466,7 @@ const FileComparisonDialog = ({
           </Button>
           {comparisonResult && (
             <Button onClick={performComparison} disabled={loading}>
-              Refresh Comparison
+              {i18n.t('dialogs.fileComparison.refresh')}
             </Button>
           )}
         </div>

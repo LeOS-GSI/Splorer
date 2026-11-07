@@ -23,9 +23,6 @@ vi.mock('@/components/panels/TokenizerStatusPanel', () => ({
 vi.mock('@/components/panels/ExtensionsPanel', () => ({
   default: () => <div data-testid="extensions-panel">Extensions</div>,
 }));
-vi.mock('@/components/panels/MarketplacePanel', () => ({
-  default: () => <div data-testid="marketplace-panel">Marketplace</div>,
-}));
 vi.mock('@/components/panels/PerformanceDashboard', () => ({
   default: () => <div data-testid="performance-dashboard">Performance</div>,
 }));
@@ -134,13 +131,6 @@ describe('RightSidebar', () => {
       renderWithSuspense(<RightSidebar {...defaultProps} rightPanelTab="extensions" />);
       expect(await screen.findByTestId('extensions-panel')).toBeInTheDocument();
       const elements = screen.getAllByText('Extensions');
-      expect(elements.length).toBeGreaterThanOrEqual(1);
-    });
-
-    it('shows marketplace panel when tab is marketplace', async () => {
-      renderWithSuspense(<RightSidebar {...defaultProps} rightPanelTab="marketplace" />);
-      expect(await screen.findByTestId('marketplace-panel')).toBeInTheDocument();
-      const elements = screen.getAllByText('Marketplace');
       expect(elements.length).toBeGreaterThanOrEqual(1);
     });
 

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useEffect, useState } from 'react';
 import { PreviewProps } from '@/lib/preview-factory';
 import { convertAssetUrl } from '@/lib/transport';
@@ -55,8 +56,8 @@ const ImagePreview = ({ file, onError, onLoad }: PreviewProps) => {
                 clipRule="evenodd"
               />
             </svg>
-            <p className="text-sm">Cannot preview image</p>
-            <p className="mt-1 text-xs opacity-70">The image format may not be supported</p>
+            <p className="text-sm">{i18n.t('previews.image.cannotPreview')}</p>
+            <p className="mt-1 text-xs opacity-70">{i18n.t('previews.image.formatNotSupported')}</p>
           </div>
         </div>
       )}

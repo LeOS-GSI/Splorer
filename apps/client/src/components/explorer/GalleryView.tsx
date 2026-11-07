@@ -1,6 +1,8 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef } from 'react';
+import { useAppSettings, getDisplayName } from '@/lib/app-settings';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { FileEntry, TauriAPI } from '@/lib/tauri-api';
+import { FileEntry } from '@/lib/tauri-api';
 import { useDraggable } from '@/hooks/use-draggable';
 import { useDroppable } from '@/hooks/use-droppable';
 import { useThumbnailCache } from '@/hooks/use-thumbnail-cache';
@@ -115,11 +117,10 @@ const GalleryView = ({
   handleFileRightClick,
   handleBackgroundRightClick,
 }: ViewComponentProps) => {
+  const { showFileExtensions } = useAppSettings();
   const [focusedFile, setFocusedFile] = useState<FileEntry | null>(null);
   const [previewError, setPreviewError] = useState(false);
   const [previewDimensions, setPreviewDimensions] = useState<{ w: number; h: number } | null>(null);
-  const [aiDescription, setAiDescription] = useState<string | null>(null);
-  const [indexingStatus, setIndexingStatus] = useState<'idle' | 'indexing' | 'done'>('idle');
   const stripRef = useRef<HTMLDivElement>(null);
   const { getThumbnailUrl, preloadThumbnails } = useThumbnailCache(100);
 
@@ -138,10 +139,7 @@ const GalleryView = ({
     const imagePaths = files.filter(isImageFile).map((f) => f.path);
     if (imagePaths.length > 0) preloadThumbnails(imagePaths);
   }, [files, preloadThumbnails]);
-  const bgDropRef = useDroppable(
-    currentPath,
-    currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://'),
-  );
+  const bgDropRef = useDroppable(currentPath, currentPath.startsWith('splorer://'));
 
   // Reset focused file when files change (navigated to a new folder)
   useEffect(() => {
@@ -154,86 +152,11 @@ const GalleryView = ({
     focusedFile ?? files.find((f) => selectedFiles.has(f.path)) ?? files[0] ?? null;
   const isDisplayImage = displayFile ? isImageFile(displayFile) : false;
 
-  // Reset preview error, fetch AI description, and auto-index current + nearby images
+  // Reset preview error state when the displayed file changes
   useEffect(() => {
     setPreviewError(false);
     setPreviewDimensions(null);
-    setAiDescription(null);
-    setIndexingStatus('idle');
-
-    if (!displayFile || !isImageFile(displayFile)) return;
-
-    let cancelled = false;
-    let pollTimer: ReturnType<typeof setInterval> | null = null;
-    let timeoutTimer: ReturnType<typeof setTimeout> | null = null;
-
-    (async () => {
-      // 1. Check if current image already has a description
-      const currentEntry = await TauriAPI.getAIIndexEntry(displayFile.path).catch(() => null);
-      if (cancelled) return;
-      if (currentEntry?.description) {
-        setAiDescription(currentEntry.description);
-        setIndexingStatus('done');
-      }
-
-      // 2. Collect current +/- 3 nearby image files
-      const imageFiles = files.filter(isImageFile);
-      const idx = imageFiles.findIndex((f) => f.path === displayFile.path);
-      if (idx === -1) return;
-      const start = Math.max(0, idx - 3);
-      const end = Math.min(imageFiles.length, idx + 4);
-      const nearby = imageFiles.slice(start, end);
-
-      // 3. Check which nearby images need indexing
-      const unindexed: string[] = [];
-      for (const f of nearby) {
-        if (f.path === displayFile.path && currentEntry?.description) continue;
-        const entry = await TauriAPI.getAIIndexEntry(f.path).catch(() => null);
-        if (cancelled) return;
-        if (!entry?.description) unindexed.push(f.path);
-      }
-
-      if (cancelled || unindexed.length === 0) return;
-
-      // 4. Trigger indexing for unindexed files
-      setIndexingStatus('indexing');
-      await TauriAPI.triggerAIIndexing(unindexed).catch((err) =>
-        console.warn('[GalleryView] AI indexing failed:', err),
-      );
-      if (cancelled) return;
-
-      // 5. Poll for current image's description if it was unindexed
-      if (unindexed.includes(displayFile.path)) {
-        pollTimer = setInterval(async () => {
-          if (cancelled) {
-            if (pollTimer) clearInterval(pollTimer);
-            return;
-          }
-          const entry = await TauriAPI.getAIIndexEntry(displayFile.path).catch(() => null);
-          if (entry?.description) {
-            setAiDescription(entry.description);
-            setIndexingStatus('done');
-            if (pollTimer) clearInterval(pollTimer);
-            if (timeoutTimer) clearTimeout(timeoutTimer);
-          }
-        }, 3000);
-
-        // Timeout after 90s
-        timeoutTimer = setTimeout(() => {
-          if (pollTimer) clearInterval(pollTimer);
-          if (!cancelled) setIndexingStatus('idle');
-        }, 90000);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-      if (pollTimer) clearInterval(pollTimer);
-      if (timeoutTimer) clearTimeout(timeoutTimer);
-    };
-    // displayFile?.path is sufficient; we don't need the full object reference
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayFile?.path, files]);
+  }, [displayFile?.path]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -288,7 +211,7 @@ const GalleryView = ({
     <div
       ref={bgDropRef}
       className="flex h-full flex-col overflow-hidden"
-      aria-label="Gallery view"
+      aria-label={i18n.t('explorer.galleryViewAria')}
       onContextMenu={handleBackgroundRightClick || undefined}
     >
       {/* -- Large preview area -- */}
@@ -300,7 +223,7 @@ const GalleryView = ({
       >
         {(() => {
           if (!displayFile) {
-            return <div className="text-xp-text-muted text-sm">No files</div>;
+            return <div className="text-xp-text-muted text-sm">{i18n.t('explorer.noFiles')}</div>;
           }
           if (isDisplayImage && !previewError) {
             return (
@@ -353,29 +276,13 @@ const GalleryView = ({
         {/* File info overlay */}
         {displayFile && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent px-4 py-2">
-            <div className="truncate text-sm font-medium text-white">{displayFile.name}</div>
+            <div className="truncate text-sm font-medium text-white">
+              {getDisplayName(displayFile.name, displayFile.is_dir, showFileExtensions)}
+            </div>
             <div className="text-xs text-white/70">
               {displayFile.is_dir ? 'Folder' : formatFileSize(displayFile.size)}
               {displayFile.modified > 0 && <> &middot; {formatDate(displayFile.modified)}</>}
             </div>
-            {(() => {
-              if (aiDescription) {
-                return (
-                  <div className="mt-1 line-clamp-2 text-xs italic text-white/60">
-                    {aiDescription}
-                  </div>
-                );
-              }
-              if (indexingStatus === 'indexing' && isDisplayImage) {
-                return (
-                  <div className="mt-1 flex items-center gap-1.5 text-xs italic text-white/50">
-                    <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-white/30 border-t-white/70" />
-                    Generating description...
-                  </div>
-                );
-              }
-              return null;
-            })()}
           </div>
         )}
       </div>

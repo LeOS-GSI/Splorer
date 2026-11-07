@@ -1,0 +1,860 @@
+From 9984c493a3d07b10a01d10932c8a894b628b691b Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Thu, 5 Nov 2026 16:25:43 +0100
+Subject: [PATCH] fix: make the dead settings actually work
+
+Most settings on the settings page were saved but never read. A shared
+settings hook now feeds them to the app and applies changes immediately:
+hidden files, file extensions, markdown preview, animations,
+notifications (errors always shown), sidebar width preset, and the
+accessibility options, which were only applied after opening the
+settings page. Auto Save had nothing to save and is removed.
+
+Claude-Session: https://claude.ai/code/session_01GWWpEUAJotcDDNozkWrLi3
+---
+ .../src/__tests__/lib/app-settings.test.ts    |  82 +++++++++++
+ .../src/components/explorer/ColumnView.tsx    |   4 +-
+ .../src/components/explorer/DetailsView.tsx   |   6 +-
+ .../src/components/explorer/FileGridItem.tsx  |   6 +-
+ .../src/components/explorer/GalleryView.tsx   |   6 +-
+ .../src/components/explorer/TreeView.tsx      |   6 +-
+ .../explorer/sidebar/SidebarFileTree.tsx      |  16 ++-
+ .../components/settings/GeneralSettings.tsx   |  13 --
+ .../client/src/components/settings/shared.tsx |  41 +-----
+ .../components/split-view/EditorGroupPane.tsx |  23 ++--
+ apps/client/src/hooks/use-layout-state.ts     |  20 ++-
+ apps/client/src/hooks/use-toast.ts            |  27 ++--
+ apps/client/src/index.css                     |   3 +-
+ apps/client/src/lib/app-settings.ts           | 129 ++++++++++++++++++
+ apps/client/src/lib/preview-factory.ts        |  10 +-
+ apps/client/src/lib/storage-keys.ts           |   1 +
+ apps/client/src/locales/en.json               |   4 +-
+ apps/client/src/locales/id.json               |   4 +-
+ apps/client/src/locales/ja.json               |   4 +-
+ apps/client/src/locales/zh.json               |   4 +-
+ apps/client/src/main.tsx                      |   4 +
+ apps/client/src/pages/settings.tsx            |   9 +-
+ 22 files changed, 317 insertions(+), 105 deletions(-)
+ create mode 100644 apps/client/src/__tests__/lib/app-settings.test.ts
+ create mode 100644 apps/client/src/lib/app-settings.ts
+
+diff --git a/apps/client/src/__tests__/lib/app-settings.test.ts b/apps/client/src/__tests__/lib/app-settings.test.ts
+new file mode 100644
+index 0000000..c5ed46f
+--- /dev/null
++++ b/apps/client/src/__tests__/lib/app-settings.test.ts
+@@ -0,0 +1,82 @@
++import { describe, it, expect, beforeEach } from 'vitest';
++import { act, renderHook } from '@testing-library/react';
++import {
++  DEFAULT_SETTINGS,
++  SETTINGS_KEY,
++  applyDocumentSettings,
++  getDisplayName,
++  loadAppSettings,
++  saveAppSettings,
++  useAppSettings,
++} from '@/lib/app-settings';
++import { toast, useToast } from '@/hooks/use-toast';
++import { useNotificationHistory } from '@/hooks/use-notification-history';
++
++describe('app-settings', () => {
++  beforeEach(() => {
++    localStorage.clear();
++    document.documentElement.className = '';
++  });
++
++  it('merges stored values over the defaults', () => {
++    localStorage.setItem(SETTINGS_KEY, JSON.stringify({ showHiddenFiles: true }));
++    const s = loadAppSettings();
++    expect(s.showHiddenFiles).toBe(true);
++    expect(s.enableMarkdownPreview).toBe(DEFAULT_SETTINGS.enableMarkdownPreview);
++  });
++
++  it('notifies the hook immediately when settings are saved', () => {
++    const { result } = renderHook(() => useAppSettings());
++    expect(result.current.showFileExtensions).toBe(true);
++    act(() => saveAppSettings({ ...DEFAULT_SETTINGS, showFileExtensions: false }));
++    expect(result.current.showFileExtensions).toBe(false);
++  });
++
++  it('applies accessibility and animation classes to <html>', () => {
++    applyDocumentSettings({
++      ...DEFAULT_SETTINGS,
++      reducedMotion: true,
++      highContrast: true,
++      enableAnimations: false,
++    });
++    const cls = document.documentElement.classList;
++    expect(cls.contains('reduce-motion')).toBe(true);
++    expect(cls.contains('high-contrast')).toBe(true);
++    expect(cls.contains('no-animations')).toBe(true);
++    expect(cls.contains('enhanced-focus')).toBe(false);
++  });
++
++  it('hides extensions only for files, keeping dotfiles and folders intact', () => {
++    expect(getDisplayName('report.pdf', false, false)).toBe('report');
++    expect(getDisplayName('archive.tar.gz', false, false)).toBe('archive.tar');
++    expect(getDisplayName('.bashrc', false, false)).toBe('.bashrc');
++    expect(getDisplayName('my.folder', true, false)).toBe('my.folder');
++    expect(getDisplayName('report.pdf', false, true)).toBe('report.pdf');
++  });
++});
++
++describe('notifications setting', () => {
++  beforeEach(() => localStorage.clear());
++
++  it('suppresses info pop-ups but keeps them in the history', () => {
++    saveAppSettings({ ...DEFAULT_SETTINGS, enableNotifications: false });
++    const toasts = renderHook(() => useToast());
++    const history = renderHook(() => useNotificationHistory());
++    const before = JSON.stringify(history.result.current).length;
++    act(() => {
++      toast({ title: 'Copied-quietly' });
++    });
++    expect(toasts.result.current.toasts.some((t) => t.title === 'Copied-quietly')).toBe(false);
++    expect(JSON.stringify(history.result.current)).toContain('Copied-quietly');
++    expect(JSON.stringify(history.result.current).length).toBeGreaterThan(before);
++  });
++
++  it('always shows error pop-ups', () => {
++    saveAppSettings({ ...DEFAULT_SETTINGS, enableNotifications: false });
++    const toasts = renderHook(() => useToast());
++    act(() => {
++      toast({ title: 'Disk-full', variant: 'destructive' });
++    });
++    expect(toasts.result.current.toasts.some((t) => t.title === 'Disk-full')).toBe(true);
++  });
++});
+diff --git a/apps/client/src/components/explorer/ColumnView.tsx b/apps/client/src/components/explorer/ColumnView.tsx
+index d529dbb..0d4c784 100644
+--- a/apps/client/src/components/explorer/ColumnView.tsx
++++ b/apps/client/src/components/explorer/ColumnView.tsx
+@@ -1,4 +1,5 @@
+ import React, { useState, useEffect, useCallback, useRef } from 'react';
++import { useAppSettings, getDisplayName } from '@/lib/app-settings';
+ import { useVirtualizer } from '@tanstack/react-virtual';
+ import { FileEntry, TauriAPI } from '@/lib/tauri-api';
+ import { ViewComponentProps } from './FileGridTypes';
+@@ -30,6 +31,7 @@ const ColumnFileRow = React.memo(
+     onDoubleClick: () => void;
+     onRightClick: (e: React.MouseEvent) => void;
+   }) => {
++    const { showFileExtensions } = useAppSettings();
+     return (
+       <div
+         role="option"
+@@ -100,7 +102,7 @@ const ColumnFileRow = React.memo(
+             whiteSpace: 'nowrap',
+           }}
+         >
+-          {file.name}
++          {getDisplayName(file.name, file.is_dir, showFileExtensions)}
+         </span>
+         {file.is_dir && (
+           <span
+diff --git a/apps/client/src/components/explorer/DetailsView.tsx b/apps/client/src/components/explorer/DetailsView.tsx
+index 4fb5cbb..099ce7c 100644
+--- a/apps/client/src/components/explorer/DetailsView.tsx
++++ b/apps/client/src/components/explorer/DetailsView.tsx
+@@ -1,4 +1,5 @@
+ import React, { useRef, useMemo, useCallback } from 'react';
++import { useAppSettings, getDisplayName } from '@/lib/app-settings';
+ import { useTranslation } from 'react-i18next';
+ import { useVirtualizer } from '@tanstack/react-virtual';
+ import { FileEntry, FolderSizeInfo } from '@/lib/tauri-api';
+@@ -47,6 +48,7 @@ const FileRow = React.memo(
+     isCalculatingSize,
+     onCalculateFolderSize,
+   }: FileRowProps) => {
++    const { showFileExtensions } = useAppSettings();
+     const { t } = useTranslation();
+     const handleClick = useCallback(
+       (e: React.MouseEvent) => onFileClick(file.path, e),
+@@ -107,7 +109,9 @@ const FileRow = React.memo(
+           <span className="text-lg">{getFileIcon(file)}</span>
+         </div>
+         <div className="col-span-5 min-w-0">
+-          <div className="truncate font-medium">{file.name}</div>
++          <div className="truncate font-medium">
++            {getDisplayName(file.name, file.is_dir, showFileExtensions)}
++          </div>
+         </div>
+         <div className="text-xp-text-muted col-span-2 text-right text-xs">
+           {(() => {
+diff --git a/apps/client/src/components/explorer/FileGridItem.tsx b/apps/client/src/components/explorer/FileGridItem.tsx
+index 1ba1307..f41933e 100644
+--- a/apps/client/src/components/explorer/FileGridItem.tsx
++++ b/apps/client/src/components/explorer/FileGridItem.tsx
+@@ -1,4 +1,5 @@
+ import React, { useState, useRef, useCallback, useEffect } from 'react';
++import { useAppSettings, getDisplayName } from '@/lib/app-settings';
+ import { createPortal } from 'react-dom';
+ import { useDraggable } from '@/hooks/use-draggable';
+ import { useDroppable } from '@/hooks/use-droppable';
+@@ -325,6 +326,7 @@ const FileGridItem = React.memo(
+     onRenameCancel,
+     onRenameTab,
+   }: FileGridItemProps) => {
++    const { showFileExtensions } = useAppSettings();
+     // Native drag via tauri-plugin-drag (mousedown/mousemove/mouseup)
+     const dragHandlers = useDraggable({ file, selectedFiles, allFiles });
+ 
+@@ -382,7 +384,9 @@ const FileGridItem = React.memo(
+ 
+       return (
+         <>
+-          <span className="min-w-0 truncate">{file.name}</span>
++          <span className="min-w-0 truncate">
++            {getDisplayName(file.name, file.is_dir, showFileExtensions)}
++          </span>
+           <LockBadge isReadonly={file.is_readonly} />
+           <GitStatusDot status={gitStatus} />
+         </>
+diff --git a/apps/client/src/components/explorer/GalleryView.tsx b/apps/client/src/components/explorer/GalleryView.tsx
+index 12fcf53..ea9e134 100644
+--- a/apps/client/src/components/explorer/GalleryView.tsx
++++ b/apps/client/src/components/explorer/GalleryView.tsx
+@@ -1,4 +1,5 @@
+ import React, { useState, useEffect, useRef } from 'react';
++import { useAppSettings, getDisplayName } from '@/lib/app-settings';
+ import { useVirtualizer } from '@tanstack/react-virtual';
+ import { FileEntry } from '@/lib/tauri-api';
+ import { useDraggable } from '@/hooks/use-draggable';
+@@ -115,6 +116,7 @@ const GalleryView = ({
+   handleFileRightClick,
+   handleBackgroundRightClick,
+ }: ViewComponentProps) => {
++  const { showFileExtensions } = useAppSettings();
+   const [focusedFile, setFocusedFile] = useState<FileEntry | null>(null);
+   const [previewError, setPreviewError] = useState(false);
+   const [previewDimensions, setPreviewDimensions] = useState<{ w: number; h: number } | null>(null);
+@@ -273,7 +275,9 @@ const GalleryView = ({
+         {/* File info overlay */}
+         {displayFile && (
+           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent px-4 py-2">
+-            <div className="truncate text-sm font-medium text-white">{displayFile.name}</div>
++            <div className="truncate text-sm font-medium text-white">
++              {getDisplayName(displayFile.name, displayFile.is_dir, showFileExtensions)}
++            </div>
+             <div className="text-xs text-white/70">
+               {displayFile.is_dir ? 'Folder' : formatFileSize(displayFile.size)}
+               {displayFile.modified > 0 && <> &middot; {formatDate(displayFile.modified)}</>}
+diff --git a/apps/client/src/components/explorer/TreeView.tsx b/apps/client/src/components/explorer/TreeView.tsx
+index a2dbeda..18a5bdc 100644
+--- a/apps/client/src/components/explorer/TreeView.tsx
++++ b/apps/client/src/components/explorer/TreeView.tsx
+@@ -1,4 +1,5 @@
+ import React, { useState, useMemo } from 'react';
++import { useAppSettings, getDisplayName } from '@/lib/app-settings';
+ import { FileEntry, TauriAPI } from '@/lib/tauri-api';
+ import { ViewComponentProps } from './FileGridTypes';
+ 
+@@ -12,6 +13,7 @@ const TreeView = ({
+   handleFileRightClick,
+   handleBackgroundRightClick,
+ }: ViewComponentProps) => {
++  const { showFileExtensions } = useAppSettings();
+   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+   const [folderContents, setFolderContents] = useState<Map<string, FileEntry[]>>(new Map());
+ 
+@@ -120,7 +122,9 @@ const TreeView = ({
+           {!file.is_dir && <div className="w-4 flex-shrink-0" />}
+ 
+           <span className="mr-2 flex-shrink-0 text-sm">{getFileIcon(file)}</span>
+-          <span className="flex-1 truncate text-sm">{file.name}</span>
++          <span className="flex-1 truncate text-sm">
++            {getDisplayName(file.name, file.is_dir, showFileExtensions)}
++          </span>
+         </div>
+       </div>
+ 
+diff --git a/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx b/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx
+index 2d68b5b..b1964ba 100644
+--- a/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx
++++ b/apps/client/src/components/explorer/sidebar/SidebarFileTree.tsx
+@@ -5,6 +5,7 @@ import { PATH_SEPARATOR, ROOT_PATH } from '@/lib/constants';
+ import { getFolderColorHex } from '@/lib/folder-colors';
+ import { useWindowEvent } from '@/hooks/use-window-event';
+ import { useTranslation } from 'react-i18next';
++import { useAppSettings, getDisplayName } from '@/lib/app-settings';
+ 
+ type SortBy = 'name' | 'dateModified' | 'size' | 'type';
+ type SortOrder = 'asc' | 'desc';
+@@ -31,6 +32,11 @@ const SidebarFileTree = ({
+   const { t } = useTranslation();
+   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+   const [folderContents, setFolderContents] = useState<Map<string, FileEntry[]>>(new Map());
++  const { showHiddenFiles, showFileExtensions } = useAppSettings();
++  const visible = useCallback(
++    (list: FileEntry[]) => (showHiddenFiles ? list : list.filter((f) => !f.name.startsWith('.'))),
++    [showHiddenFiles],
++  );
+   const [loadingFolders, setLoadingFolders] = useState<Set<string>>(new Set());
+ 
+   // Re-render when folder colors change
+@@ -125,8 +131,8 @@ const SidebarFileTree = ({
+   const sortedRootContents = useMemo(() => {
+     const rootContents = folderContents.get(rootPath);
+     if (!rootContents) return undefined;
+-    return sortFiles(rootContents);
+-  }, [folderContents, rootPath, sortFiles]);
++    return visible(sortFiles(rootContents));
++  }, [folderContents, rootPath, sortFiles, visible]);
+ 
+   const toggleFolder = async (folderPath: string, event: React.MouseEvent) => {
+     event.stopPropagation();
+@@ -165,7 +171,7 @@ const SidebarFileTree = ({
+     const isExpanded = expandedFolders.has(file.path);
+     const isLoading = loadingFolders.has(file.path);
+     const hasChildren = folderContents.has(file.path);
+-    const children = folderContents.get(file.path) ?? [];
++    const children = visible(folderContents.get(file.path) ?? []);
+ 
+     return (
+       <div key={file.path}>
+@@ -240,7 +246,9 @@ const SidebarFileTree = ({
+                   />
+                 ) : null;
+               })()}
+-            <span className="flex-1 truncate">{file.name}</span>
++            <span className="flex-1 truncate">
++              {getDisplayName(file.name, file.is_dir, showFileExtensions)}
++            </span>
+           </div>
+         </div>
+ 
+diff --git a/apps/client/src/components/settings/GeneralSettings.tsx b/apps/client/src/components/settings/GeneralSettings.tsx
+index b7471fb..ddc29ba 100644
+--- a/apps/client/src/components/settings/GeneralSettings.tsx
++++ b/apps/client/src/components/settings/GeneralSettings.tsx
+@@ -7,7 +7,6 @@ import {
+   Sparkles,
+   PanelLeft,
+   Bell,
+-  Save,
+   HelpCircle,
+   AlertTriangle,
+   RotateCcw,
+@@ -150,18 +149,6 @@ const GeneralSettings = ({ settings, updateSetting, setSettings }: GeneralSettin
+           onChange={(v) => updateSetting('enableNotifications', v)}
+         />
+       </SettingRow>
+-      <SettingRow
+-        icon={Save}
+-        label={t('settings.general.autoSave')}
+-        description={t('settings.general.autoSaveDesc')}
+-      >
+-        <Toggle
+-          id="autoSave"
+-          label={t('settings.general.autoSave')}
+-          checked={settings.autoSave}
+-          onChange={(v) => updateSetting('autoSave', v)}
+-        />
+-      </SettingRow>
+ 
+       <Divider />
+       <SectionTitle title={t('settings.general.systemIntegration')} />
+diff --git a/apps/client/src/components/settings/shared.tsx b/apps/client/src/components/settings/shared.tsx
+index ab8b832..a8cea21 100644
+--- a/apps/client/src/components/settings/shared.tsx
++++ b/apps/client/src/components/settings/shared.tsx
+@@ -1,5 +1,4 @@
+ import { useState, useEffect } from 'react';
+-import { STORAGE_KEYS } from '@/lib/storage-keys';
+ import { Monitor, FolderOpen, AlertTriangle } from 'lucide-react';
+ import {
+   Select,
+@@ -239,42 +238,4 @@ export const SystemIntegrationSettings = () => {
+ 
+ // ── Shared types ──────────────────────────────────────────────────
+ 
+-export interface AppSettings {
+-  theme: string;
+-  language: string;
+-  showHiddenFiles: boolean;
+-  enableMarkdownPreview: boolean;
+-  defaultView: string;
+-  enableAnimations: boolean;
+-  showFileExtensions: boolean;
+-  enableNotifications: boolean;
+-  autoSave: boolean;
+-  fontSize: string;
+-  sidebarWidth: string;
+-  reducedMotion: boolean;
+-  enhancedFocus: boolean;
+-  highContrast: boolean;
+-  autoCalculateFolderSizes: boolean;
+-  rememberViewPerFolder: boolean;
+-}
+-
+-export const DEFAULT_SETTINGS: AppSettings = {
+-  theme: 'glass',
+-  language: '',
+-  showHiddenFiles: false,
+-  enableMarkdownPreview: true,
+-  defaultView: 'grid',
+-  enableAnimations: true,
+-  showFileExtensions: true,
+-  enableNotifications: true,
+-  autoSave: true,
+-  fontSize: 'medium',
+-  sidebarWidth: 'medium',
+-  reducedMotion: false,
+-  enhancedFocus: false,
+-  highContrast: false,
+-  autoCalculateFolderSizes: false,
+-  rememberViewPerFolder: false,
+-};
+-
+-export const SETTINGS_KEY = STORAGE_KEYS.SETTINGS;
++export { DEFAULT_SETTINGS, SETTINGS_KEY, type AppSettings } from '@/lib/app-settings';
+diff --git a/apps/client/src/components/split-view/EditorGroupPane.tsx b/apps/client/src/components/split-view/EditorGroupPane.tsx
+index a8aa636..60a4e55 100644
+--- a/apps/client/src/components/split-view/EditorGroupPane.tsx
++++ b/apps/client/src/components/split-view/EditorGroupPane.tsx
+@@ -18,6 +18,7 @@ import {
+   computeRelativeSyncPath,
+ } from '@/hooks/use-pane-sync';
+ import { useFolderViewSettings } from '@/hooks/use-folder-view-settings';
++import { useAppSettings } from '@/lib/app-settings';
+ 
+ // Re-export components needed by the pane content
+ import HomePage from '@/pages/HomePage';
+@@ -218,7 +219,13 @@ const EditorGroupPane = ({
+       !currentPath.startsWith('comparison://') &&
+       !isCollectionPath,
+   });
+-  const queryFiles = queryFilesRaw ?? EMPTY_FILES;
++  // "Show Hidden Files" off: hide dotfiles from the listing
++  const appSettings = useAppSettings();
++  const queryFiles = useMemo(() => {
++    const list = queryFilesRaw ?? EMPTY_FILES;
++    if (appSettings.showHiddenFiles) return list;
++    return list.filter((f) => !f.name.startsWith('.'));
++  }, [queryFilesRaw, EMPTY_FILES, appSettings.showHiddenFiles]);
+ 
+   // Fallback base path for collection scanning (memoized to avoid re-renders)
+   const collectionFallbackPath = useMemo(() => {
+@@ -265,18 +272,10 @@ const EditorGroupPane = ({
+ 
+   // Auto-calculate folder sizes if the setting is enabled
+   useEffect(() => {
+-    try {
+-      const saved = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+-      if (saved) {
+-        const settings = JSON.parse(saved);
+-        if (settings.autoCalculateFolderSizes && files.some((f) => f.is_dir)) {
+-          calculateMissingSizes();
+-        }
+-      }
+-    } catch {
+-      /* ignore localStorage/parse errors */
++    if (appSettings.autoCalculateFolderSizes && files.some((f) => f.is_dir)) {
++      calculateMissingSizes();
+     }
+-  }, [files, calculateMissingSizes]);
++  }, [files, calculateMissingSizes, appSettings.autoCalculateFolderSizes]);
+ 
+   // Listen for files-changed events (from drag-drop operations) to refetch
+   useEffect(() => {
+diff --git a/apps/client/src/hooks/use-layout-state.ts b/apps/client/src/hooks/use-layout-state.ts
+index 9e2389f..a1f051b 100644
+--- a/apps/client/src/hooks/use-layout-state.ts
++++ b/apps/client/src/hooks/use-layout-state.ts
+@@ -1,6 +1,7 @@
+-import { useState, useCallback } from 'react';
++import { useState, useCallback, useEffect } from 'react';
+ import { STORAGE_KEYS } from '@/lib/storage-keys';
+ import type { SortField } from '@/lib/utils';
++import { useAppSettings, SIDEBAR_WIDTH_PRESETS } from '@/lib/app-settings';
+ 
+ // ── Helpers for persisting UI state to localStorage ──────────────────────────
+ const UI_STATE_KEY = STORAGE_KEYS.UI_STATE;
+@@ -123,6 +124,23 @@ export const useLayoutState = (): LayoutState => {
+     loadUiState('bottomPanelHeight', 192),
+   );
+ 
++  // "Sidebar Width" setting: apply the preset whenever the setting changes.
++  // The last applied preset is remembered so a width dragged by hand survives restarts.
++  const { sidebarWidth: sidebarPreset } = useAppSettings();
++  useEffect(() => {
++    try {
++      const applied = localStorage.getItem(STORAGE_KEYS.SIDEBAR_WIDTH_PRESET);
++      localStorage.setItem(STORAGE_KEYS.SIDEBAR_WIDTH_PRESET, sidebarPreset);
++      if (applied === sidebarPreset) return;
++      // First run with the untouched default: keep whatever width the user already has
++      if (applied === null && sidebarPreset === 'medium') return;
++    } catch {
++      /* storage unavailable — still apply the preset */
++    }
++    const px = SIDEBAR_WIDTH_PRESETS[sidebarPreset];
++    if (px) setLeftSidebarWidth(px);
++  }, [sidebarPreset]);
++
+   // Resize handlers
+   const handleLeftResize = useCallback((delta: number) => {
+     setLeftSidebarWidth((w) => Math.min(480, Math.max(180, w + delta)));
+diff --git a/apps/client/src/hooks/use-toast.ts b/apps/client/src/hooks/use-toast.ts
+index 0627466..ad4c24a 100644
+--- a/apps/client/src/hooks/use-toast.ts
++++ b/apps/client/src/hooks/use-toast.ts
+@@ -1,5 +1,6 @@
+ import * as React from 'react';
+ import { addNotification } from './use-notification-history';
++import { loadAppSettings } from '@/lib/app-settings';
+ 
+ // Simplified toast types without shadcn/ui dependency
+ type ToastActionElement = React.ReactElement;
+@@ -153,6 +154,10 @@ export type Toast = Omit<ToasterToast, 'id'>;
+ const toast = ({ ...props }: Toast) => {
+   const id = genId();
+ 
++  // "Notifications" off: keep errors visible, record everything else in the
++  // notification history without showing a pop-up.
++  const popupsDisabled = !loadAppSettings().enableNotifications && props.variant !== 'destructive';
++
+   const update = (props: ToasterToast) =>
+     dispatch({
+       type: 'UPDATE_TOAST',
+@@ -160,17 +165,19 @@ const toast = ({ ...props }: Toast) => {
+     });
+   const dismiss = () => dispatch({ type: 'DISMISS_TOAST', toastId: id });
+ 
+-  dispatch({
+-    type: 'ADD_TOAST',
+-    toast: {
+-      ...props,
+-      id,
+-      open: true,
+-      onOpenChange: (open: boolean) => {
+-        if (!open) dismiss();
++  if (!popupsDisabled) {
++    dispatch({
++      type: 'ADD_TOAST',
++      toast: {
++        ...props,
++        id,
++        open: true,
++        onOpenChange: (open: boolean) => {
++          if (!open) dismiss();
++        },
+       },
+-    },
+-  });
++    });
++  }
+ 
+   // Capture toast into notification history
+   {
+diff --git a/apps/client/src/index.css b/apps/client/src/index.css
+index aa26d68..44d9d96 100644
+--- a/apps/client/src/index.css
++++ b/apps/client/src/index.css
+@@ -216,7 +216,8 @@ html.font-xl {
+    Collapses all animations/transitions for motion-sensitive users.
+    ═══════════════════════════════════════════════════════════════════ */
+ 
+-html.reduce-motion * {
++html.reduce-motion *,
++html.no-animations * {
+   animation-duration: 0.001ms !important;
+   transition-duration: 0.001ms !important;
+ }
+diff --git a/apps/client/src/lib/app-settings.ts b/apps/client/src/lib/app-settings.ts
+new file mode 100644
+index 0000000..fc91158
+--- /dev/null
++++ b/apps/client/src/lib/app-settings.ts
+@@ -0,0 +1,129 @@
++/**
++ * App settings (Settings page) — single source of truth for the rest of the app.
++ *
++ * Settings are stored as one JSON object in localStorage. Anything outside the
++ * settings page reads them through `useAppSettings()` (React) or
++ * `loadAppSettings()` (plain code) and is notified immediately when they change.
++ */
++import { useSyncExternalStore } from 'react';
++import { STORAGE_KEYS } from './storage-keys';
++
++export interface AppSettings {
++  theme: string;
++  language: string;
++  showHiddenFiles: boolean;
++  enableMarkdownPreview: boolean;
++  defaultView: string;
++  enableAnimations: boolean;
++  showFileExtensions: boolean;
++  enableNotifications: boolean;
++  fontSize: string;
++  sidebarWidth: string;
++  reducedMotion: boolean;
++  enhancedFocus: boolean;
++  highContrast: boolean;
++  autoCalculateFolderSizes: boolean;
++}
++
++export const DEFAULT_SETTINGS: AppSettings = {
++  theme: 'glass',
++  language: '',
++  showHiddenFiles: false,
++  enableMarkdownPreview: true,
++  defaultView: 'grid',
++  enableAnimations: true,
++  showFileExtensions: true,
++  enableNotifications: true,
++  fontSize: 'medium',
++  sidebarWidth: 'medium',
++  reducedMotion: false,
++  enhancedFocus: false,
++  highContrast: false,
++  autoCalculateFolderSizes: false,
++};
++
++export const SETTINGS_KEY = STORAGE_KEYS.SETTINGS;
++
++/** Fired on window whenever the settings object is saved. */
++export const SETTINGS_CHANGED_EVENT = 'xplorer:settings-changed';
++
++/** Left sidebar width in px for each "Sidebar Width" preset. */
++export const SIDEBAR_WIDTH_PRESETS: Record<string, number> = {
++  narrow: 200,
++  medium: 256,
++  wide: 340,
++};
++
++let cachedRaw: string | null | undefined;
++let cachedSettings: AppSettings = DEFAULT_SETTINGS;
++
++/** Read the current settings (merged over defaults). Returns a stable object while unchanged. */
++export const loadAppSettings = (): AppSettings => {
++  let raw: string | null;
++  try {
++    raw = localStorage.getItem(SETTINGS_KEY);
++  } catch {
++    return DEFAULT_SETTINGS;
++  }
++  if (raw === cachedRaw) return cachedSettings;
++  cachedRaw = raw;
++  try {
++    const parsed: unknown = raw ? JSON.parse(raw) : {};
++    cachedSettings =
++      parsed && typeof parsed === 'object'
++        ? { ...DEFAULT_SETTINGS, ...(parsed as Partial<AppSettings>) }
++        : DEFAULT_SETTINGS;
++  } catch {
++    cachedSettings = DEFAULT_SETTINGS;
++  }
++  return cachedSettings;
++};
++
++/** Persist settings and notify every listener in this window. */
++export const saveAppSettings = (settings: AppSettings): void => {
++  try {
++    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
++  } catch (err) {
++    console.warn('[app-settings] failed to save:', err);
++  }
++  window.dispatchEvent(new CustomEvent(SETTINGS_CHANGED_EVENT));
++};
++
++const subscribe = (onChange: () => void): (() => void) => {
++  const onStorage = (e: StorageEvent) => {
++    if (e.key === SETTINGS_KEY) onChange();
++  };
++  window.addEventListener(SETTINGS_CHANGED_EVENT, onChange);
++  window.addEventListener('storage', onStorage);
++  return () => {
++    window.removeEventListener(SETTINGS_CHANGED_EVENT, onChange);
++    window.removeEventListener('storage', onStorage);
++  };
++};
++
++/** React hook: current settings, re-renders when they change. */
++export const useAppSettings = (): AppSettings =>
++  useSyncExternalStore(subscribe, loadAppSettings, loadAppSettings);
++
++/** Apply settings that live as classes on <html> (accessibility, animations). */
++export const applyDocumentSettings = (settings: AppSettings = loadAppSettings()): void => {
++  const root = document.documentElement.classList;
++  root.toggle('reduce-motion', settings.reducedMotion);
++  root.toggle('enhanced-focus', settings.enhancedFocus);
++  root.toggle('high-contrast', settings.highContrast);
++  root.toggle('no-animations', !settings.enableAnimations);
++};
++
++/** Apply document-level settings now and keep them in sync. Call once at startup. */
++export const installDocumentSettings = (): void => {
++  applyDocumentSettings();
++  subscribe(() => applyDocumentSettings());
++};
++
++/** File name as shown in the UI, honoring "Show File Extensions". Folders are never shortened. */
++export const getDisplayName = (name: string, isDir: boolean, showExtensions: boolean): string => {
++  if (showExtensions || isDir) return name;
++  const dot = name.lastIndexOf('.');
++  // Keep dotfiles (".bashrc") and names without an extension as they are
++  return dot > 0 ? name.slice(0, dot) : name;
++};
+diff --git a/apps/client/src/lib/preview-factory.ts b/apps/client/src/lib/preview-factory.ts
+index 542d75e..d02eb71 100644
+--- a/apps/client/src/lib/preview-factory.ts
++++ b/apps/client/src/lib/preview-factory.ts
+@@ -1,4 +1,5 @@
+ import { FileEntry } from '@/lib/tauri-api';
++import { loadAppSettings } from '@/lib/app-settings';
+ 
+ // Preview types
+ export type PreviewType =
+@@ -323,9 +324,15 @@ export class PreviewFactory {
+   private canPreviewText(file: FileEntry): boolean {
+     const ext = file.name.split('.').pop()?.toLowerCase() || '';
+     const capability = this.capabilities.get('text')!;
++    // "Markdown Preview" off: show markdown files as plain text
++    const rawMarkdown =
++      !loadAppSettings().enableMarkdownPreview &&
++      this.capabilities.get('markdown')!.extensions.includes(ext);
+ 
+     return (
+-      capability.extensions.includes(ext) || (file.mime_type?.startsWith('text/plain') ?? false)
++      rawMarkdown ||
++      capability.extensions.includes(ext) ||
++      (file.mime_type?.startsWith('text/plain') ?? false)
+     );
+   }
+ 
+@@ -354,6 +361,7 @@ export class PreviewFactory {
+   }
+ 
+   private canPreviewMarkdown(file: FileEntry): boolean {
++    if (!loadAppSettings().enableMarkdownPreview) return false;
+     const ext = file.name.split('.').pop()?.toLowerCase() || '';
+     const capability = this.capabilities.get('markdown')!;
+ 
+diff --git a/apps/client/src/lib/storage-keys.ts b/apps/client/src/lib/storage-keys.ts
+index b2c7787..868d605 100644
+--- a/apps/client/src/lib/storage-keys.ts
++++ b/apps/client/src/lib/storage-keys.ts
+@@ -23,6 +23,7 @@ export const STORAGE_KEYS = {
+   // Explorer UI
+   SIDEBAR_SECTIONS: 'xplorer-sidebar-sections',
+   SIDEBAR_HEIGHTS: 'xplorer-sidebar-heights',
++  SIDEBAR_WIDTH_PRESET: 'xplorer:sidebar-width-preset',
+ 
+   // Collections, bookmarks, colors
+   COLLECTIONS: 'xplorer:collections',
+diff --git a/apps/client/src/locales/en.json b/apps/client/src/locales/en.json
+index eafb6c7..1dd1434 100644
+--- a/apps/client/src/locales/en.json
++++ b/apps/client/src/locales/en.json
+@@ -262,9 +262,7 @@
+       "wide": "Wide",
+       "system": "System",
+       "notifications": "Notifications",
+-      "notificationsDesc": "Show desktop notifications for events",
+-      "autoSave": "Auto Save",
+-      "autoSaveDesc": "Automatically save changes to files",
++      "notificationsDesc": "Show pop-up notifications (errors are always shown)",
+       "systemIntegration": "System Integration",
+       "defaultExplorer": "Default File Explorer",
+       "defaultExplorerDesc": "Double-clicking folders opens Splorer instead of Windows Explorer",
+diff --git a/apps/client/src/locales/id.json b/apps/client/src/locales/id.json
+index 4f13cb7..1d8438b 100644
+--- a/apps/client/src/locales/id.json
++++ b/apps/client/src/locales/id.json
+@@ -262,9 +262,7 @@
+       "wide": "Lebar",
+       "system": "Sistem",
+       "notifications": "Notifikasi",
+-      "notificationsDesc": "Tampilkan notifikasi desktop untuk event",
+-      "autoSave": "Simpan Otomatis",
+-      "autoSaveDesc": "Otomatis menyimpan perubahan file",
++      "notificationsDesc": "Tampilkan notifikasi pop-up (kesalahan selalu ditampilkan)",
+       "systemIntegration": "Integrasi Sistem",
+       "defaultExplorer": "File Explorer Default",
+       "defaultExplorerDesc": "Klik dua kali folder membuka Splorer alih-alih Windows Explorer",
+diff --git a/apps/client/src/locales/ja.json b/apps/client/src/locales/ja.json
+index 4a94944..7efea36 100644
+--- a/apps/client/src/locales/ja.json
++++ b/apps/client/src/locales/ja.json
+@@ -262,9 +262,7 @@
+       "wide": "広い",
+       "system": "システム",
+       "notifications": "通知",
+-      "notificationsDesc": "イベントのデスクトップ通知を表示",
+-      "autoSave": "自動保存",
+-      "autoSaveDesc": "ファイルの変更を自動保存",
++      "notificationsDesc": "ポップアップ通知を表示（エラーは常に表示）",
+       "systemIntegration": "システム統合",
+       "defaultExplorer": "デフォルトファイルエクスプローラー",
+       "defaultExplorerDesc": "フォルダをダブルクリックした時に Windows エクスプローラーの代わりに Splorer で開く",
+diff --git a/apps/client/src/locales/zh.json b/apps/client/src/locales/zh.json
+index 534a1ca..eef83a1 100644
+--- a/apps/client/src/locales/zh.json
++++ b/apps/client/src/locales/zh.json
+@@ -262,9 +262,7 @@
+       "wide": "宽",
+       "system": "系统",
+       "notifications": "通知",
+-      "notificationsDesc": "显示桌面事件通知",
+-      "autoSave": "自动保存",
+-      "autoSaveDesc": "自动保存文件更改",
++      "notificationsDesc": "显示弹出通知（错误始终显示）",
+       "systemIntegration": "系统集成",
+       "defaultExplorer": "默认文件管理器",
+       "defaultExplorerDesc": "双击文件夹时使用 Splorer 而非 Windows 资源管理器",
+diff --git a/apps/client/src/main.tsx b/apps/client/src/main.tsx
+index fa2e824..9787564 100644
+--- a/apps/client/src/main.tsx
++++ b/apps/client/src/main.tsx
+@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
+ import { createRoot } from 'react-dom/client';
+ import './i18n';
+ import { runLegacyCleanup } from './lib/legacy-cleanup';
++import { installDocumentSettings } from './lib/app-settings';
+ import App from './App';
+ import './index.css';
+ 
+@@ -31,4 +32,7 @@ window.addEventListener('unhandledrejection', (event) => {
+ // Remove leftovers of removed features (AI, Google Drive, marketplace, sync)
+ runLegacyCleanup();
+ 
++// Apply accessibility / animation settings at startup and keep them in sync
++installDocumentSettings();
++
+ createRoot(document.getElementById('root')!).render(<App />);
+diff --git a/apps/client/src/pages/settings.tsx b/apps/client/src/pages/settings.tsx
+index 68ca5c9..b07994b 100644
+--- a/apps/client/src/pages/settings.tsx
++++ b/apps/client/src/pages/settings.tsx
+@@ -31,6 +31,7 @@ import ExplorerSettings from '@/components/settings/ExplorerSettings';
+ import AccessibilitySettings from '@/components/settings/AccessibilitySettings';
+ import FileAssociationsSettings from '@/components/settings/FileAssociationsSettings';
+ import { loadFontSize } from '@/lib/utils';
++import { saveAppSettings } from '@/lib/app-settings';
+ import { AppSettings, DEFAULT_SETTINGS, SETTINGS_KEY } from '@/components/settings/shared';
+ 
+ type SettingsTab =
+@@ -133,17 +134,13 @@ const Settings = () => {
+     return DEFAULT_SETTINGS;
+   });
+ 
++  // Persist and notify the rest of the app (applies the change immediately)
+   useEffect(() => {
+-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
++    saveAppSettings(settings);
+   }, [settings]);
+ 
+   useEffect(() => {
+     loadFontSize();
+-    if (settings.reducedMotion) document.documentElement.classList.add('reduce-motion');
+-    if (settings.enhancedFocus) document.documentElement.classList.add('enhanced-focus');
+-    if (settings.highContrast) document.documentElement.classList.add('high-contrast');
+-    // Mount-only: apply persisted accessibility settings on init
+-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []);
+ 
+   const updateSetting = (key: string, value: string | boolean | number) => {
+-- 
+2.43.0
+

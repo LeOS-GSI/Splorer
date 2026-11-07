@@ -1,8 +1,7 @@
 // Splorer Search Engine v2
 // Modular search pipeline: stemming, BM25F, FST fuzzy, bitmap filters,
-// incremental indexing, hybrid retrieval, multi-signal reranking.
+// incremental indexing, multi-signal reranking.
 
-pub mod ai_pipeline;
 pub mod bitmap_filters;
 pub mod bm25f;
 pub mod compat;
@@ -14,11 +13,9 @@ pub mod compat_watcher;
 pub mod context_ranker;
 pub mod fst_index;
 pub mod fuzzy;
-pub mod hybrid;
 pub mod index;
 pub mod index_io;
 pub mod index_types;
-pub mod ollama_client;
 pub mod query_parser;
 pub mod reranker;
 pub mod search_pipeline;

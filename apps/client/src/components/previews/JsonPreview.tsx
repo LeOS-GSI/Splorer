@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect } from 'react';
 import { PreviewProps } from '@/lib/preview-factory';
 import { TauriAPI } from '@/lib/tauri-api';
@@ -36,7 +37,8 @@ const JsonPreview = ({ file, onError, onLoad }: PreviewProps) => {
 
         onLoad?.();
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load JSON file';
+        const errorMessage =
+          err instanceof Error ? err.message : i18n.t('previews.json.failedToLoad');
         setError(errorMessage);
         onError?.(err instanceof Error ? err : new Error(errorMessage));
       } finally {
@@ -115,7 +117,7 @@ const JsonPreview = ({ file, onError, onLoad }: PreviewProps) => {
   return (
     <div className="mt-4">
       <div className="mb-2 flex items-center justify-between">
-        <h4 className="text-xp-text-muted text-xs font-medium">JSON Preview</h4>
+        <h4 className="text-xp-text-muted text-xs font-medium">{i18n.t('previews.json.title')}</h4>
         <div className="flex space-x-1">
           <button
             onClick={() => setViewMode('formatted')}
@@ -144,7 +146,7 @@ const JsonPreview = ({ file, onError, onLoad }: PreviewProps) => {
         <div className="bg-xp-surface border-xp-border text-xp-text-muted rounded border p-4 text-center">
           <div className="animate-pulse">
             <div className="bg-xp-bg mb-2 h-48 w-full rounded" />
-            <p className="text-xs">Loading JSON...</p>
+            <p className="text-xs">{i18n.t('previews.json.loading')}</p>
           </div>
         </div>
       )}
@@ -158,7 +160,7 @@ const JsonPreview = ({ file, onError, onLoad }: PreviewProps) => {
               clipRule="evenodd"
             />
           </svg>
-          <p className="text-xs">Cannot preview JSON</p>
+          <p className="text-xs">{i18n.t('previews.json.cannotPreview')}</p>
           <p className="mt-1 text-xs opacity-70">{error}</p>
         </div>
       ) : null}

@@ -8,8 +8,6 @@ import * as fileSystem from './file-system';
 import * as search from './search';
 import * as git from './git';
 import * as extensions from './extensions';
-import * as ai from './ai';
-import * as agentSessions from './agent-sessions';
 import * as storage from './storage';
 import * as system from './system';
 import * as pty from './pty';
@@ -22,8 +20,6 @@ export * from './file-system';
 export * from './search';
 export * from './git';
 export * from './extensions';
-export * from './ai';
-export * from './agent-sessions';
 export * from './storage';
 export * from './system';
 export * from './pty';
@@ -42,8 +38,11 @@ export class TauriAPI {
   static getDirectoryItemCount = fileSystem.getDirectoryItemCount;
   static setFilePermissions = fileSystem.setFilePermissions;
   static getFileAssociations = fileSystem.getFileAssociations;
+  static setSystemClipboardFiles = fileSystem.setSystemClipboardFiles;
   static openFileWithApplication = fileSystem.openFileWithApplication;
   static getSystemApplications = fileSystem.getSystemApplications;
+  static listOpenWithApps = fileSystem.listOpenWithApps;
+  static launchDesktopApp = fileSystem.launchDesktopApp;
   static setDefaultApplication = fileSystem.setDefaultApplication;
   static compressFiles = fileSystem.compressFiles;
   static getCompressionInfo = fileSystem.getCompressionInfo;
@@ -74,6 +73,7 @@ export class TauriAPI {
   static createDirRecursive = fileSystem.createDirRecursive;
   static createFile = fileSystem.createFile;
   static createFileWithContent = fileSystem.createFileWithContent;
+  static writeTextFile = fileSystem.writeTextFile;
   static createSymlink = fileSystem.createSymlink;
   static getDirSize = fileSystem.getDirSize;
   static readTextFile = fileSystem.readTextFile;
@@ -145,15 +145,8 @@ export class TauriAPI {
   static indexDirectory = search.indexDirectory;
   static setSearchContext = search.setSearchContext;
   static addWhitelistedPath = search.addWhitelistedPath;
-  static aiSearch = search.aiSearch;
-  static smartSearch = search.smartSearch;
   static parseSearchQuery = search.parseSearchQuery;
   static enhancedSearch = search.enhancedSearch;
-  static getAIIndexStatus = search.getAIIndexStatus;
-  static triggerAIIndexing = search.triggerAIIndexing;
-  static getAIIndexEntry = search.getAIIndexEntry;
-  static semanticSearch = search.semanticSearch;
-  static findSimilarFiles = search.findSimilarFiles;
 
   // ── Git ─────────────────────────────────────────────────────────────────
   static findGitRepository = git.findGitRepository;
@@ -190,40 +183,13 @@ export class TauriAPI {
   static getActiveExtensionIds = extensions.getActiveExtensionIds;
   static getExtensionPermissions = extensions.getExtensionPermissions;
   static validateExtensionPath = extensions.validateExtensionPath;
-  static downloadAndInstallExtension = extensions.downloadAndInstallExtension;
   static packExtension = extensions.packExtension;
   static installXtensionFile = extensions.installXtensionFile;
   static inspectXtensionFile = extensions.inspectXtensionFile;
   static nativePluginInvoke = extensions.nativePluginInvoke;
   static extensionBackendCall = extensions.extensionBackendCall;
   static extensionBackendStatus = extensions.extensionBackendStatus;
-  static checkForExtensionUpdates = extensions.checkForExtensionUpdates;
-  static downloadExtensionUpdate = extensions.downloadExtensionUpdate;
   static sshReadDirectory = extensions.sshReadDirectory;
-
-  // ── AI ──────────────────────────────────────────────────────────────────
-  static getAiModels = ai.getAiModels;
-  static checkOllamaStatus = ai.checkOllamaStatus;
-  static chatWithAI = ai.chatWithAI;
-  static analyzeFileWithAI = ai.analyzeFileWithAI;
-  static getFileHelp = ai.getFileHelp;
-  static suggestFilename = ai.suggestFilename;
-  static autoTagFiles = ai.autoTagFiles;
-  static agentReadFileTree = ai.agentReadFileTree;
-  static agentRequestWritePermission = ai.agentRequestWritePermission;
-  static agentWriteFileWithPermission = ai.agentWriteFileWithPermission;
-  static agentRespondApproval = ai.agentRespondApproval;
-  static agentCancelSession = ai.agentCancelSession;
-  static getAgentSettings = ai.getAgentSettings;
-  static updateAgentSettings = ai.updateAgentSettings;
-  static updateAgentApiKeys = ai.updateAgentApiKeys;
-
-  // ── Agent Sessions ──────────────────────────────────────────────────────
-  static createAgentSession = agentSessions.createAgentSession;
-  static listAgentSessions = agentSessions.listAgentSessions;
-  static getAgentSession = agentSessions.getAgentSession;
-  static stopAgentSession = agentSessions.stopAgentSession;
-  static removeAgentSession = agentSessions.removeAgentSession;
 
   // ── Storage ─────────────────────────────────────────────────────────────
   static getBookmarks = storage.getBookmarks;
@@ -259,16 +225,6 @@ export class TauriAPI {
   static getFileMetadata = storage.getFileMetadata;
   static setFileMetadata = storage.setFileMetadata;
   static getAllMetadataKeys = storage.getAllMetadataKeys;
-  static getChatSessions = storage.getChatSessions;
-  static getChatSession = storage.getChatSession;
-  static saveChatSession = storage.saveChatSession;
-  static deleteChatSession = storage.deleteChatSession;
-  static clearChatHistory = storage.clearChatHistory;
-  static getChatsDirectory = storage.getChatsDirectory;
-  static createChatFile = storage.createChatFile;
-  static readChatFile = storage.readChatFile;
-  static saveChatFile = storage.saveChatFile;
-  static getChatFileSummary = storage.getChatFileSummary;
   static listSqliteTables = storage.listSqliteTables;
   static getSqliteTableColumns = storage.getSqliteTableColumns;
   static querySqliteTable = storage.querySqliteTable;
@@ -342,29 +298,8 @@ export class TauriAPI {
   static getVersionCount = system.getVersionCount;
   static deleteAllVersions = system.deleteAllVersions;
   static readVersionContent = system.readVersionContent;
-  static syncBookmarksToCloud = system.syncBookmarksToCloud;
-  static fetchCloudBookmarks = system.fetchCloudBookmarks;
-  static setLastSyncTime = system.setLastSyncTime;
-  static getLastSyncTime = system.getLastSyncTime;
-  static syncAll = system.syncAll;
-  static startAutoSync = system.startAutoSync;
-  static stopAutoSync = system.stopAutoSync;
-  static getAutoSyncStatus = system.getAutoSyncStatus;
   static setDefaultFolderHandler = system.setDefaultFolderHandler;
   static addContextMenuEntry = system.addContextMenuEntry;
   static removeContextMenuEntry = system.removeContextMenuEntry;
   static getShellIntegrationStatus = system.getShellIntegrationStatus;
-  static gdriveAuthenticate = system.gdriveAuthenticate;
-  static gdriveDisconnect = system.gdriveDisconnect;
-  static gdriveListAccounts = system.gdriveListAccounts;
-  static gdriveListFiles = system.gdriveListFiles;
-  static gdriveDownloadFile = system.gdriveDownloadFile;
-  static gdriveUploadFile = system.gdriveUploadFile;
-  static gdriveDeleteFile = system.gdriveDeleteFile;
-  static gdriveRenameFile = system.gdriveRenameFile;
-  static gdriveMoveFile = system.gdriveMoveFile;
-  static gdriveCreateFolder = system.gdriveCreateFolder;
-  static gdriveGetFileContent = system.gdriveGetFileContent;
-  static getGdriveSettings = system.getGdriveSettings;
-  static updateGdriveSettings = system.updateGdriveSettings;
 }

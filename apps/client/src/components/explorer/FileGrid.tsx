@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,7 @@ import TreeView from './TreeView';
 import GalleryView from './GalleryView';
 import DetailsView from './DetailsView';
 import ColumnView from './ColumnView';
-import type { FileGroup } from '@/lib/utils';
+import type { FileGroup, SortField } from '@/lib/utils';
 import { FileGridSkeleton } from '@/components/ui/Skeleton';
 import {
   CROSS_TAB_SELECTION_EVENT,
@@ -52,6 +53,10 @@ interface FileGridProps {
   renamingPath?: string | null;
   /** Setter to clear/set the renaming path from parent */
   setRenamingPath?: (path: string | null) => void;
+  /** Aktuelle Sortierung (für klickbare Spaltenköpfe in der Detailansicht) */
+  sortBy?: SortField;
+  sortOrder?: 'asc' | 'desc';
+  onSortColumn?: (field: SortField) => void;
 }
 
 const FileGrid = ({
@@ -79,6 +84,9 @@ const FileGrid = ({
   onRenameFile,
   renamingPath: externalRenamingPath,
   setRenamingPath: externalSetRenamingPath,
+  sortBy,
+  sortOrder,
+  onSortColumn,
 }: FileGridProps) => {
   const { t } = useTranslation();
 
@@ -155,7 +163,7 @@ const FileGrid = ({
     if (files.length === 0) return;
 
     // Only fetch tags when on a real filesystem path (not special pages)
-    if (currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://')) return;
+    if (currentPath.startsWith('splorer://')) return;
 
     let cancelled = false;
     const loadAllTags = async () => {
@@ -415,7 +423,7 @@ const FileGrid = ({
   );
 
   // Background drop target — the whole grid accepts drops into currentPath
-  const isSpecialPage = currentPath.startsWith('splorer://') || currentPath.startsWith('gdrive://');
+  const isSpecialPage = currentPath.startsWith('splorer://');
   const bgDropRef = useDroppable(currentPath, isSpecialPage);
 
   // ─── Virtual scrolling hooks (must be called before any early returns) ───
@@ -556,7 +564,15 @@ const FileGrid = ({
   }
 
   if (viewMode === 'details') {
-    return <DetailsView {...viewComponentProps} fileGroups={fileGroups} />;
+    return (
+      <DetailsView
+        {...viewComponentProps}
+        fileGroups={fileGroups}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortColumn={onSortColumn}
+      />
+    );
   }
 
   if (viewMode === 'column') {
@@ -598,7 +614,7 @@ const FileGrid = ({
         {isCrossTabSelected && (
           <>
             <div style={crossTabOutlineStyle} />
-            <div style={crossTabBadgeStyle} title="Selected for cross-tab operation" />
+            <div style={crossTabBadgeStyle} title={i18n.t('explorer.crossTabSelected')} />
           </>
         )}
         <FileGridItem
@@ -644,7 +660,7 @@ const FileGrid = ({
         <div
           ref={bgDropRef}
           role="listbox"
-          aria-label="File list"
+          aria-label={i18n.t('explorer.fileListAria')}
           aria-multiselectable={true}
           className="relative"
           onContextMenu={handleBackgroundRightClick || undefined}
@@ -669,7 +685,7 @@ const FileGrid = ({
       <div
         ref={bgDropRef}
         role="listbox"
-        aria-label="File list"
+        aria-label={i18n.t('explorer.fileListAria')}
         aria-multiselectable={true}
         className={`${getGridLayout()} relative p-2`}
         onContextMenu={handleBackgroundRightClick || undefined}
@@ -690,7 +706,7 @@ const FileGrid = ({
         }
       }}
       role="listbox"
-      aria-label="File list"
+      aria-label={i18n.t('explorer.fileListAria')}
       aria-multiselectable={true}
       className="relative h-full overflow-auto"
       style={{ padding: '8px' }}

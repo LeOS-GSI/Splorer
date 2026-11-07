@@ -174,7 +174,7 @@ export const ACTION_LABELS: Record<string, string> = {
 
   Search: 'Search',
   QuickSearch: 'Quick Search',
-  NaturalLanguageSearch: 'AI Search',
+  NaturalLanguageSearch: 'Index Search',
   FilterFiles: 'Filter Files',
 
   Refresh: 'Refresh',

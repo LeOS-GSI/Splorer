@@ -61,6 +61,30 @@ pub async fn create_file_with_content(path: String, content: String) -> Result<(
     .map_err(|e| e.to_string())?
 }
 
+/// Write (create or overwrite) a UTF-8 text file. Used by the editors and by
+/// extensions with the `file:write` permission to save files.
+#[command]
+pub async fn write_text_file(path: String, content: String) -> Result<(), String> {
+    validate_file_path(&path)?;
+
+    tokio::task::spawn_blocking(move || {
+        let file_path = Path::new(&path);
+
+        if file_path.is_dir() {
+            return Err(format!("Path is a directory: {}", path));
+        }
+
+        if let Some(parent) = file_path.parent() {
+            fs::create_dir_all(parent)
+                .map_err(|e| format!("Failed to create parent directory: {}", e))?;
+        }
+
+        fs::write(file_path, content).map_err(|e| format!("Failed to write file: {}", e))
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
+
 #[command]
 pub async fn get_file_templates() -> Result<Vec<FileTemplate>, String> {
     Ok(vec![

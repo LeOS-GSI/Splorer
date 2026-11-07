@@ -22,14 +22,62 @@ export interface FolderColorDef {
 // ── Predefined palette ───────────────────────────────────────────────────────
 
 export const FOLDER_COLORS: FolderColorDef[] = [
-  { id: 'red', hex: '#ef4444', label: 'Urgent' },
-  { id: 'orange', hex: '#f97316', label: 'Important' },
-  { id: 'yellow', hex: '#eab308', label: 'In Progress' },
-  { id: 'green', hex: '#22c55e', label: 'Active' },
-  { id: 'blue', hex: '#3b82f6', label: 'Archive' },
-  { id: 'purple', hex: '#a855f7', label: 'Personal' },
-  { id: 'pink', hex: '#ec4899', label: 'Review' },
-  { id: 'gray', hex: '#6b7280', label: 'Inactive' },
+  {
+    id: 'red',
+    hex: '#ef4444',
+    get label() {
+      return i18n.t('folderColors.urgent');
+    },
+  },
+  {
+    id: 'orange',
+    hex: '#f97316',
+    get label() {
+      return i18n.t('folderColors.important');
+    },
+  },
+  {
+    id: 'yellow',
+    hex: '#eab308',
+    get label() {
+      return i18n.t('folderColors.inProgress');
+    },
+  },
+  {
+    id: 'green',
+    hex: '#22c55e',
+    get label() {
+      return i18n.t('folderColors.active');
+    },
+  },
+  {
+    id: 'blue',
+    hex: '#3b82f6',
+    get label() {
+      return i18n.t('folderColors.archive');
+    },
+  },
+  {
+    id: 'purple',
+    hex: '#a855f7',
+    get label() {
+      return i18n.t('folderColors.personal');
+    },
+  },
+  {
+    id: 'pink',
+    hex: '#ec4899',
+    get label() {
+      return i18n.t('folderColors.review');
+    },
+  },
+  {
+    id: 'gray',
+    hex: '#6b7280',
+    get label() {
+      return i18n.t('folderColors.inactive');
+    },
+  },
 ];
 
 // Quick lookup map: colorId -> hex
@@ -37,6 +85,7 @@ const COLOR_HEX_MAP = new Map<string, string>(FOLDER_COLORS.map((c) => [c.id, c.
 
 // ── Storage key ──────────────────────────────────────────────────────────────
 
+import i18n from '@/i18n';
 import { STORAGE_KEYS } from '@/lib/storage-keys';
 
 const STORAGE_KEY = STORAGE_KEYS.FOLDER_COLORS;

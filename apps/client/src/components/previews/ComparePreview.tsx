@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileEntry, TauriAPI } from '@/lib/tauri-api';
@@ -270,7 +271,8 @@ const TextCompare = React.memo(
             setRightContent(right);
           }
         } catch (err) {
-          if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to read file(s)');
+          if (!cancelled)
+            setError(err instanceof Error ? err.message : i18n.t('previews.compare.failedToRead'));
         } finally {
           if (!cancelled) setLoading(false);
         }

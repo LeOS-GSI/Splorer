@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 import { diffStrings, DiffText, WarningIcon, CheckIcon } from '../bulk-rename-helpers';
 import type { BulkRenameResult } from '@/lib/tauri-api';
@@ -69,8 +70,10 @@ const RenamePreviewList = ({
               {conflictSet.size !== 1 ? 's' : ''}
             </span>
           )}
-          <span>{changedCount} changed</span>
-          <span>{displayData.length - changedCount} unchanged</span>
+          <span>{i18n.t('bulkRename.preview.changed', { count: changedCount })}</span>
+          <span>
+            {i18n.t('bulkRename.preview.unchanged', { count: displayData.length - changedCount })}
+          </span>
         </div>
       </div>
       <div
@@ -103,7 +106,7 @@ const RenamePreviewList = ({
                     width: '42%',
                   }}
                 >
-                  Current Name
+                  {i18n.t('dialogs.rename.currentName')}
                 </th>
                 <th
                   style={{
@@ -127,7 +130,7 @@ const RenamePreviewList = ({
                     width: '42%',
                   }}
                 >
-                  New Name
+                  {i18n.t('dialogs.rename.newName')}
                 </th>
                 <th
                   style={{
@@ -248,7 +251,7 @@ const PreviewRow = ({ item, index, totalCount, isConflict, isResult }: PreviewRo
     );
   } else if (isConflict) {
     statusCell = (
-      <span title="Name conflict - multiple files would have the same name">
+      <span title={i18n.t('bulkRename.preview.conflict')}>
         <WarningIcon />
       </span>
     );
@@ -262,12 +265,12 @@ const PreviewRow = ({ item, index, totalCount, isConflict, isResult }: PreviewRo
           borderRadius: '50%',
           backgroundColor: 'var(--xp-blue)',
         }}
-        title="Will be renamed"
+        title={i18n.t('bulkRename.preview.willRename')}
       />
     );
   } else {
     statusCell = (
-      <span title="No change">
+      <span title={i18n.t('bulkRename.preview.noChange')}>
         <CheckIcon />
       </span>
     );

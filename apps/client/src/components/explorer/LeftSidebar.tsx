@@ -13,6 +13,7 @@ import SearchResultsPanel, {
 import { extensionHost } from '@/lib/extension-host';
 import { type FileCollection } from '@/lib/collections';
 import { useSidebarResize } from '@/hooks/use-sidebar-resize';
+import { useTranslation } from 'react-i18next';
 import SidebarTabBar from '@/components/explorer/sidebar/SidebarTabBar';
 import SidebarQuickAccess from '@/components/explorer/sidebar/SidebarQuickAccess';
 import SidebarRecent from '@/components/explorer/sidebar/SidebarRecent';
@@ -76,6 +77,7 @@ const LeftSidebar = forwardRef<LeftSidebarHandle, LeftSidebarProps>(function Lef
   }));
 
   // ─── Extension sidebar tabs ────────────────────────────────────────────
+  const { t } = useTranslation();
   const [activeExtensionTab, setActiveExtensionTab] = useState<string | null>(null);
 
   const extRefreshKey = useSyncExternalStore(
@@ -121,7 +123,7 @@ const LeftSidebar = forwardRef<LeftSidebarHandle, LeftSidebarProps>(function Lef
     <nav
       data-tour={dataTour}
       role="navigation"
-      aria-label="File explorer sidebar"
+      aria-label={t('sidebar.sidebarAria')}
       className="bg-xp-surface border-xp-border flex flex-shrink-0 flex-col border-r"
       style={{ width: width ?? 256, minHeight: 0, overflow: 'hidden' }}
     >
@@ -152,7 +154,7 @@ const LeftSidebar = forwardRef<LeftSidebarHandle, LeftSidebarProps>(function Lef
           if (!renderer) {
             return (
               <div className="text-xp-text-muted flex flex-1 items-center justify-center p-4 text-xs">
-                Extension tab not available
+                {t('sidebar.extensionTabUnavailable')}
               </div>
             );
           }

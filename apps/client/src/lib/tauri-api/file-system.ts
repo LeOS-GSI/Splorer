@@ -5,6 +5,7 @@ import type {
   DetailedFileProperties,
   FileAssociation,
   Application,
+  OpenWithApps,
   CompressionOptions,
   CompressionInfo,
   ExtractionOptions,
@@ -56,6 +57,16 @@ export const getFileAssociations = async (filePath: string): Promise<FileAssocia
 
 export const openFileWithApplication = async (filePath: string, appPath: string): Promise<void> =>
   await transport('open_file_with_application', { filePath, appPath });
+
+export const listOpenWithApps = async (filePath: string): Promise<OpenWithApps> =>
+  await transport('list_open_with_apps', { filePath });
+
+/** Dateien ins System-Clipboard legen (für Einfügen in anderen Programmen). */
+export const setSystemClipboardFiles = async (paths: string[]): Promise<void> =>
+  await transport('set_system_clipboard_files', { paths });
+
+export const launchDesktopApp = async (desktopId: string, filePaths: string[]): Promise<void> =>
+  await transport('launch_desktop_app', { desktopId, filePaths });
 
 export const getSystemApplications = async (): Promise<Application[]> =>
   await transport('get_system_applications');
@@ -182,6 +193,10 @@ export const createFile = async (path: string): Promise<void> =>
 
 export const createFileWithContent = async (path: string, content: string): Promise<void> =>
   await transport('create_file_with_content', { path, content });
+
+/** Create or overwrite a text file (editors, extensions with file:write). */
+export const writeTextFile = async (path: string, content: string): Promise<void> =>
+  await transport('write_text_file', { path, content });
 
 export const createSymlink = async (target: string, linkPath: string): Promise<void> =>
   await transport('create_symlink', { target, link_path: linkPath });

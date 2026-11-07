@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React from 'react';
 import { useToast, toast } from '@/hooks/use-toast';
 
@@ -42,7 +43,7 @@ const Toast = ({
       <button
         onClick={onClose}
         className="flex-shrink-0 p-4 transition-colors hover:bg-black hover:bg-opacity-10"
-        aria-label="Dismiss notification"
+        aria-label={i18n.t('ui.dismissNotification')}
       >
         <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
           <path

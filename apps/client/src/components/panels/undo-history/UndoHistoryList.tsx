@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useCallback } from 'react';
 import {
   operationIcon,
@@ -62,7 +63,7 @@ const UndoPositionMarker = React.forwardRef<HTMLDivElement>((_props, ref) => (
         flexShrink: 0,
       }}
     >
-      Current Position
+      {i18n.t('panels.undo.currentPosition')}
     </span>
     <div
       style={{
@@ -336,7 +337,7 @@ const UndoHistoryList = ({
             <circle cx="12" cy="12" r="10" />
             <path d="M12 6v6l4 2" />
           </svg>
-          No operations in history
+          {i18n.t('panels.undo.empty')}
         </div>
       ) : (
         renderItemsWithMarker()

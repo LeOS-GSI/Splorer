@@ -14,6 +14,7 @@ const ExplorerSettings = ({ settings, updateSetting }: ExplorerSettingsProps) =>
     { value: 'grid', label: t('settings.explorer.grid') },
     { value: 'list', label: t('settings.explorer.list') },
     { value: 'details', label: t('settings.explorer.details') },
+    { value: 'auto', label: t('settings.explorer.autoView') },
   ];
 
   return (

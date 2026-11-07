@@ -1,0 +1,97 @@
+From 0a993da965d5f8dbc79908de95f99da6472bb3e6 Mon Sep 17 00:00:00 2001
+From: harvey186 <harvey186@hotmail.com>
+Date: Sat, 7 Nov 2026 08:54:34 +0100
+Subject: [PATCH] =?UTF-8?q?fix:=20Version=20zentral=20aus=20package.json?=
+ =?UTF-8?q?=20(Paketname,=20=C3=9Cber-Seite)?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+tauri.conf.json verweist jetzt auf package.json statt fest 0.99.1;
+die Über-Seite liest die Version zur Laufzeit statt sie hart zu kodieren.
+Cargo-Version angeglichen.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GWWpEUX1W65k9BrLDCn2Ma
+---
+ apps/client/src/pages/settings.tsx | 10 +++++++++-
+ apps/src-tauri/Cargo.lock          |  2 +-
+ apps/src-tauri/Cargo.toml          |  2 +-
+ apps/src-tauri/tauri.conf.json     |  2 +-
+ 4 files changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/apps/client/src/pages/settings.tsx b/apps/client/src/pages/settings.tsx
+index e5f6d94..42b76a1 100644
+--- a/apps/client/src/pages/settings.tsx
++++ b/apps/client/src/pages/settings.tsx
+@@ -1,6 +1,7 @@
+ import { useState, useEffect } from 'react';
+ import { TauriAPI } from '@/lib/tauri-api';
+ import { useLocation } from 'wouter';
++import { getVersion } from '@tauri-apps/api/app';
+ import { useTranslation } from 'react-i18next';
+ import {
+   ArrowLeft,
+@@ -122,6 +123,13 @@ const Settings = () => {
+   const { t } = useTranslation();
+   const tabs = buildTabs(t);
+   const [activeTab, setActiveTab] = useState<SettingsTab>('general');
++  const [appVersion, setAppVersion] = useState<string>('');
++
++  useEffect(() => {
++    getVersion()
++      .then(setAppVersion)
++      .catch(() => setAppVersion(''));
++  }, []);
+ 
+   const [settings, setSettings] = useState<AppSettings>(() => {
+     try {
+@@ -183,7 +191,7 @@ const Settings = () => {
+           <div className="space-y-6 px-4 py-2">
+             <div className="border-xp-border rounded-lg border p-6 text-center">
+               <h2 className="text-xp-text mb-1 text-2xl font-bold">Splorer</h2>
+-              <p className="text-xp-text-muted text-sm">v1.0.0-alpha.1</p>
++              {appVersion && <p className="text-xp-text-muted text-sm">v{appVersion}</p>}
+               <p className="text-xp-text-secondary mt-3 text-sm">
+                 {t('settings.about.description')}
+               </p>
+diff --git a/apps/src-tauri/Cargo.lock b/apps/src-tauri/Cargo.lock
+index e784a28..0bc15e3 100644
+--- a/apps/src-tauri/Cargo.lock
++++ b/apps/src-tauri/Cargo.lock
+@@ -5186,7 +5186,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "splorer"
+-version = "0.99.1"
++version = "1.0.0-alpha.1"
+ dependencies = [
+  "aes-gcm",
+  "argon2",
+diff --git a/apps/src-tauri/Cargo.toml b/apps/src-tauri/Cargo.toml
+index 16c689f..fa52b0e 100644
+--- a/apps/src-tauri/Cargo.toml
++++ b/apps/src-tauri/Cargo.toml
+@@ -1,6 +1,6 @@
+ [package]
+ name = "splorer"
+-version = "0.99.1"
++version = "1.0.0-alpha.1"
+ description = "Splorer — privacy-focused file explorer built with Tauri"
+ authors = ["Justin Maximillian Kimlim", "harvey186"]
+ license = "AGPL-3.0"
+diff --git a/apps/src-tauri/tauri.conf.json b/apps/src-tauri/tauri.conf.json
+index dbdbfc5..377b458 100644
+--- a/apps/src-tauri/tauri.conf.json
++++ b/apps/src-tauri/tauri.conf.json
+@@ -1,6 +1,6 @@
+ {
+   "productName": "Splorer",
+-  "version": "0.99.1",
++  "version": "../../package.json",
+   "identifier": "org.snakeos.splorer",
+   "build": {
+     "beforeBuildCommand": "pnpm -w frontend:build",
+-- 
+2.43.0
+

@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import React, { useMemo } from 'react';
 import type { FileEntry } from '@/lib/tauri-api';
 
@@ -65,7 +66,7 @@ export const SizeDistributionChart = React.memo(({ files }: SizeDistributionChar
           whiteSpace: 'nowrap',
         }}
       >
-        Size:
+        {i18n.t('explorer.sizeLabel')}
       </span>
       <div
         title={`Size Distribution — ${chartTitle}`}
