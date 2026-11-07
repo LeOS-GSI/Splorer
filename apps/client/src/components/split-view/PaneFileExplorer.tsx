@@ -265,6 +265,9 @@ const PaneFileExplorer = React.memo(
             onQuickLook={onQuickLook}
             showSizeBadges={showSizeBadges}
             onRenameFile={onRenameFile}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSortColumn={(field) => (field === sortBy ? toggleSortOrder() : setSortBy(field))}
           />
         </div>
 

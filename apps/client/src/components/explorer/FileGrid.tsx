@@ -16,7 +16,7 @@ import TreeView from './TreeView';
 import GalleryView from './GalleryView';
 import DetailsView from './DetailsView';
 import ColumnView from './ColumnView';
-import type { FileGroup } from '@/lib/utils';
+import type { FileGroup, SortField } from '@/lib/utils';
 import { FileGridSkeleton } from '@/components/ui/Skeleton';
 import {
   CROSS_TAB_SELECTION_EVENT,
@@ -53,6 +53,10 @@ interface FileGridProps {
   renamingPath?: string | null;
   /** Setter to clear/set the renaming path from parent */
   setRenamingPath?: (path: string | null) => void;
+  /** Aktuelle Sortierung (für klickbare Spaltenköpfe in der Detailansicht) */
+  sortBy?: SortField;
+  sortOrder?: 'asc' | 'desc';
+  onSortColumn?: (field: SortField) => void;
 }
 
 const FileGrid = ({
@@ -80,6 +84,9 @@ const FileGrid = ({
   onRenameFile,
   renamingPath: externalRenamingPath,
   setRenamingPath: externalSetRenamingPath,
+  sortBy,
+  sortOrder,
+  onSortColumn,
 }: FileGridProps) => {
   const { t } = useTranslation();
 
@@ -557,7 +564,15 @@ const FileGrid = ({
   }
 
   if (viewMode === 'details') {
-    return <DetailsView {...viewComponentProps} fileGroups={fileGroups} />;
+    return (
+      <DetailsView
+        {...viewComponentProps}
+        fileGroups={fileGroups}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        onSortColumn={onSortColumn}
+      />
+    );
   }
 
   if (viewMode === 'column') {

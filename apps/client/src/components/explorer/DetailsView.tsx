@@ -4,11 +4,75 @@ import { useTranslation } from 'react-i18next';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { FileEntry, FolderSizeInfo } from '@/lib/tauri-api';
 import { ViewComponentProps } from './FileGridTypes';
-import type { FileGroup } from '@/lib/utils';
+import type { FileGroup, SortField } from '@/lib/utils';
+import { ArrowUp, ArrowDown } from 'lucide-react';
 
 interface DetailsViewProps extends ViewComponentProps {
   fileGroups?: FileGroup[] | null;
+  sortBy?: SortField;
+  sortOrder?: 'asc' | 'desc';
+  onSortColumn?: (field: SortField) => void;
 }
+
+interface SortHeaderProps {
+  field: SortField;
+  label: string;
+  className: string;
+  justify: 'start' | 'center' | 'end';
+  sortBy?: SortField;
+  sortOrder?: 'asc' | 'desc';
+  onSortColumn?: (field: SortField) => void;
+}
+
+/** Klickbarer Spaltenkopf: Klick sortiert, erneuter Klick dreht die Richtung um. */
+const SortHeader = ({
+  field,
+  label,
+  className,
+  justify,
+  sortBy,
+  sortOrder,
+  onSortColumn,
+}: SortHeaderProps) => {
+  const active = sortBy === field;
+  const justifyClass =
+    justify === 'end' ? 'justify-end' : justify === 'center' ? 'justify-center' : 'justify-start';
+  const arrow = active ? (
+    sortOrder === 'asc' ? (
+      <ArrowUp size={11} />
+    ) : (
+      <ArrowDown size={11} />
+    )
+  ) : null;
+
+  if (!onSortColumn) {
+    return (
+      <div className={className} role="columnheader">
+        {label}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={className}
+      role="columnheader"
+      aria-sort={active ? (sortOrder === 'asc' ? 'ascending' : 'descending') : 'none'}
+    >
+      <button
+        type="button"
+        onClick={() => onSortColumn(field)}
+        className={`hover:text-xp-text flex w-full items-center gap-1 transition-colors ${justifyClass} ${
+          active ? 'text-xp-blue' : ''
+        }`}
+      >
+        {justify === 'end' && arrow}
+        <span>{label}</span>
+        {justify !== 'end' && arrow}
+      </button>
+    </div>
+  );
+};
 
 const DETAILS_ROW_HEIGHT = 40;
 const GROUP_HEADER_HEIGHT = 36;
@@ -172,7 +236,11 @@ const DetailsView = (props: DetailsViewProps) => {
     isCalculatingSize,
     calculateFolderSize,
     fileGroups,
+    sortBy,
+    sortOrder,
+    onSortColumn,
   } = props;
+  const sortProps = { sortBy, sortOrder, onSortColumn };
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -255,18 +323,34 @@ const DetailsView = (props: DetailsViewProps) => {
           role="columnheader"
           aria-label={t('explorer.details.iconCol')}
         />
-        <div className="col-span-5" role="columnheader">
-          {t('explorer.details.nameCol')}
-        </div>
-        <div className="col-span-2 text-right" role="columnheader">
-          {t('explorer.details.sizeCol')}
-        </div>
-        <div className="col-span-2 text-center" role="columnheader">
-          {t('explorer.details.typeCol')}
-        </div>
-        <div className="col-span-2 text-right" role="columnheader">
-          {t('explorer.details.modifiedCol')}
-        </div>
+        <SortHeader
+          field="name"
+          label={t('explorer.details.nameCol')}
+          className="col-span-5"
+          justify="start"
+          {...sortProps}
+        />
+        <SortHeader
+          field="size"
+          label={t('explorer.details.sizeCol')}
+          className="col-span-2 text-right"
+          justify="end"
+          {...sortProps}
+        />
+        <SortHeader
+          field="type"
+          label={t('explorer.details.typeCol')}
+          className="col-span-2 text-center"
+          justify="center"
+          {...sortProps}
+        />
+        <SortHeader
+          field="dateModified"
+          label={t('explorer.details.modifiedCol')}
+          className="col-span-2 text-right"
+          justify="end"
+          {...sortProps}
+        />
       </div>
     </div>
   );
