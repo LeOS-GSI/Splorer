@@ -4,6 +4,10 @@ import '@testing-library/jest-dom';
 import DetailsView from '@/components/explorer/DetailsView';
 import type { FileEntry } from '@/lib/tauri-api';
 
+vi.mock('@/hooks/use-draggable', () => ({
+  useDraggable: vi.fn(() => ({})),
+}));
+
 // Mock @tanstack/react-virtual
 vi.mock('@tanstack/react-virtual', () => ({
   useVirtualizer: () => ({

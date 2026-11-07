@@ -6,6 +6,7 @@ import { FileEntry, FolderSizeInfo } from '@/lib/tauri-api';
 import { ViewComponentProps } from './FileGridTypes';
 import type { FileGroup, SortField } from '@/lib/utils';
 import { ArrowUp, ArrowDown } from 'lucide-react';
+import { useDraggable } from '@/hooks/use-draggable';
 
 interface DetailsViewProps extends ViewComponentProps {
   fileGroups?: FileGroup[] | null;
@@ -85,6 +86,7 @@ type FlatItem =
 interface FileRowProps {
   file: FileEntry;
   selectedFiles: Set<string>;
+  allFiles: FileEntry[];
   getFileIcon: (file: FileEntry) => React.ReactNode;
   formatFileSize: (bytes: number) => string;
   formatFolderSize: (folderSizeInfo: FolderSizeInfo | null, isCalculating?: boolean) => string;
@@ -101,6 +103,7 @@ const FileRow = React.memo(
   ({
     file,
     selectedFiles,
+    allFiles,
     getFileIcon,
     formatFileSize,
     formatFolderSize,
@@ -114,6 +117,8 @@ const FileRow = React.memo(
   }: FileRowProps) => {
     const { showFileExtensions } = useAppSettings();
     const { t } = useTranslation();
+    // Native drag via tauri-plugin-drag (wie in der Kachel-/Listenansicht)
+    const dragHandlers = useDraggable({ file, selectedFiles, allFiles });
     const handleClick = useCallback(
       (e: React.MouseEvent) => onFileClick(file.path, e),
       [onFileClick, file.path],
@@ -168,6 +173,7 @@ const FileRow = React.memo(
         onDoubleClick={handleDoubleClick}
         onContextMenu={handleContextMenu}
         onKeyDown={handleKeyDown}
+        {...dragHandlers}
       >
         <div className="col-span-1 flex justify-center">
           <span className="text-lg">{getFileIcon(file)}</span>
@@ -357,6 +363,7 @@ const DetailsView = (props: DetailsViewProps) => {
 
   const stableRowProps = {
     selectedFiles,
+    allFiles: files,
     getFileIcon,
     formatFileSize,
     formatFolderSize,
